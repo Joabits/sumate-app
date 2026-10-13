@@ -1,4 +1,4 @@
-# 📚 StudyMatch Web App
+# 🤝 Súmate App
 
 ## 📌 Información del Proyecto
 
@@ -11,18 +11,19 @@
 
 ## 📝 Descripción del Proyecto
 
-**StudyMatch** es una aplicación web orientada a conectar estudiantes para facilitar la búsqueda de compañeros de estudio y la organización de sesiones de aprendizaje.
+**Súmate App** es una plataforma web diseñada para conectar estudiantes universitarios y voluntarios con causas sociales, actividades comunitarias y convocatorias de voluntariado.
 
-La plataforma permitirá a los estudiantes:
-* 🔍 Encontrar personas con intereses, materias u objetivos académicos similares.
-* 📅 Crear o unirse a sesiones de estudio.
-* 🤝 Descubrir oportunidades de participación dentro de su entorno, como actividades de voluntariado.
+La plataforma permite a los usuarios:
+* 🔍 **Buscar y explorar convocatorias** filtrando por palabras clave, organización, causa social (medio ambiente, educación, salud, bienestar animal, etc.), modalidad (presencial/virtual) y rango de fechas.
+* 📍 **Búsqueda por cercanía y ubicación:** Encontrar actividades cercanas calculando la distancia en kilómetros según la zona y ubicación geográfica del voluntario.
+* 👥 **Inscripción y cupos en tiempo real:** Unirse a convocatorias con disponibilidad inmediata y control de aforo.
+* 📅 **Gestión y seguimiento:** Publicar y gestionar actividades, consultar historial de participaciones y estado de convocatorias.
 
-El objetivo principal es facilitar la conexión entre estudiantes, promoviendo tanto la colaboración académica como la participación en oportunidades y actividades cercanas.
+El objetivo principal es reducir las barreras de participación juvenil en causas comunitarias y facilitar que las organizaciones y estudiantes encuentren iniciativas donde realmente puedan colaborar y generar impacto.
 
 ---
 
 ## 💻 Tecnologías y Stack
 
-* **Frontend:** Next.js
-* **Backend:** FastAPI
+* **Frontend:** Next.js (TypeScript, Tailwind CSS)
+* **Backend:** FastAPI (Python, SQLAlchemy, PostgreSQL)
