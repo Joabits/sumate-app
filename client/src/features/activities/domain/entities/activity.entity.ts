@@ -97,6 +97,7 @@ export interface SearchFilterState {
   datePreset: DatePresetFilter;
   capacityRange: CapacityRangeFilter;
   causeIds: string[];
+  distanceKm: number;
 }
 
 export interface ActivitySearchParams {
@@ -105,5 +106,8 @@ export interface ActivitySearchParams {
   datePreset?: DatePresetFilter;
   capacityRange?: CapacityRangeFilter;
   causeIds?: string[];
+  userLat?: number;
+  userLon?: number;
+  maxDistanceKm?: number;
 }
 

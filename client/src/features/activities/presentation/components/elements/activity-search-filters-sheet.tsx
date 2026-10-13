@@ -9,12 +9,14 @@ import {
   Moon,
   X,
   Tag,
+  MapPin,
 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Slider } from "@/components/ui/slider";
 import type {
   CapacityRangeFilter,
   DatePresetFilter,
@@ -100,6 +102,12 @@ export function ActivitySearchFiltersSheet({
 
   const handleSelectAllCauses = () => {
     onDraftFiltersChange((prev) => ({ ...prev, causeIds: [] }));
+  };
+
+  const handleDistanceChange = (vals: number[]) => {
+    if (vals && vals.length > 0) {
+      onDraftFiltersChange((prev) => ({ ...prev, distanceKm: Math.round(vals[0]) }));
+    }
   };
 
   return (
@@ -190,35 +198,7 @@ export function ActivitySearchFiltersSheet({
 
           <div className="h-px bg-slate-100 w-full" />
 
-          {/* Sección 3: Tamaño de asistentes */}
-          <div>
-            <h3 className="text-sm font-bold text-slate-900 mb-2.5">
-              Tamaño de asistentes
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {CAPACITY_RANGE_OPTIONS.map((opt) => {
-                const isSelected = draftFilters.capacityRange === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => handleSelectCapacityRange(opt.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                        : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <span>{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="h-px bg-slate-100 w-full" />
-
-          {/* Sección 4: Causas temáticas */}
+          {/* Sección 3: Causas temáticas */}
           <div>
             <h3 className="text-sm font-bold text-slate-900 mb-2.5">
               Causas
@@ -251,6 +231,59 @@ export function ActivitySearchFiltersSheet({
                   >
                     <Tag className="w-3 h-3 shrink-0" />
                     <span>{cause.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="h-px bg-slate-100 w-full" />
+
+          {/* Sección 4: Distancia */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-slate-900">
+                Distancia
+              </h3>
+              <span className="text-sm font-medium text-slate-600">
+                {draftFilters.distanceKm >= 50
+                  ? "Cualquier distancia"
+                  : `${Math.round(draftFilters.distanceKm)} km`}
+              </span>
+            </div>
+            <div className="px-1">
+              <Slider
+                value={[Math.round(draftFilters.distanceKm)]}
+                onValueChange={handleDistanceChange}
+                min={1}
+                max={50}
+                step={1}
+              />
+            </div>
+          </div>
+
+          <div className="h-px bg-slate-100 w-full" />
+
+          {/* Sección 5: Tamaño de asistentes */}
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 mb-2.5">
+              Tamaño de asistentes
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {CAPACITY_RANGE_OPTIONS.map((opt) => {
+                const isSelected = draftFilters.capacityRange === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => handleSelectCapacityRange(opt.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                        : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    <span>{opt.label}</span>
                   </button>
                 );
               })}

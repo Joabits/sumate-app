@@ -19,6 +19,9 @@ class SearchActivitiesQuery:
     date_preset: str | None = None
     capacity_range: str | None = None
     cause_ids: tuple[UUID, ...] = ()
+    user_latitude: float | None = None
+    user_longitude: float | None = None
+    max_distance_km: float | None = None
 
 
 class SearchActivitiesQueryHandler:
@@ -33,6 +36,9 @@ class SearchActivitiesQueryHandler:
             date_preset=query.date_preset,
             capacity_range=query.capacity_range,
             cause_ids=query.cause_ids,
+            user_latitude=query.user_latitude,
+            user_longitude=query.user_longitude,
+            max_distance_km=query.max_distance_km,
             min_date=now,
         )
 

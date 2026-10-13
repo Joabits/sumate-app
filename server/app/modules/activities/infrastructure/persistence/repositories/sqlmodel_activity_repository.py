@@ -1,12 +1,13 @@
+import math
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
 
 from app.modules.activities.domain.entities.activity import Activity
 from app.modules.activities.domain.entities.activity_detail import ActivityDetail
+from app.modules.activities.domain.entities.cause import Cause
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
-from app.modules.activities.domain.entities.cause import Cause
 from app.modules.activities.infrastructure.persistence.mappers.activity_detail_mapper import (
     ActivityDetailMapper,
 )
@@ -15,6 +16,14 @@ from app.modules.activities.infrastructure.persistence.mappers.activity_mapper i
 )
 from app.modules.activities.infrastructure.persistence.mappers.cause_mapper import (
     CauseMapper,
+)
+from app.modules.activities.infrastructure.persistence.repositories.activity_search_filters import (
+    apply_capacity_filter,
+    apply_causes_filter,
+    apply_date_preset_filter,
+    apply_distance_filter,
+    apply_search_query_filter,
+    apply_time_of_day_filter,
 )
 from app.modules.activities.infrastructure.persistence.models.activity_cause_model import (
     ActivityCauseModel,
@@ -106,6 +115,9 @@ class SQLModelActivityRepository(ActivityRepository):
         date_preset: str | None = None,
         capacity_range: str | None = None,
         cause_ids: tuple[UUID, ...] = (),
+        user_latitude: float | None = None,
+        user_longitude: float | None = None,
+        max_distance_km: float | None = None,
         min_date: datetime,
     ) -> list[Activity]:
         subquery = (
@@ -132,109 +144,14 @@ class SQLModelActivityRepository(ActivityRepository):
             )
         )
 
-        if query and query.strip():
-            statement = statement.where(ActivityModel.name.ilike(f"%{query.strip()}%"))
-
-        if date_preset == "starting_soon":
-            statement = statement.where(
-                ActivityModel.date >= min_date,
-                ActivityModel.date <= min_date + timedelta(hours=24),
-            )
-        elif date_preset == "today":
-            end_today = min_date.replace(
-                hour=23, minute=59, second=59, microsecond=999999
-            )
-            statement = statement.where(
-                ActivityModel.date >= min_date,
-                ActivityModel.date <= end_today,
-            )
-        elif date_preset == "tomorrow":
-            start_tomorrow = (min_date + timedelta(days=1)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
-            end_tomorrow = (min_date + timedelta(days=1)).replace(
-                hour=23, minute=59, second=59, microsecond=999999
-            )
-            statement = statement.where(
-                ActivityModel.date >= start_tomorrow,
-                ActivityModel.date <= end_tomorrow,
-            )
-        elif date_preset == "this_weekend":
-            days_to_sat = 5 - min_date.weekday()
-            if min_date.weekday() >= 5:
-                start_weekend = min_date
-            else:
-                start_weekend = (min_date + timedelta(days=days_to_sat)).replace(
-                    hour=0, minute=0, second=0, microsecond=0
-                )
-            days_to_sun = 6 - min_date.weekday()
-            end_weekend = (min_date + timedelta(days=days_to_sun)).replace(
-                hour=23, minute=59, second=59, microsecond=999999
-            )
-            statement = statement.where(
-                ActivityModel.date >= start_weekend,
-                ActivityModel.date <= end_weekend,
-            )
-        elif date_preset == "next_week":
-            days_to_next_mon = 7 - min_date.weekday()
-            start_next_mon = (min_date + timedelta(days=days_to_next_mon)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
-            end_next_sun = (start_next_mon + timedelta(days=6)).replace(
-                hour=23, minute=59, second=59, microsecond=999999
-            )
-            statement = statement.where(
-                ActivityModel.date >= start_next_mon,
-                ActivityModel.date <= end_next_sun,
-            )
-        elif date_preset == "next_weekend":
-            days_to_next_mon = 7 - min_date.weekday()
-            start_next_mon = (min_date + timedelta(days=days_to_next_mon)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
-            start_next_sat = (start_next_mon + timedelta(days=5)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
-            end_next_sun = (start_next_sat + timedelta(days=1)).replace(
-                hour=23, minute=59, second=59, microsecond=999999
-            )
-            statement = statement.where(
-                ActivityModel.date >= start_next_sat,
-                ActivityModel.date <= end_next_sun,
-            )
-        else:
-            statement = statement.where(ActivityModel.date >= min_date)
-
-        if time_of_day == "early_morning":
-            statement = statement.where(
-                func.extract("hour", ActivityModel.date).between(0, 5)
-            )
-        elif time_of_day == "morning":
-            statement = statement.where(
-                func.extract("hour", ActivityModel.date).between(6, 11)
-            )
-        elif time_of_day == "afternoon":
-            statement = statement.where(
-                func.extract("hour", ActivityModel.date).between(12, 18)
-            )
-        elif time_of_day == "night":
-            statement = statement.where(
-                func.extract("hour", ActivityModel.date).between(19, 23)
-            )
-
-        if capacity_range == "1-9":
-            statement = statement.where(ActivityModel.capacity.between(1, 9))
-        elif capacity_range == "10-20":
-            statement = statement.where(ActivityModel.capacity.between(10, 20))
-        elif capacity_range == "gt-20":
-            statement = statement.where(ActivityModel.capacity > 20)
-
-        if cause_ids:
-            cause_subquery = select(ActivityCauseModel.activity_id).where(
-                ActivityCauseModel.cause_id.in_(cause_ids),
-                ActivityCauseModel.deleted_date.is_(None),
-            )
-            statement = statement.where(ActivityModel.id.in_(cause_subquery))
+        statement = apply_search_query_filter(statement, query)
+        statement = apply_date_preset_filter(statement, date_preset, min_date)
+        statement = apply_time_of_day_filter(statement, time_of_day)
+        statement = apply_capacity_filter(statement, capacity_range)
+        statement = apply_causes_filter(statement, cause_ids)
+        statement = apply_distance_filter(
+            statement, user_latitude, user_longitude, max_distance_km
+        )
 
         statement = statement.order_by(ActivityModel.date.asc())
         results = self.db.exec(statement).all()

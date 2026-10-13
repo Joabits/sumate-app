@@ -241,6 +241,9 @@ def search_activities(
     date_preset: Annotated[DatePresetFilter, Query(description="Filtro de temporalidad de fecha")] = DatePresetFilter.upcoming,
     capacity_range: Annotated[CapacityRangeFilter, Query(description="Filtro de plazas/cupos totales configurados")] = CapacityRangeFilter.any,
     cause_ids: Annotated[list[UUID], Query(description="Lista de IDs de causas para filtrar")] = [],
+    user_lat: Annotated[float | None, Query(description="Latitud actual del usuario")] = None,
+    user_lon: Annotated[float | None, Query(description="Longitud actual del usuario")] = None,
+    max_distance_km: Annotated[float | None, Query(description="Radio máximo en kilómetros")] = None,
 ) -> ActivityListRead:
     repository = SQLModelActivityRepository(db)
     handler = SearchActivitiesQueryHandler(repository)
@@ -251,6 +254,9 @@ def search_activities(
             date_preset=date_preset.value if date_preset else None,
             capacity_range=capacity_range.value if capacity_range else None,
             cause_ids=tuple(cause_ids),
+            user_latitude=user_lat,
+            user_longitude=user_lon,
+            max_distance_km=max_distance_km,
         )
     )
 

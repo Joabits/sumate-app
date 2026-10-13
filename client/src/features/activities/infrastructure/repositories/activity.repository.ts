@@ -64,6 +64,13 @@ export const activityRepositoryImpl: ActivityRepository = {
         }
       });
     }
+    if (params?.userLat !== undefined && params?.userLon !== undefined) {
+      searchParams.set("user_lat", params.userLat.toString());
+      searchParams.set("user_lon", params.userLon.toString());
+    }
+    if (params?.maxDistanceKm !== undefined) {
+      searchParams.set("max_distance_km", params.maxDistanceKm.toString());
+    }
 
     const queryString = searchParams.toString();
     const url = queryString ? `${BASE_URL}/search?${queryString}` : `${BASE_URL}/search`;

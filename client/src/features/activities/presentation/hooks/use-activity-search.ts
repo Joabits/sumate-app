@@ -15,7 +15,33 @@ export const DEFAULT_SEARCH_FILTERS: SearchFilterState = {
   datePreset: "upcoming",
   capacityRange: "any",
   causeIds: [],
+  distanceKm: 50,
 };
+
+function getDiscreetUserLocation(): Promise<{ latitude: number; longitude: number } | null> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !("geolocation" in navigator)) {
+      resolve(null);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        resolve({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+        });
+      },
+      () => {
+        resolve(null);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 3000,
+        maximumAge: 60000,
+      }
+    );
+  });
+}
 
 export function useActivitySearch() {
   const [query, setQuery] = useState<string>("");
@@ -32,6 +58,7 @@ export function useActivitySearch() {
     if (filters.datePreset !== "upcoming") count++;
     if (filters.capacityRange !== "any") count++;
     if (filters.causeIds.length > 0) count += filters.causeIds.length;
+    if (filters.distanceKm < 50) count++;
     return count;
   }, [filters]);
 
@@ -44,7 +71,8 @@ export function useActivitySearch() {
         filtersToSearch.timeOfDay === "any" &&
         filtersToSearch.datePreset === "upcoming" &&
         filtersToSearch.capacityRange === "any" &&
-        filtersToSearch.causeIds.length === 0;
+        filtersToSearch.causeIds.length === 0 &&
+        filtersToSearch.distanceKm >= 50;
 
       // Si no hay texto y los filtros están en valores por defecto, resetear a vista inicial
       if (!trimmedQuery && areFiltersDefault) {
@@ -58,12 +86,19 @@ export function useActivitySearch() {
       setIsLoading(true);
 
       try {
+        // Pedir la ubicación actual de forma discreta
+        const location = await getDiscreetUserLocation();
+
         const res = await activityRepositoryImpl.searchActivities({
           q: trimmedQuery || undefined,
           timeOfDay: filtersToSearch.timeOfDay,
           datePreset: filtersToSearch.datePreset,
           capacityRange: filtersToSearch.capacityRange,
           causeIds: filtersToSearch.causeIds,
+          userLat: location?.latitude,
+          userLon: location?.longitude,
+          maxDistanceKm:
+            filtersToSearch.distanceKm < 50 ? filtersToSearch.distanceKm : undefined,
         });
 
         if (res.ok) {
@@ -109,7 +144,8 @@ export function useActivitySearch() {
       filters.timeOfDay === "any" &&
       filters.datePreset === "upcoming" &&
       filters.capacityRange === "any" &&
-      filters.causeIds.length === 0;
+      filters.causeIds.length === 0 &&
+      filters.distanceKm >= 50;
 
     if (areFiltersDefault) {
       setHasSearched(false);

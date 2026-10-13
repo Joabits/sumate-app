@@ -36,6 +36,9 @@ class ActivityRepository(ABC):
         date_preset: str | None = None,
         capacity_range: str | None = None,
         cause_ids: tuple[UUID, ...] = (),
+        user_latitude: float | None = None,
+        user_longitude: float | None = None,
+        max_distance_km: float | None = None,
         min_date: datetime,
     ) -> list[Activity]:
         ...
