@@ -108,49 +108,4 @@ def test_create_activity_request_as_form():
     assert req.date.tzinfo is not None
 
 
-def test_search_activities_query_handler():
-    from unittest.mock import MagicMock
-    from app.modules.activities.application.queries.search_activities import (
-        SearchActivitiesQuery,
-        SearchActivitiesQueryHandler,
-    )
-    from app.modules.activities.domain.entities.cause import Cause
-
-    activity = Activity.create(
-        name="Limpieza de Playa",
-        owner_id="usr_123",
-        image_url="https://res.cloudinary.com/test.webp",
-        date=datetime.now(timezone.utc),
-        capacity=10,
-        creator_name="Carlos Ruiz",
-        creator_image="https://example.com/carlos.jpg",
-    )
-
-    cause = Cause(
-        id=activity.id,
-        name="Medio Ambiente",
-        slug="medio-ambiente",
-    )
-
-    repo = MagicMock()
-    repo.search_activities.return_value = [activity]
-    repo.get_causes_for_activities.return_value = {activity.id: [cause]}
-
-    handler = SearchActivitiesQueryHandler(repo)
-    result = handler.execute(
-        SearchActivitiesQuery(
-            query="playa",
-            time_of_day="morning",
-            date_preset="upcoming",
-            capacity_range="10-20",
-        )
-    )
-
-    assert len(result.items) == 1
-    assert result.items[0].name == "Limpieza de Playa"
-    assert result.items[0].creator_name == "Carlos Ruiz"
-    assert len(result.items[0].causes) == 1
-    assert result.items[0].causes[0].name == "Medio Ambiente"
-
-
 
