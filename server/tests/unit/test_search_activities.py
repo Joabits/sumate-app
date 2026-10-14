@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 import pytest
 from sqlalchemy import event
@@ -262,12 +263,16 @@ def test_search_repo_by_date_preset_matching_and_empty(db_session):
     db_session.add(owner)
 
     now = datetime.now(timezone.utc)
+    now_bo = now.astimezone(ZoneInfo("America/La_Paz"))
+    tomorrow_bo = (now_bo + timedelta(days=1)).replace(hour=10, minute=0, second=0, microsecond=0)
+    next_month_bo = (now_bo + timedelta(days=30)).replace(hour=10, minute=0, second=0, microsecond=0)
+
     act_tomorrow = ActivityModel(
         id=uuid4(),
         name="Actividad Mañana",
         owner_id="usr_1",
         image_url="https://res.cloudinary.com/test.webp",
-        date=(now + timedelta(days=1)).replace(hour=10, minute=0, second=0),
+        date=tomorrow_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
     )
@@ -276,7 +281,7 @@ def test_search_repo_by_date_preset_matching_and_empty(db_session):
         name="Actividad Próximo Mes",
         owner_id="usr_1",
         image_url="https://res.cloudinary.com/test.webp",
-        date=(now + timedelta(days=30)).replace(hour=10, minute=0, second=0),
+        date=next_month_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
     )
@@ -298,12 +303,16 @@ def test_search_repo_by_time_of_day_matching_and_empty(db_session):
     db_session.add(owner)
 
     now = datetime.now(timezone.utc)
+    now_bo = now.astimezone(ZoneInfo("America/La_Paz"))
+    morning_bo = (now_bo + timedelta(days=2)).replace(hour=8, minute=0, second=0, microsecond=0)
+    night_bo = (now_bo + timedelta(days=2)).replace(hour=21, minute=0, second=0, microsecond=0)
+
     act_morning = ActivityModel(
         id=uuid4(),
         name="Yoga Matutino",
         owner_id="usr_1",
         image_url="https://res.cloudinary.com/test.webp",
-        date=(now + timedelta(days=2)).replace(hour=8, minute=0, second=0),
+        date=morning_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
     )
@@ -312,7 +321,7 @@ def test_search_repo_by_time_of_day_matching_and_empty(db_session):
         name="Observación Nocturna",
         owner_id="usr_1",
         image_url="https://res.cloudinary.com/test.webp",
-        date=(now + timedelta(days=2)).replace(hour=21, minute=0, second=0),
+        date=night_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
     )
@@ -502,8 +511,12 @@ def test_search_repo_combined_filters_matching_and_empty(db_session):
     db_session.commit()
 
     now = datetime.now(timezone.utc)
+    now_bo = now.astimezone(ZoneInfo("America/La_Paz"))
+    tomorrow_morning_bo = (now_bo + timedelta(days=1)).replace(
+        hour=10, minute=0, second=0, microsecond=0
+    )
+    tomorrow_morning = tomorrow_morning_bo.astimezone(timezone.utc).replace(tzinfo=None)
     act_target_id = uuid4()
-    tomorrow_morning = (now + timedelta(days=1)).replace(hour=10, minute=0, second=0)
 
     act_target = ActivityModel(
         id=act_target_id,

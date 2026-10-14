@@ -60,9 +60,9 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
         </p>
       )}
 
-      <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-        <div className="flex items-center gap-1.5 font-medium text-slate-600">
-          <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+      <div className="mt-2 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg">
+          <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
           {isMine && typeof myActivity.registeredCount === "number" ? (
             <span>
               {myActivity.registeredCount} / {activity.capacity} inscritos
@@ -75,7 +75,7 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
         </div>
 
         {showStatusBadge && statusBadge && (
-          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${statusBadge.className}`}>
+          <span className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold ${statusBadge.className}`}>
             {statusBadge.label}
           </span>
         )}

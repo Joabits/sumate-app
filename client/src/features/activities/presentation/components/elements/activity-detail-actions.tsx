@@ -8,6 +8,7 @@ import {
   Lock,
   Rocket,
   RotateCcw,
+  UserMinus,
 } from "lucide-react";
 import type { ActivityDetailData } from "@/features/activities/domain/entities/activity.entity";
 import { appToast } from "@/features/shared/presentation/components/notifications/toast";
@@ -106,7 +107,7 @@ export function ActivityDetailActions({
         return;
       }
       appToast.success(
-        "¡Actividad publicada con éxito! Ya es visible para todos.",
+        "¡Actividad publicada con éxito!",
       );
     });
   };
@@ -182,10 +183,10 @@ export function ActivityDetailActions({
                 onClick={() => setLeaveDialogOpen(true)}
                 disabled={isPending}
                 aria-label="Cancelar participación en el evento"
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-emerald-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-rose-600/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white"
               >
-                <CheckCircle2 className="w-5 h-5 stroke-current" />
-                <span>Asistiré (Confirmado)</span>
+                <UserMinus className="w-5 h-5 stroke-current" />
+                <span>Cancelar participación</span>
               </button>
             ) : isFull ? (
               <button

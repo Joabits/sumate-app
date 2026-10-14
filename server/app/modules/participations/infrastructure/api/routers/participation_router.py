@@ -16,6 +16,9 @@ from app.modules.participations.application.use_cases.leave_activity import (
     LeaveActivityCommand,
     LeaveActivityUseCase,
 )
+from app.modules.activities.infrastructure.api.schemas.cause_schemas import (
+    CauseRead,
+)
 from app.modules.participations.infrastructure.api.schemas.participation_schemas import (
     ParticipatedActivityItemRead,
     ParticipatedActivityListRead,

@@ -166,7 +166,6 @@ export function LocationMapSheet({
           mapInstanceRef.current.setView([latitude, longitude], 16);
           markerInstanceRef.current.setLatLng([latitude, longitude]);
         }
-        appToast.success("Ubicación actual detectada.");
       },
       () => {
         appToast.error(

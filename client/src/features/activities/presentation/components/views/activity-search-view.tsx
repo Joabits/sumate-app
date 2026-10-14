@@ -36,6 +36,7 @@ export function ActivitySearchView() {
         onClearQuery={clearQuery}
         onSubmit={submitSearch}
         onOpenFilters={openFiltersSheet}
+        activeFiltersCount={activeFiltersCount}
       />
 
       {/* Área de Scroll de Contenido */}

@@ -10,6 +10,7 @@ interface ActivitySearchHeaderProps {
   onClearQuery: () => void;
   onSubmit: () => void;
   onOpenFilters: () => void;
+  activeFiltersCount?: number;
 }
 
 export function ActivitySearchHeader({
@@ -18,6 +19,7 @@ export function ActivitySearchHeader({
   onClearQuery,
   onSubmit,
   onOpenFilters,
+  activeFiltersCount = 0,
 }: ActivitySearchHeaderProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -89,10 +91,23 @@ export function ActivitySearchHeader({
         <button
           type="button"
           onClick={onOpenFilters}
-          aria-label="Abrir filtros"
-          className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200 active:scale-95 transition-all cursor-pointer shrink-0"
+          aria-label={
+            activeFiltersCount > 0
+              ? `Abrir filtros (${activeFiltersCount} activos)`
+              : "Abrir filtros"
+          }
+          className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+            activeFiltersCount > 0
+              ? "bg-[#6355de] text-white shadow-md shadow-[#6355de]/30 hover:bg-[#5244cc] active:scale-95"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200 active:scale-95"
+          }`}
         >
           <ListFilter className="w-4 h-4" />
+          {activeFiltersCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+              {activeFiltersCount}
+            </span>
+          )}
         </button>
       </div>
     </header>

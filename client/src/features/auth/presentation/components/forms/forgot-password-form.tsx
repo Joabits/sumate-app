@@ -35,7 +35,7 @@ export function ForgotPasswordForm({
            * Esto evita que se pueda enumerar usuarios existentes.
            */
           appToast.success(
-            "Si ese email está registrado, recibirás un enlace para restablecer tu contraseña.",
+            "Revisa tu correo para restablecer tu contraseña.",
           );
         },
         onError: (ctx) => {

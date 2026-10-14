@@ -49,7 +49,7 @@ export function ResetPasswordForm({
         onSuccess: () => {
           formRef.current?.reset();
           appToast.success(
-            "¡Contraseña actualizada! Ya puedes iniciar sesión.",
+            "¡Contraseña actualizada!",
           );
           router.push("/auth/login");
         },
