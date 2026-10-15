@@ -176,7 +176,7 @@
 * **Solución y Comprobación:** Se implementó un botón de acción contextual sutil debajo del mensaje de sin resultados: `"Ajustar filtros"` con icono `SlidersHorizontal`. Al pulsarlo, abre de inmediato el panel inferior (bottom sheet) de filtros para que el usuario pueda calibrar o limpiar sus criterios de búsqueda con un solo toque.
 * **Referencia de código:**
   - `client/src/features/activities/presentation/components/views/activity-search-view.tsx:90-99`
-* **Commit:** *[Pendiente de commit tras capturar h9-despues]*
+* **Commit:** `3311f23`
 * **Evidencia:**
 
 | Antes de la corrección | Después de la corrección |
