@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SearchX } from "lucide-react";
+import { Search, SearchX, SlidersHorizontal } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useActivitySearch } from "../../hooks/use-activity-search";
 import { ActivitySearchHeader } from "../elements/activity-search-header";
@@ -87,6 +87,15 @@ export function ActivitySearchView() {
             <p className="text-sm text-slate-500 mt-1 max-w-xs leading-relaxed">
               No se ha encontrado nada en base a ese filtro de búsqueda
             </p>
+            <button
+              type="button"
+              onClick={openFiltersSheet}
+              aria-label="Ajustar filtros de búsqueda"
+              className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#6355de] bg-[#f3f1fd] hover:bg-[#eae6fd] active:scale-95 transition-all cursor-pointer shadow-xs border border-[#6355de]/15"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              <span>Ajustar filtros</span>
+            </button>
           </div>
         )}
 
