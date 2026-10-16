@@ -297,7 +297,16 @@ export function ActivityDetailInfo({
           />
         ) : (
           <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
-            <div className="flex items-center flex-1 mr-2">
+            <div
+              className={`flex items-center flex-1 mr-2 ${
+                isOwner && isEditMode && !isOtherFieldActive("causes") ? "cursor-pointer" : ""
+              }`}
+              onClick={
+                isOwner && isEditMode && !isOtherFieldActive("causes")
+                  ? () => setActiveField("causes")
+                  : undefined
+              }
+            >
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
                   src="/assets/icons/cause.webp"
@@ -310,12 +319,20 @@ export function ActivityDetailInfo({
               </div>
               <div className="min-w-0 pr-2">
                 <p className="text-sm font-semibold text-slate-900 leading-tight">
-                  Causas temáticas
+                  {activity.causes && activity.causes.length > 0
+                    ? "Causas temáticas"
+                    : isOwner
+                      ? "Causas por definir"
+                      : "Causas temáticas"}
                 </p>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">
                   {activity.causes && activity.causes.length > 0
                     ? activity.causes.map((cause) => cause.name).join(", ")
-                    : "Sin causas"}
+                    : isOwner
+                      ? isEditMode
+                        ? "Toca para seleccionar causas"
+                        : "Activa el modo de edición"
+                      : "Sin causas"}
                 </p>
               </div>
             </div>

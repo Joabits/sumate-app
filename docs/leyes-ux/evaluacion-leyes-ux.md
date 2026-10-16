@@ -15,13 +15,13 @@
 | :--- | :---: | :--- | :---: |
 | **1. Ley de Fitts**<br>Dimensiones y ubicación de acciones críticas en Detalle de Actividad (`/activities/[id]`) y Crear actividad (`/my-activities`): Botones flotantes inferiores arrinconados a la derecha (`fixed bottom-6 right-5`), y acciones superiores en el header (*Compartir*, *Editar*, *Eliminar*). | ![Fitts 1](../fotos-nuevas/hick1.png) ![Fitts 2](../fotos-nuevas/hick2.png) ![Fitts 3](../fotos-nuevas/hick3.png) | Según la Ley de Fitts ($MT = a + b \log_2(2D/W)$), el tiempo para alcanzar un objetivo depende de la distancia ($D$) y del ancho ($W$) del blanco. Los botones flotantes periféricos tienen un ancho reducido (~140px) y una posición que dificulta el alcance ergonómico del pulgar (fuera de la zona natural de confort o Thumb Zone). En el header superior, los botones de acción son pequeños y requieren alta precisión. | **Requiere mejora**<br>*(En proceso / Identificado con propuesta de mejora)* |
 | **2. Ley de Hick**<br>Sobrecarga de opciones simultáneas e inmediatas al desplegar el panel de filtros de búsqueda (`/activities/search`). | ![Hick Antes](../fotos-nuevas/fitts.png) ![Hick Después](../fotos-nuevas/mejora-filtro.png) | Conforme a la Ley de Hick ($T = b \log_2(n+1)$), el tiempo de decisión se incrementa logarítmicamente con el número de alternativas visibles. Inicialmente el panel mostraba 5 secciones abiertas en simultáneo (más de 15 chips y controles). Se solucionó jerarquizando las secciones en bloques colapsables: se dejan abiertas por defecto solo las 2 primarias (*Hora del día* y *Fecha*), se colapsa *Causas* y se agrupan los filtros secundarios (*Distancia* y *Asistentes*) en *"Más filtros"*. | **Requiere implementación**<br>*(Implementado y corregido con código)* |
-| **3. Carga Cognitiva**<br>Flujo de creación progresiva de actividades: Creación rápida inicial y posterior enriquecimiento guiado en la pantalla de detalle (`/activities/[id]`) para el organizador (*owner*). | ![Cogni 1](../fotos-nuevas/cogni1.png) ![Cogni 2](../fotos-nuevas/cogni2.png) | Para evitar la sobrecarga cognitiva intrínseca de completar un formulario masivo de 15 campos en un solo paso, el sistema divide la carga mental (*Chunking* de Sweller): primero solicita los datos indispensables (nombre, fecha, cupos, imagen) y permite al *owner* definir progresivamente detalles complementarios en la vista de detalle. Para reducir la carga extraneous, la interfaz guía activamente al creador indicando *"Causas por definir"* y *"Ubicación por definir"* junto con la instrucción contextual *"Activa el modo de edición"*. | **Cumple con la regla**<br>*(Cumple por diseño arquitectónico)* |
+| **3. Carga Cognitiva**<br>Flujo de creación progresiva de actividades y guía contextual en detalle (`/activities/[id]`): Creación rápida inicial y posterior enriquecimiento guiado en la pantalla de detalle para el organizador (*owner*). | ![Cogni 1](../fotos-nuevas/cogni1.png) ![Cogni Antes](../fotos-nuevas/cogni2.png) ![Cogni Después](../fotos-nuevas/mejora-detail.png) | Para evitar la sobrecarga cognitiva intrínseca de completar un formulario masivo de 15 campos en un solo paso, el sistema divide la carga mental (*Chunking* de Sweller): primero solicita los datos indispensables y permite al *owner* definir progresivamente detalles en el detalle. Para reducir la carga extraneous, se implementó en código que la interfaz guíe activamente al creador indicando *"Causas por definir"* (con *"Activa el modo de edición"* / *"Toca para seleccionar causas"*) al igual que *"Ubicación por definir"*. | **Requiere implementación**<br>*(Implementado y corregido con código en detalle)* |
 
 > [!NOTE]
-> **Aclaración sobre los estados de la evaluación:**
-> 1. **Filtros (Ley de Hick):** **SÍ requirió implementación activa en código**. Se implementó la lógica de secciones colapsables, persistencia al limpiar filtros y agrupación secundaria en `activity-search-filters-sheet.tsx`.
-> 2. **Detalle y Acciones (Ley de Fitts):** **Requiere una mejora técnica**. Se diagnosticó la necesidad de sustituir los botones flotantes aislados de la esquina por una *Sticky Bottom Bar* de ancho completo para optimizar el área táctil y la distancia ergonómica.
-> 3. **Flujo de Creación (Carga Cognitiva):** **Ya CUMPLE con la regla**. El sistema fue concebido arquitectónicamente bajo el principio de división de carga cognitiva (creación ágil inicial en sheet y enriquecimiento posterior por demanda en la pantalla de detalle con guías visuales).
+> **Aclaración sobre los estados y requerimientos de implementación:**
+> 1. **Filtros (Ley de Hick):** **SÍ requirió implementación en código** (`activity-search-filters-sheet.tsx`). Se implementó la lógica de secciones colapsables, persistencia al limpiar filtros y agrupación secundaria en "Más filtros" (ver evidencia antes `fitts.png` y después `mejora-filtro.png`).
+> 2. **Causas y Guía en Detalle (Carga Cognitiva):** **SÍ requirió implementación en código** (`activity-detail-info.tsx`). El flujo base cumplía conceptualmente con la división en etapas, pero requirió implementar las etiquetas activas para que *Causas por definir* guíe al creador igual que la ubicación (ver antes `cogni2.png` y después `mejora-detail.png`).
+> 3. **Detalle y Acciones (Ley de Fitts):** **Requiere una mejora técnica futura**. Se diagnosticó la necesidad de sustituir los botones flotantes periféricos por una *Sticky Bottom Bar* de ancho completo.
 
 ---
 
@@ -44,7 +44,7 @@ Los botones de acción clave en la pantalla de detalle (`Reabrir convocatoria`, 
 
 El panel de filtros en `/activities/search` presentaba múltiples dimensiones de filtrado abiertas en simultáneo (*Hora del día*, *Fecha*, *Causas temáticas*, *Distancia* y *Tamaño de asistentes*).
 
-| Antes (Todas las opciones abiertas y sobrecarga cognitiva) | Después (Secciones colapsables y agrupación "Más filtros") |
+| Antes (Todas las opciones abiertas y sobrecarga cognitiva) | Después: Implementación (Secciones colapsables y "Más filtros") |
 | :---: | :---: |
 | ![Filtros Antes](../fotos-nuevas/fitts.png) | ![Filtros Después](../fotos-nuevas/mejora-filtro.png) |
 
@@ -53,20 +53,19 @@ El panel de filtros en `/activities/search` presentaba múltiples dimensiones de
 
 ---
 
-### 3. Carga Cognitiva: Creación Progresiva y Guías en Detalle
+### 3. Carga Cognitiva: Creación Progresiva y Guías en Detalle (Antes vs Después)
 
-El proceso de creación de una actividad no fuerza al usuario a completar decenas de campos de golpe.
+El proceso de creación de una actividad divide la carga cognitiva en etapas para no saturar al usuario, requiriendo una implementación en la vista de detalle para guiar al organizador (*owner*).
 
-| Paso 1: Creación ágil (Datos básicos) | Paso 2: Enriquecimiento progresivo en Detalle |
-| :---: | :---: |
-| ![Creación ágil](../fotos-nuevas/cogni1.png) | ![Enriquecimiento en Detalle](../fotos-nuevas/cogni2.png) |
+| Paso 1: Creación ágil (Datos básicos) | Detalle Antes (Sin causas plano) | Detalle Después: Implementación ("Causas por definir" y guía) |
+| :---: | :---: | :---: |
+| ![Creación ágil](../fotos-nuevas/cogni1.png) | ![Detalle Antes](../fotos-nuevas/cogni2.png) | ![Detalle Después](../fotos-nuevas/mejora-detail.png) |
 
 * **Fase 1 (Creación rápida):** El modal de creación (`CreateActivitySheet` en `cogni1.png`) solicita únicamente los datos indispensables para dar de alta el evento: título, fecha, aforo e imagen.
-* **Fase 2 (Enriquecimiento en Detalle):** Una vez creada la actividad, el creador (*owner*) accede al detalle (`cogni2.png`) para completar la información secundaria (ubicación en mapa, causas temáticas y descripción).
-* **Guía activa en la interfaz:** Para evitar incertidumbre en el creador, la vista de detalle señala claramente qué datos están pendientes de configuración:
-  - *Ubicación:* Muestra `"Ubicación por definir"` y el texto de acción `"Activa el modo de edición"`.
-  - *Causas temáticas:* Muestra `"Causas por definir"` y el texto de acción `"Activa el modo de edición"` / `"Toca para seleccionar causas"`.
-  - *Descripción:* Muestra `"Aún no has agregado una descripción. Activa el modo edición para redactarla."`
+* **Fase 2 (Enriquecimiento en Detalle):** Una vez creada la actividad, el creador (*owner*) accede al detalle para completar la información secundaria.
+* **Mejora Implementada en Código (`mejora-detail.png`):**
+  - **Antes (`cogni2.png`):** Mostraba un texto inerte *"Causas temáticas: Sin causas"*, dejando incertidumbre sobre qué hacer.
+  - **Después (`mejora-detail.png`):** Muestra reactivamente **`"Causas por definir"`** con la indicación **`"Activa el modo de edición"`** (o *"Toca para seleccionar causas"*), alineado con *"Ubicación por definir"*, reduciendo la carga cognitiva extraneous del usuario.
 
 ---
 
@@ -101,4 +100,4 @@ El proceso de creación de una actividad no fuerza al usuario a completar decena
   - Si un usuario tuviera que definir mapa exacto, geolocalización por coordenadas, etiquetas de causas, descripción detallada y aforo en un solo formulario inicial, la tasa de abandono sería alta.
 * **Solución y Comprobación en la Arquitectura:**
   - **División en etapas (Chunking):** Creación ágil en el Bottom Sheet inicial (`CreateActivitySheet`) y refinamiento posterior en el Detalle (`ActivityDetailView`).
-  - **Señalización explícita para el creador (*owner*):** Si faltan datos complementarios, la vista de detalle muestra placeholders activos de acción (*"Ubicación por definir"*, *"Causas por definir"*, *"Activa el modo de edición"*).
+  - **Señalización explícita para el creador (*owner*):** Se implementó la guía contextual activa en `activity-detail-info.tsx` (*"Causas por definir"* y *"Activa el modo de edición"*), eliminando la ambigüedad y completando la paridad con la ubicación.
