@@ -11,7 +11,7 @@ export function CreateActivitySheet() {
   return (
     <>
       {/* Botón flotante estilizado */}
-      <div className="fixed bottom-6 right-5 z-50 max-w-md pointer-events-none">
+      <div className="fixed bottom-6 right-5 lg:right-8 z-50 pointer-events-none">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -23,17 +23,16 @@ export function CreateActivitySheet() {
         </button>
       </div>
 
-      {/* Diálogo inferior (Bottom Sheet) */}
+      {/* Sheet adaptativo: Bottom Sheet en móvil, Right Sheet en desktop */}
       <AppSheet
         open={open}
         onOpenChange={setOpen}
-        side="bottom"
         title="Crear actividad"
-        height="auto"
-        showHeader={false}
-        showDivider={false}
+        description="Publica una nueva convocatoria comunitaria"
+        showHeader
+        showCloseButton
         autoFocusInput={false}
-        bodyClassName="px-5 pt-2 pb-5 max-h-[85vh] overflow-y-auto no-scrollbar"
+        bodyClassName="px-6 lg:px-8 py-5"
       >
         <div className="pb-2">
           <CreateActivityForm onSuccess={() => setOpen(false)} />

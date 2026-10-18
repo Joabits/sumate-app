@@ -41,20 +41,22 @@ export function AppHeader() {
 
   return (
     <header
-      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-5 pt-4 pb-2"
+      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-5 lg:px-8 pt-4 pb-2 border-b border-slate-100 lg:border-none"
       data-purpose="app-header"
     >
-      <div className="flex items-center gap-3" data-purpose="search-and-profile">
-        {/* Buscador simulado como botón centrado */}
-        <button
-          type="button"
-          onClick={() => router.push("/search")}
-          aria-label="Buscar actividades"
-          className="relative flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200/80 rounded-2xl text-sm text-slate-400 shadow-sm hover:border-slate-300 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
-        >
-          <Search className="w-4 h-4 text-slate-400 shrink-0" />
-          <span className="truncate font-normal">Buscar actividades</span>
-        </button>
+      <div className="flex items-center justify-between gap-3 lg:gap-6 w-full" data-purpose="search-and-profile">
+        {/* Buscador interactivo: 20% más largo hacia la derecha (lg:max-w-3xl xl:max-w-4xl) */}
+        <div className="flex-1 lg:max-w-3xl xl:max-w-4xl">
+          <button
+            type="button"
+            onClick={() => router.push("/search")}
+            aria-label="Buscar actividades"
+            className="w-full flex items-center justify-start gap-3 px-5 py-2.5 lg:py-3 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-sm lg:text-[15px] text-slate-400 shadow-xs hover:border-slate-300 hover:bg-slate-100/60 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
+          >
+            <Search className="w-4 h-4 lg:w-5 lg:h-5 text-slate-400 shrink-0" />
+            <span className="truncate font-normal">Buscar actividades por nombre, causa o lugar...</span>
+          </button>
+        </div>
 
         {/* Popover con Avatar y Menú de Perfil */}
         <Popover open={open} onOpenChange={setOpen}>
@@ -62,7 +64,7 @@ export function AppHeader() {
             <button
               type="button"
               aria-label="Perfil de usuario"
-              className="relative shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-slate-200 hover:border-black transition-all focus:outline-none focus:ring-2 focus:ring-black/20 active:scale-95 shadow-sm flex items-center justify-center bg-slate-100"
+              className="relative shrink-0 w-10 h-10 lg:w-11 lg:h-11 rounded-full overflow-hidden border-2 border-slate-200 hover:border-black transition-all focus:outline-none focus:ring-2 focus:ring-black/20 active:scale-95 shadow-xs flex items-center justify-center bg-slate-100 cursor-pointer"
             >
               {isPending ? (
                 <Skeleton className="w-full h-full rounded-full" />
@@ -75,7 +77,7 @@ export function AppHeader() {
                   className="object-cover"
                 />
               ) : (
-                <span className="font-bold text-xs text-zinc-700">
+                <span className="font-bold text-xs lg:text-sm text-zinc-700">
                   {userInitials}
                 </span>
               )}
@@ -113,7 +115,7 @@ export function AppHeader() {
 
             {/* Centro: Foto de perfil, nombre y correo */}
             <div className="flex flex-col items-center text-center">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-200 shadow-sm mb-2.5 bg-slate-100 flex items-center justify-center">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-200 shadow-xs mb-2.5 bg-slate-100 flex items-center justify-center">
                 {user?.image ? (
                   <Image
                     src={user.image}

@@ -166,7 +166,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
         <SubmitButton
           text="Registrar actividad"
           pendingText="Registrando actividad..."
-          className="w-full py-3.5 px-4 rounded-2xl bg-[#6355DE] hover:bg-[#5243CE] text-white font-bold text-base shadow-lg shadow-[#6355DE]/25 active:scale-[0.99] transition duration-200"
+          className="w-full py-3.5 px-4 rounded-2xl bg-[#6355DE] hover:bg-[#5243CE] text-white font-bold text-base shadow-lg shadow-[#6355DE]/25 active:scale-[0.99] transition duration-200 cursor-pointer"
         />
       </div>
     </form>

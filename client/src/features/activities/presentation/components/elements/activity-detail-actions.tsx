@@ -154,18 +154,62 @@ export function ActivityDetailActions({
 
   return (
     <>
-      <div className="fixed bottom-6 right-5 z-40 pointer-events-none">
-        {!isOwner ? (
-          isPast ? (
-            isParticipating ? (
-              <button
-                type="button"
-                disabled
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
-              >
-                <CheckCircle2 className="w-5 h-5 stroke-current" />
-                <span>Asististe</span>
-              </button>
+      <div className="fixed bottom-6 inset-x-0 pointer-events-none z-40">
+        <div className="w-full max-w-md lg:max-w-6xl mx-auto px-5 lg:px-8 flex justify-end">
+          {!isOwner ? (
+            isPast ? (
+              isParticipating ? (
+                <button
+                  type="button"
+                  disabled
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                >
+                  <CheckCircle2 className="w-5 h-5 stroke-current" />
+                  <span>Asististe</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Actividad finalizada</span>
+                </button>
+              )
+            ) : status === "active" ? (
+              isParticipating ? (
+                <button
+                  type="button"
+                  onClick={() => setLeaveDialogOpen(true)}
+                  disabled={isPending}
+                  aria-label="Cancelar participación en el evento"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-rose-600/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white"
+                >
+                  <UserMinus className="w-5 h-5 stroke-current" />
+                  <span>Cancelar participación</span>
+                </button>
+              ) : isFull ? (
+                <button
+                  type="button"
+                  disabled
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                >
+                  <Lock className="w-4 h-4" />
+                  <span>Cupos agotados</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setJoinDialogOpen(true)}
+                  disabled={isPending}
+                  aria-label="Confirmar asistencia al evento"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] cursor-pointer bg-[#6355de] hover:bg-[#5244cc] text-white"
+                >
+                  <Check className="w-5 h-5 stroke-current" />
+                  <span>Participar</span>
+                </button>
+              )
             ) : (
               <button
                 type="button"
@@ -173,122 +217,80 @@ export function ActivityDetailActions({
                 className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
               >
                 <Lock className="w-4 h-4" />
-                <span>Actividad finalizada</span>
+                <span>Convocatoria cerrada</span>
               </button>
             )
+          ) : status === "draft" ? (
+            <button
+              type="button"
+              onClick={handlePublish}
+              disabled={isPending}
+              aria-label="Publicar actividad"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#6355de] text-white shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] font-semibold text-sm disabled:opacity-50 cursor-pointer"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Publicando...</span>
+                </>
+              ) : (
+                <>
+                  <Rocket className="w-4 h-4" />
+                  <span>Publicar actividad</span>
+                </>
+              )}
+            </button>
           ) : status === "active" ? (
-            isParticipating ? (
-              <button
-                type="button"
-                onClick={() => setLeaveDialogOpen(true)}
-                disabled={isPending}
-                aria-label="Cancelar participación en el evento"
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-rose-600/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white"
-              >
-                <UserMinus className="w-5 h-5 stroke-current" />
-                <span>Cancelar participación</span>
-              </button>
-            ) : isFull ? (
-              <button
-                type="button"
-                disabled
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
-              >
-                <Lock className="w-4 h-4" />
-                <span>Cupos agotados</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setJoinDialogOpen(true)}
-                disabled={isPending}
-                aria-label="Confirmar asistencia al evento"
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] cursor-pointer bg-[#6355de] hover:bg-[#5244cc] text-white"
-              >
-                <Check className="w-5 h-5 stroke-current" />
-                <span>Participar</span>
-              </button>
-            )
-          ) : (
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={isPending}
+              aria-label="Cerrar convocatoria"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-rose-600 text-white shadow-lg shadow-rose-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Cerrando...</span>
+                </>
+              ) : (
+                <>
+                  <Lock className="w-4 h-4" />
+                  <span>Cerrar convocatoria</span>
+                </>
+              )}
+            </button>
+          ) : isPast ? (
             <button
               type="button"
               disabled
               className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
             >
               <Lock className="w-4 h-4" />
-              <span>Convocatoria cerrada</span>
+              <span>Evento finalizado (Cerrado)</span>
             </button>
-          )
-        ) : status === "draft" ? (
-          <button
-            type="button"
-            onClick={handlePublish}
-            disabled={isPending}
-            aria-label="Publicar actividad"
-            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#6355de] text-white shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] font-semibold text-sm disabled:opacity-50 cursor-pointer"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Publicando...</span>
-              </>
-            ) : (
-              <>
-                <Rocket className="w-4 h-4" />
-                <span>Publicar actividad</span>
-              </>
-            )}
-          </button>
-        ) : status === "active" ? (
-          <button
-            type="button"
-            onClick={handleClose}
-            disabled={isPending}
-            aria-label="Cerrar convocatoria"
-            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-rose-600 text-white shadow-lg shadow-rose-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Cerrando...</span>
-              </>
-            ) : (
-              <>
-                <Lock className="w-4 h-4" />
-                <span>Cerrar convocatoria</span>
-              </>
-            )}
-          </button>
-        ) : isPast ? (
-          <button
-            type="button"
-            disabled
-            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
-          >
-            <Lock className="w-4 h-4" />
-            <span>Evento finalizado (Cerrado)</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleReopen}
-            disabled={isPending}
-            aria-label="Reabrir convocatoria"
-            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Reabriendo...</span>
-              </>
-            ) : (
-              <>
-                <RotateCcw className="w-4 h-4" />
-                <span>Reabrir convocatoria</span>
-              </>
-            )}
-          </button>
-        )}
+          ) : (
+            <button
+              type="button"
+              onClick={handleReopen}
+              disabled={isPending}
+              aria-label="Reabrir convocatoria"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Reabriendo...</span>
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Reabrir convocatoria</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
       </div>
 
       <ConfirmJoinDialog

@@ -104,8 +104,8 @@ export function ActivitiesFeed({
         onChange={setActiveFilter}
       />
 
-      {/* Contenedor de Scroll de Tarjetas */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24" data-purpose="activities-feed-scroll">
+      {/* Contenedor de Scroll de Tarjetas: En móvil/tablet lista vertical; en desktop (>= lg) cuadrícula de 3 columnas */}
+      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24 lg:pb-12" data-purpose="activities-feed-scroll">
         {filteredActivities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
@@ -119,9 +119,9 @@ export function ActivitiesFeed({
             </p>
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-6">
             {filteredActivities.map((activity, index) => (
-              <ActivityCard key={activity.id} activity={activity} scope={scope} priority={index < 2} />
+              <ActivityCard key={activity.id} activity={activity} scope={scope} priority={index < 3} />
             ))}
           </div>
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Sheet,
   SheetContent,
@@ -37,7 +37,7 @@ export function AppSheet({
   title,
   description,
   children,
-  side = "right",
+  side,
   width,
   height,
   className,
@@ -48,10 +48,38 @@ export function AppSheet({
   autoFocusInput = false,
   showHeader = true,
 }: AppSheetProps) {
-  // Computamos las clases dinámicas para controlar ancho y alto independientemente
+  // Detección reactiva de escritorio (>= 1024px)
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    setIsDesktop(mediaQuery.matches);
+
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
+
+  // En móvil/tablet es bottom sheet por defecto; en desktop es side right sheet
+  const resolvedSide: AppSheetSide = side ? side : isDesktop ? "right" : "bottom";
+
   const getDimensionsClass = () => {
-    // 1. Resolver Ancho
-    const resolvedWidth = width || (side === "left" || side === "right" ? "md" : "full");
+    if (resolvedSide === "right" || resolvedSide === "left") {
+      const resolvedWidth = width || (isDesktop ? "xl" : "md");
+      const baseWidth = {
+        sm: "w-full sm:max-w-sm",
+        md: "w-full sm:max-w-md",
+        lg: "w-full sm:max-w-lg",
+        xl: "w-full lg:max-w-2xl xl:max-w-2xl",
+        full: "w-full sm:max-w-full",
+        auto: "w-auto",
+      }[resolvedWidth];
+
+      return cn(baseWidth, "h-full max-h-screen");
+    }
+
+    // Viene de arriba o abajo (móviles/tablets)
+    const resolvedWidth = width || "full";
     const baseWidth = {
       sm: "w-full sm:max-w-sm",
       md: "w-full sm:max-w-md",
@@ -61,11 +89,9 @@ export function AppSheet({
       auto: "w-auto",
     }[resolvedWidth];
 
-    // Si viene de arriba/abajo y tiene un ancho restringido, lo centramos horizontalmente
-    const centerHorizontally = (side === "top" || side === "bottom") && resolvedWidth !== "full" ? "mx-auto" : "";
+    const centerHorizontally = resolvedWidth !== "full" ? "mx-auto" : "";
 
-    // 2. Resolver Alto
-    const resolvedHeight = height || (side === "top" || side === "bottom" ? "auto" : "full");
+    const resolvedHeight = height || "auto";
     const baseHeight = {
       sm: "h-full max-h-[33vh]",
       md: "h-full max-h-[50vh]",
@@ -75,21 +101,17 @@ export function AppSheet({
       auto: "h-auto",
     }[resolvedHeight];
 
-    // Si viene de izquierda/derecha y tiene un alto restringido, lo centramos verticalmente
-    const centerVertically = (side === "left" || side === "right") && resolvedHeight !== "full" ? "my-auto" : "";
-
-    return cn(baseWidth, centerHorizontally, baseHeight, centerVertically);
+    return cn(baseWidth, centerHorizontally, baseHeight);
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side={side}
-        showCloseButton={showCloseButton}
+        side={resolvedSide}
+        showCloseButton={showCloseButton || resolvedSide === "right"}
         onOpenAutoFocus={
           autoFocusInput ? undefined : (e) => e.preventDefault()
         }
-        // Configuración para evitar cierre al hacer clic afuera (similar al Modal)
         onPointerDownOutside={
           preventCloseOnOutsideClick ? (e) => e.preventDefault() : undefined
         }
@@ -99,29 +121,30 @@ export function AppSheet({
         className={cn(
           "flex flex-col bg-white p-0 text-popover-foreground shadow-2xl",
           getDimensionsClass(),
-          side === "top" && "rounded-b-3xl",
-          side === "bottom" && "rounded-t-3xl",
+          resolvedSide === "top" && "rounded-b-3xl",
+          resolvedSide === "bottom" && "rounded-t-3xl",
+          resolvedSide === "right" && "border-l border-slate-100",
           className
         )}
       >
-        {/* Handle pill para bottom sheet */}
-        {side === "bottom" && (
+        {/* Handle pill únicamente para bottom sheet en móvil */}
+        {resolvedSide === "bottom" && (
           <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mt-3 mb-1 shrink-0" />
         )}
 
         {showHeader && title ? (
           <div
             className={cn(
-              "px-5 pt-2 pb-1",
-              showDivider && "border-b border-slate-100 pb-2"
+              "px-6 lg:px-8 pt-6 pb-2",
+              showDivider && "border-b border-slate-100"
             )}
           >
-            <SheetHeader className="p-0 space-y-0.5 text-left">
-              <SheetTitle className="text-base font-bold text-slate-900 tracking-tight">
+            <SheetHeader className="p-0 space-y-1 text-left pr-10">
+              <SheetTitle className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
                 {title}
               </SheetTitle>
               {description ? (
-                <SheetDescription className="text-xs text-slate-500 font-medium">
+                <SheetDescription className="text-xs lg:text-sm text-slate-500 font-normal">
                   {description}
                 </SheetDescription>
               ) : null}
@@ -134,8 +157,8 @@ export function AppSheet({
           </SheetHeader>
         )}
         
-        {/* Cuerpo del sheet con scroll interno si hay mucho contenido */}
-        <div className={cn("px-6 py-4 flex-1 overflow-y-auto", bodyClassName)}>
+        {/* Cuerpo del sheet con scroll interno */}
+        <div className={cn("px-6 lg:px-8 py-5 flex-1 overflow-y-auto no-scrollbar", bodyClassName)}>
           {children}
         </div>
       </SheetContent>

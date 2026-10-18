@@ -30,17 +30,17 @@ export function ConfirmLeaveDialog({
 }: ConfirmLeaveDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="rounded-3xl p-6 sm:p-7 max-w-sm sm:max-w-md">
         <AlertDialogHeader>
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-950 dark:text-rose-400">
-            <AlertCircle className="h-6 w-6" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100 text-rose-600 mb-1">
+            <AlertCircle className="h-7 w-7" />
           </div>
-          <AlertDialogTitle className="text-center">Cancelar participación</AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
+          <AlertDialogTitle>Cancelar participación</AlertDialogTitle>
+          <AlertDialogDescription>
             {activityName ? (
               <>
                 ¿Estás seguro de que deseas cancelar tu participación en{" "}
-                <span className="font-semibold text-foreground">&ldquo;{activityName}&rdquo;</span>?
+                <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?
                 Tu cupo reservado quedará disponible para que otro voluntario pueda unirse.
               </>
             ) : (
@@ -48,14 +48,19 @@ export function ConfirmLeaveDialog({
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="sm:justify-center">
-          <AlertDialogCancel disabled={isPending}>Mantener mi lugar</AlertDialogCancel>
+        <AlertDialogFooter className="mt-4">
+          <AlertDialogCancel
+            disabled={isPending}
+            className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+          >
+            Mantener mi lugar
+          </AlertDialogCancel>
           <Button
             type="button"
             variant="destructive"
             disabled={isPending}
             onClick={onConfirm}
-            className="cursor-pointer"
+            className="w-full h-11 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-xs cursor-pointer"
           >
             {isPending ? (
               <>

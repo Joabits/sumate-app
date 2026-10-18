@@ -61,7 +61,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <PwaRegister />
-        <Toaster position="top-center" theme="light" />
+        <Toaster
+          position="top-center"
+          options={{
+            fill: "#ffffff",
+            roundness: 18,
+          }}
+        />
       </body>
     </html>
   );

@@ -5,7 +5,6 @@ import {
   Sunrise,
   Sun,
   Moon,
-  X,
   Tag,
   MapPin,
   ChevronDown,
@@ -13,11 +12,7 @@ import {
   Users,
   Calendar,
 } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { AppSheet } from "@/features/shared/presentation/components/dialogs/app-sheet";
 import { Slider } from "@/components/ui/slider";
 import type {
   CapacityRangeFilter,
@@ -79,7 +74,7 @@ function CollapsibleSection({
   children,
 }: CollapsibleSectionProps) {
   return (
-    <div className="border-b border-slate-100 last:border-b-0 pb-3">
+    <div className="border-b border-slate-100 last:border-b-0 pb-4 pt-1">
       <button
         type="button"
         onClick={onToggle}
@@ -202,222 +197,203 @@ export function ActivitySearchFiltersSheet({
     (draftFilters.capacityRange !== "any" ? 1 : 0);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        showCloseButton={false}
-        className="max-w-md mx-auto rounded-t-3xl p-0 max-h-[85vh] flex flex-col bg-white overflow-hidden shadow-2xl border-t border-slate-100"
-      >
-        {/* Grab Handle */}
-        <div className="pt-3 pb-1 flex justify-center shrink-0">
-          <div className="w-12 h-1 bg-slate-300 rounded-full" />
-        </div>
+    <AppSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Filtros"
+      description="Refina los resultados según tus preferencias"
+      showHeader
+      showCloseButton
+      bodyClassName="p-0 flex flex-col justify-between"
+    >
+      {/* Contenido con Scroll vertical de arriba a abajo */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-6 lg:px-8 py-4 space-y-2">
+        {/* Sección 1: Hora del día (Desplegada por defecto) */}
+        <CollapsibleSection
+          title="Hora del día"
+          icon={Clock}
+          isOpen={sections.timeOfDay}
+          onToggle={() => toggleSection("timeOfDay")}
+          badge={timeOfDayBadge}
+        >
+          <div className="flex flex-wrap gap-2 pt-1 pb-1">
+            {TIME_OF_DAY_OPTIONS.map((opt) => {
+              const isSelected = draftFilters.timeOfDay === opt.id;
+              const Icon = opt.icon;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => handleSelectTimeOfDay(opt.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span>{opt.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
 
-        {/* Header con título y botón de cierre */}
-        <div className="px-5 py-2 flex items-center justify-between border-b border-slate-100 shrink-0">
-          <div className="w-8" />
-          <SheetTitle className="text-base font-bold text-slate-900 text-center">
-            Filtros
-          </SheetTitle>
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            aria-label="Cerrar filtros"
-            className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Sección 2: Fecha (Desplegada por defecto) */}
+        <CollapsibleSection
+          title="Fecha"
+          icon={Calendar}
+          isOpen={sections.datePreset}
+          onToggle={() => toggleSection("datePreset")}
+          badge={datePresetBadge}
+        >
+          <div className="flex flex-wrap gap-2 pt-1 pb-1">
+            {DATE_PRESET_OPTIONS.map((opt) => {
+              const isSelected = draftFilters.datePreset === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => handleSelectDatePreset(opt.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <span>{opt.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
 
-        {/* Contenido con Scroll y Secciones Colapsables (Ley de Hick) */}
-        <div className="flex-1 overflow-y-auto no-scrollbar px-5 py-4 space-y-2">
-          {/* Sección 1: Hora del día (Desplegada por defecto) */}
-          <CollapsibleSection
-            title="Hora del día"
-            icon={Clock}
-            isOpen={sections.timeOfDay}
-            onToggle={() => toggleSection("timeOfDay")}
-            badge={timeOfDayBadge}
-          >
-            <div className="flex flex-wrap gap-2 pt-1 pb-1">
-              {TIME_OF_DAY_OPTIONS.map((opt) => {
-                const isSelected = draftFilters.timeOfDay === opt.id;
-                const Icon = opt.icon;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => handleSelectTimeOfDay(opt.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                        : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5 shrink-0" />
-                    <span>{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </CollapsibleSection>
+        {/* Sección 3: Causas temáticas (Colapsada por defecto) */}
+        <CollapsibleSection
+          title="Causas temáticas"
+          icon={Tag}
+          isOpen={sections.causes}
+          onToggle={() => toggleSection("causes")}
+          badge={causesBadge}
+        >
+          <div className="flex flex-wrap gap-2 pt-1 pb-1">
+            <button
+              type="button"
+              onClick={handleSelectAllCauses}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                isAllCausesSelected
+                  ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                  : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+              }`}
+            >
+              <span>Todas</span>
+            </button>
 
-          {/* Sección 2: Fecha (Desplegada por defecto) */}
-          <CollapsibleSection
-            title="Fecha"
-            icon={Calendar}
-            isOpen={sections.datePreset}
-            onToggle={() => toggleSection("datePreset")}
-            badge={datePresetBadge}
-          >
-            <div className="flex flex-wrap gap-2 pt-1 pb-1">
-              {DATE_PRESET_OPTIONS.map((opt) => {
-                const isSelected = draftFilters.datePreset === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => handleSelectDatePreset(opt.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                        : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <span>{opt.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </CollapsibleSection>
+            {causes.map((cause) => {
+              const isSelected = draftFilters.causeIds.includes(cause.id);
+              return (
+                <button
+                  key={cause.id}
+                  type="button"
+                  onClick={() => handleToggleCause(cause.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <Tag className="w-3 h-3 shrink-0" />
+                  <span>{cause.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </CollapsibleSection>
 
-          {/* Sección 3: Causas temáticas (Colapsada por defecto) */}
-          <CollapsibleSection
-            title="Causas temáticas"
-            icon={Tag}
-            isOpen={sections.causes}
-            onToggle={() => toggleSection("causes")}
-            badge={causesBadge}
-          >
-            <div className="flex flex-wrap gap-2 pt-1 pb-1">
-              <button
-                type="button"
-                onClick={handleSelectAllCauses}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                  isAllCausesSelected
-                    ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                    : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                <span>Todas</span>
-              </button>
-
-              {causes.map((cause) => {
-                const isSelected = draftFilters.causeIds.includes(cause.id);
-                return (
-                  <button
-                    key={cause.id}
-                    type="button"
-                    onClick={() => handleToggleCause(cause.id)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                      isSelected
-                        ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                        : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    <Tag className="w-3 h-3 shrink-0" />
-                    <span>{cause.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </CollapsibleSection>
-
-          {/* Sección 4: Más filtros (Colapsada por defecto: Distancia + Tamaño de asistentes) */}
-          <CollapsibleSection
-            title="Más filtros"
-            icon={SlidersHorizontal}
-            isOpen={sections.moreFilters}
-            onToggle={() => toggleSection("moreFilters")}
-            badge={moreFiltersActiveCount > 0 ? `${moreFiltersActiveCount} activos` : null}
-          >
-            <div className="pt-2 pb-1 space-y-5">
-              {/* Sub-filtro 1: Distancia */}
-              <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
-                    <span className="text-xs font-bold text-slate-800">
-                      Radio de distancia
-                    </span>
-                  </div>
-                  <span className="text-xs font-semibold text-[#6355de] bg-white px-2.5 py-0.5 rounded-full border border-slate-200/80 shadow-xs">
-                    {draftFilters.distanceKm >= 50
-                      ? "Cualquier distancia"
-                      : `${Math.round(draftFilters.distanceKm)} km`}
-                  </span>
-                </div>
-                <div className="px-1 pt-1">
-                  <Slider
-                    value={[Math.round(draftFilters.distanceKm)]}
-                    onValueChange={handleDistanceChange}
-                    min={1}
-                    max={50}
-                    step={1}
-                  />
-                </div>
-              </div>
-
-              {/* Sub-filtro 2: Tamaño de asistentes */}
-              <div className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5">
-                <div className="flex items-center gap-2 mb-2.5">
-                  <Users className="w-4 h-4 text-slate-500 shrink-0" />
+        {/* Sección 4: Más filtros (Plano, sin cards artificiales) */}
+        <CollapsibleSection
+          title="Más filtros"
+          icon={SlidersHorizontal}
+          isOpen={sections.moreFilters}
+          onToggle={() => toggleSection("moreFilters")}
+          badge={moreFiltersActiveCount > 0 ? `${moreFiltersActiveCount} activos` : null}
+        >
+          <div className="pt-2 pb-1 space-y-6">
+            {/* Sub-filtro 1: Distancia (Plano) */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
                   <span className="text-xs font-bold text-slate-800">
-                    Tamaño de asistentes
+                    Radio de distancia
                   </span>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {CAPACITY_RANGE_OPTIONS.map((opt) => {
-                    const isSelected = draftFilters.capacityRange === opt.id;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => handleSelectCapacityRange(opt.id)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                          isSelected
-                            ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                            : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
-                        }`}
-                      >
-                        <span>{opt.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                <span className="text-xs font-semibold text-[#6355de] bg-slate-100 px-2.5 py-0.5 rounded-full">
+                  {draftFilters.distanceKm >= 50
+                    ? "Cualquier distancia"
+                    : `${Math.round(draftFilters.distanceKm)} km`}
+                </span>
+              </div>
+              <div className="px-1 pt-2">
+                <Slider
+                  value={[Math.round(draftFilters.distanceKm)]}
+                  onValueChange={handleDistanceChange}
+                  min={1}
+                  max={50}
+                  step={1}
+                />
               </div>
             </div>
-          </CollapsibleSection>
-        </div>
 
-        {/* Footer Fijo con Limpiar todo y Aplicar filtros */}
-        <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border-t border-slate-100 px-5 py-3.5 flex items-center justify-between shrink-0">
-          <button
-            type="button"
-            onClick={onReset}
-            className="text-slate-500 hover:text-slate-900 text-sm font-semibold py-2 px-1 cursor-pointer transition-colors"
-          >
-            Limpiar todo
-          </button>
-          <button
-            type="button"
-            onClick={onApply}
-            className="bg-[#6355de] text-white hover:bg-[#5245c7] active:scale-95 font-semibold text-sm px-6 py-2.5 rounded-full shadow-md shadow-[#6355de]/20 cursor-pointer transition-all"
-          >
-            Aplicar filtros
-          </button>
-        </div>
-      </SheetContent>
-    </Sheet>
+            {/* Sub-filtro 2: Tamaño de asistentes (Plano) */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-slate-500 shrink-0" />
+                <span className="text-xs font-bold text-slate-800">
+                  Tamaño de asistentes
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {CAPACITY_RANGE_OPTIONS.map((opt) => {
+                  const isSelected = draftFilters.capacityRange === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => handleSelectCapacityRange(opt.id)}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
+                          : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </CollapsibleSection>
+      </div>
+
+      {/* Footer Fijo con Limpiar todo y Aplicar filtros */}
+      <div className="bg-white/95 backdrop-blur-sm border-t border-slate-100 px-6 lg:px-8 py-4 flex items-center justify-between shrink-0">
+        <button
+          type="button"
+          onClick={onReset}
+          className="text-slate-500 hover:text-slate-900 text-sm font-semibold py-2 px-1 cursor-pointer transition-colors"
+        >
+          Limpiar todo
+        </button>
+        <button
+          type="button"
+          onClick={onApply}
+          className="bg-[#6355de] text-white hover:bg-[#5245c7] active:scale-95 font-semibold text-sm px-6 py-2.5 rounded-full shadow-md shadow-[#6355de]/20 cursor-pointer transition-all"
+        >
+          Aplicar filtros
+        </button>
+      </div>
+    </AppSheet>
   );
 }

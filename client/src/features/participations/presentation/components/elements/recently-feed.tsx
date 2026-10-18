@@ -43,7 +43,7 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
         onChange={setActiveFilter}
       />
 
-      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24" data-purpose="recently-feed-scroll">
+      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24 lg:pb-12" data-purpose="recently-feed-scroll">
         {filteredParticipations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
@@ -55,12 +55,12 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-6">
             {filteredParticipations.map((item, index) => (
               <ActivityCardShell
                 key={item.id}
                 activity={item}
-                priority={index < 2}
+                priority={index < 3}
                 badge={
                   item.isPast ? (
                     <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-700/80 text-white backdrop-blur-xs shadow-sm">

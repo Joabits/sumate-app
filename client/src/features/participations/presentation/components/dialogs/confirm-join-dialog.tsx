@@ -30,17 +30,17 @@ export function ConfirmJoinDialog({
 }: ConfirmJoinDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="rounded-3xl p-6 sm:p-7 max-w-sm sm:max-w-md">
         <AlertDialogHeader>
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
-            <CheckCircle2 className="h-6 w-6" />
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-1">
+            <CheckCircle2 className="h-7 w-7" />
           </div>
-          <AlertDialogTitle className="text-center">Confirmar asistencia</AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
+          <AlertDialogTitle>Confirmar asistencia</AlertDialogTitle>
+          <AlertDialogDescription>
             {activityName ? (
               <>
                 ¿Deseas confirmar tu participación como voluntario en{" "}
-                <span className="font-semibold text-foreground">&ldquo;{activityName}&rdquo;</span>?
+                <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?
                 Al confirmar, se reservará tu plaza de inmediato.
               </>
             ) : (
@@ -48,13 +48,18 @@ export function ConfirmJoinDialog({
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="sm:justify-center">
-          <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
+        <AlertDialogFooter className="mt-4">
+          <AlertDialogCancel
+            disabled={isPending}
+            className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+          >
+            Cancelar
+          </AlertDialogCancel>
           <Button
             type="button"
             disabled={isPending}
             onClick={onConfirm}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer"
+            className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs cursor-pointer"
           >
             {isPending ? (
               <>

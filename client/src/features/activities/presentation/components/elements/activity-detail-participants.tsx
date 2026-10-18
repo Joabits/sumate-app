@@ -100,12 +100,10 @@ export function ActivityDetailParticipants({
         </div>
       </button>
 
+      {/* AppSheet adaptativo (bottom sheet en móvil, side right sheet en desktop) */}
       <AppSheet
         open={isOpen}
         onOpenChange={setIsOpen}
-        side="bottom"
-        width="md"
-        height="lg"
         title="Participantes de la actividad"
         description={
           participants.length === 0
@@ -116,7 +114,7 @@ export function ActivityDetailParticipants({
                   : "voluntarios confirmados"
               }`
         }
-        showDivider
+        showHeader
         showCloseButton
       >
         {participants.length === 0 ? (

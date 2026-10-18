@@ -144,10 +144,9 @@ export function EditActivityCausesForm({
       <div className="grid grid-cols-2 gap-3 w-full pt-1">
         <Button
           type="button"
-          variant="outline"
           onClick={onCancel}
           disabled={isSaving}
-          className="w-full rounded-xl cursor-pointer"
+          className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
         >
           Cancelar
         </Button>

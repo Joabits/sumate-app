@@ -14,7 +14,10 @@ export function MainLayoutHeader() {
   return (
     <header className="shrink-0 z-40 bg-white">
       <AppHeader />
-      <AppNavbar />
+      {/* En pantallas de escritorio la navegación está en el DesktopSidebar */}
+      <div className="lg:hidden">
+        <AppNavbar />
+      </div>
     </header>
   );
 }

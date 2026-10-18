@@ -142,3 +142,54 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
+
+/*
+ * ==============================================================================
+ * 🍞 SILEO TOASTER CUSTOMIZATION (Theme Integration)
+ * ==============================================================================
+ */
+:root {
+  --sileo-state-info: var(--app-primary);
+  --sileo-state-success: var(--app-success);
+  --sileo-state-error: var(--app-destructive);
+  --sileo-state-warning: var(--app-warning);
+}
+
+[data-sileo-viewport] {
+  z-index: 9999;
+}
+
+[data-sileo-toast] {
+  filter: 
+    drop-shadow(0 0 1px rgba(15, 23, 42, 0.12))
+    drop-shadow(0 4px 14px rgba(15, 23, 42, 0.05))
+    drop-shadow(0 12px 28px rgba(15, 23, 42, 0.08)) !important;
+}
+
+[data-sileo-viewport] [data-sileo-title] {
+  color: var(--app-headline-foreground, oklch(0.145 0 0)) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;
+}
+
+[data-sileo-viewport] [data-sileo-description] {
+  color: var(--app-body-foreground, oklch(0.35 0 0)) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.35rem !important;
+  font-weight: 400 !important;
+}
+
+[data-sileo-badge] {
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--_c, currentColor) 18%, transparent) !important;
+}
+
+[data-sileo-button] {
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  border-radius: 9999px !important;
+  transition: all 150ms ease !important;
+}
+

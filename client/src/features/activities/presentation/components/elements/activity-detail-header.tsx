@@ -73,28 +73,35 @@ export function ActivityDetailHeader({
   return (
     <>
       <header
-        className="sticky top-0 z-40 flex items-center justify-between -mx-5 px-5 -mt-2 sm:-mt-4 pt-3 sm:pt-4 pb-3 mb-4 bg-white transition-colors"
+        className="sticky top-0 z-40 flex items-center justify-between px-0 pt-3 sm:pt-4 pb-3 mb-4 bg-white transition-colors"
         data-purpose="top-navigation-bar"
       >
-        {/* Botón Volver Atrás */}
+        {/* Botón Volver Atrás: en móvil solo ícono, en desktop (>= lg) ícono + texto "Volver" */}
         <button
           type="button"
           onClick={handleBack}
           aria-label="Volver atrás"
-          className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+          className="h-11 px-3.5 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
         >
-          <ChevronLeft className="w-5 h-5 -ml-0.5" />
+          <ChevronLeft className="w-5 h-5 -ml-1 shrink-0" />
+          <span className="hidden lg:inline ml-1 text-sm font-semibold tracking-tight">
+            Volver
+          </span>
         </button>
 
-        {/* Acciones de la derecha */}
+        {/* Acciones de la derecha: en móvil íconos circulares, en escritorio (>= lg) píldoras con ícono + texto */}
         <div className="flex items-center space-x-2.5">
           <button
             type="button"
             onClick={handleShare}
             aria-label="Compartir evento"
-            className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+            title="Compartir evento"
+            className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center gap-1.5 text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
           >
-            <Share2 className="w-5 h-5" />
+            <Share2 className="w-4.5 h-4.5 shrink-0" />
+            <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+              Compartir
+            </span>
           </button>
 
           {isOwner && (
@@ -104,9 +111,12 @@ export function ActivityDetailHeader({
                 onClick={() => setIsDeleteDialogOpen(true)}
                 aria-label="Eliminar actividad"
                 title="Eliminar actividad"
-                className="w-11 h-11 rounded-full bg-red-50 text-red-600 flex items-center justify-center active:scale-95 hover:bg-red-100 transition-all cursor-pointer"
+                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-rose-100 transition-all cursor-pointer"
               >
-                <Trash2 className="w-5 h-5" />
+                <Trash2 className="w-4.5 h-4.5 shrink-0" />
+                <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                  Eliminar
+                </span>
               </button>
 
               <button
@@ -114,13 +124,27 @@ export function ActivityDetailHeader({
                 onClick={toggleEditMode}
                 aria-label={isEditMode ? "Volver a modo lectura" : "Activar modo edición"}
                 title={isEditMode ? "Volver a modo lectura" : "Editar actividad"}
-                className={`w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
+                className={`h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer ${
                   isEditMode
                     ? "bg-[#6355de] text-white shadow-md shadow-[#6355de]/30 ring-2 ring-[#6355de] ring-offset-2"
                     : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                 }`}
               >
-                {isEditMode ? <Eye className="w-5 h-5" /> : <Pencil className="w-5 h-5" />}
+                {isEditMode ? (
+                  <>
+                    <Eye className="w-4.5 h-4.5 shrink-0" />
+                    <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                      Modo lectura
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Pencil className="w-4.5 h-4.5 shrink-0" />
+                    <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                      Editar
+                    </span>
+                  </>
+                )}
               </button>
             </>
           )}

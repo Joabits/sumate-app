@@ -1,8 +1,15 @@
 import { sileo } from "sileo";
-import { CircleCheck, CircleX, CircleAlert, TriangleAlert } from "lucide-react";
+import { CircleCheck, CircleAlert, TriangleAlert, Info } from "lucide-react";
 
 const DEFAULT_ERROR_MESSAGE = "Ocurrió un error inesperado";
 const DEFAULT_ERROR_TITLE = "Error";
+
+const TOAST_FILL = "#ffffff";
+const TOAST_ROUNDNESS = 18;
+const TOAST_STYLES = {
+  title: "font-semibold text-sm tracking-tight text-neutral-900",
+  description: "text-xs text-neutral-600 leading-relaxed",
+};
 
 type ErrorToastOptions = {
   title?: string;
@@ -16,7 +23,10 @@ export function showErrorList(
     sileo.error({
       title: options?.title ?? DEFAULT_ERROR_TITLE,
       description: message,
-      icon: <CircleX className="text-destructive size-5" />,
+      icon: <CircleAlert className="text-destructive size-4 stroke-[2.25]" />,
+      fill: TOAST_FILL,
+      roundness: TOAST_ROUNDNESS,
+      styles: TOAST_STYLES,
     });
   };
 
@@ -30,25 +40,41 @@ export function showErrorList(
 }
 
 export const appToast = {
-  success: (message: string) =>
+  success: (title: string, description?: string) =>
     sileo.success({
-      title: message,
-      icon: <CircleCheck className="text-emerald-500 size-5" />,
+      title,
+      description: description || undefined,
+      icon: <CircleCheck className="text-emerald-600 size-4 stroke-[2.25]" />,
+      fill: TOAST_FILL,
+      roundness: TOAST_ROUNDNESS,
+      styles: TOAST_STYLES,
     }),
-  error: (title: string, message: string) =>
+  error: (title: string, message?: string) =>
     sileo.error({
-      title: title,
-      description: message,
-      icon: <CircleX className="text-destructive size-5" />,
+      title: message ? title : DEFAULT_ERROR_TITLE,
+      description: message ?? title,
+      icon: <CircleAlert className="text-destructive size-4 stroke-[2.25]" />,
+      fill: TOAST_FILL,
+      roundness: TOAST_ROUNDNESS,
+      styles: TOAST_STYLES,
     }),
-  info: (message: string) =>
+  info: (title: string, description?: string) =>
     sileo.info({
-      title: message,
-      icon: <CircleAlert className="text-blue-500 size-5" />,
+      title,
+      description: description || undefined,
+      icon: <Info className="text-[#6355de] size-4 stroke-[2.25]" />,
+      fill: TOAST_FILL,
+      roundness: TOAST_ROUNDNESS,
+      styles: TOAST_STYLES,
     }),
-  warning: (message: string) =>
+  warning: (title: string, description?: string) =>
     sileo.warning({
-      title: message,
-      icon: <TriangleAlert className="text-amber-500 size-5" />,
+      title,
+      description: description || undefined,
+      icon: <TriangleAlert className="text-amber-500 size-4 stroke-[2.25]" />,
+      fill: TOAST_FILL,
+      roundness: TOAST_ROUNDNESS,
+      styles: TOAST_STYLES,
     }),
 };
+

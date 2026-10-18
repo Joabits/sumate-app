@@ -28,7 +28,7 @@ export function ActivitySearchView() {
   } = useActivitySearch();
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 h-full -mx-5 px-5" data-purpose="activity-search-view">
+    <div className="flex-1 flex flex-col min-h-0 h-full -mx-5 lg:-mx-8" data-purpose="activity-search-view">
       {/* Header Fijo con Navegación y Acciones */}
       <ActivitySearchHeader
         query={query}
@@ -39,15 +39,15 @@ export function ActivitySearchView() {
         activeFiltersCount={activeFiltersCount}
       />
 
-      {/* Área de Scroll de Contenido */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24" data-purpose="activity-search-scroll">
+      {/* Área de Scroll de Contenido con los mismos márgenes laterales que AppHeader y los feeds */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-5 lg:px-8 pt-3 pb-24 lg:pb-12" data-purpose="activity-search-scroll">
         {/* Estado de Carga */}
         {isLoading && (
-          <div className="flex flex-col gap-4">
-            {[1, 2, 3].map((n) => (
+          <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-6">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
                 key={n}
-                className="bg-white rounded-2xl border border-slate-100 p-3 shadow-xs space-y-3"
+                className="bg-white rounded-2xl border border-slate-100 lg:border-none p-3 shadow-xs lg:shadow-none space-y-3"
               >
                 <Skeleton className="w-full h-44 rounded-xl" />
                 <div className="space-y-2">
@@ -99,9 +99,9 @@ export function ActivitySearchView() {
           </div>
         )}
 
-        {/* Lista de Resultados */}
+        {/* Lista de Resultados: 3 columnas en escritorio */}
         {!isLoading && hasSearched && items.length > 0 && (
-          <div className="flex flex-col">
+          <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-6">
             {items.map((activity, index) => (
               <ActivityCard
                 key={activity.id}

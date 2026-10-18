@@ -137,8 +137,8 @@ export function ActivityDetailInfo({
 
   return (
     <>
-      {/* Título de la actividad */}
-      <div className="mb-6" data-purpose="event-title-section">
+      {/* Título de la actividad: En desktop (>= lg) se renderiza en la columna izquierda sobre la descripción */}
+      <div className="mb-6 lg:hidden" data-purpose="event-title-section">
         {activeField === "title" ? (
           <EditActivityTitleForm
             activityId={activityId}
