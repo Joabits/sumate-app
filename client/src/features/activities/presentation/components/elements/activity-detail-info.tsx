@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Map, Pencil, Plus } from "lucide-react";
 import type { ActivityDetailData } from "@/features/activities/domain/entities/activity.entity";
 import { useActivityDetailUiStore } from "../../stores/activity-detail-ui.store";
-import { EditActivityTitleForm } from "../forms/edit-activity-title-form";
 import { EditActivityDateForm } from "../forms/edit-activity-date-form";
 import { EditActivityCapacityForm } from "../forms/edit-activity-capacity-form";
 import { EditActivityCausesForm } from "../forms/edit-activity-causes-form";
@@ -136,43 +135,7 @@ export function ActivityDetailInfo({
     activeField !== null && activeField !== field;
 
   return (
-    <>
-      {/* Título de la actividad: En desktop (>= lg) se renderiza en la columna izquierda sobre la descripción */}
-      <div className="mb-6 lg:hidden" data-purpose="event-title-section">
-        {activeField === "title" ? (
-          <EditActivityTitleForm
-            activityId={activityId}
-            initialTitle={name}
-            onCancel={() => setActiveField(null)}
-            onSuccess={() => setActiveField(null)}
-          />
-        ) : (
-          <div>
-            <h1 className="text-2xl sm:text-[1.65rem] font-extrabold text-slate-900 leading-snug tracking-tight">
-              {name}
-              {isOwner && isEditMode && (
-                <button
-                  type="button"
-                  onClick={() => setActiveField("title")}
-                  disabled={isOtherFieldActive("title")}
-                  title="Editar título"
-                  aria-label="Editar título"
-                  className={`inline-flex items-center justify-center align-middle ml-2.5 p-1.5 rounded-full transition-all cursor-pointer ${
-                    isOtherFieldActive("title")
-                      ? "opacity-30 cursor-not-allowed text-slate-300"
-                      : "text-slate-500 hover:text-[#6355de] hover:bg-slate-100"
-                  }`}
-                >
-                  <Pencil className="w-4 h-4" />
-                </button>
-              )}
-            </h1>
-          </div>
-        )}
-      </div>
-
-      {/* Lista de información clave (Fecha, Cupos, Ubicación) */}
-      <section className="space-y-4 mb-7" data-purpose="key-event-information">
+    <section className="space-y-4" data-purpose="key-event-information">
         {/* Fila: Fecha y Hora */}
         {activeField === "date" ? (
           <EditActivityDateForm
@@ -422,6 +385,5 @@ export function ActivityDetailInfo({
           </div>
         </div>
       </section>
-    </>
   );
 }

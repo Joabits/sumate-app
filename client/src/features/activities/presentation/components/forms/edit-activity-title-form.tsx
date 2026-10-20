@@ -44,7 +44,7 @@ export function EditActivityTitleForm({
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full text-xl font-bold text-slate-900 border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+        className="w-full text-xl font-bold text-slate-900 bg-white border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
         placeholder="Nombre de la actividad"
         autoFocus
       />

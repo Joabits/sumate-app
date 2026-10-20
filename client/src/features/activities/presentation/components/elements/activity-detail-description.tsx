@@ -7,10 +7,12 @@ import { EditActivityDescriptionForm } from "../forms/edit-activity-description-
 
 type ActivityDetailDescriptionProps = {
   activity: ActivityDetailData;
+  className?: string;
 };
 
 export function ActivityDetailDescription({
   activity,
+  className = "mt-6 pt-5 border-t border-slate-100",
 }: ActivityDetailDescriptionProps) {
   const { isEditMode, activeField, setActiveField } = useActivityDetailUiStore();
   const { id: activityId, isOwner } = activity;
@@ -21,7 +23,7 @@ export function ActivityDetailDescription({
 
   return (
     <section
-      className="mt-6 pt-5 border-t border-slate-100"
+      className={className}
       data-purpose="event-description-section"
     >
       <div className="flex items-center justify-between mb-2.5">

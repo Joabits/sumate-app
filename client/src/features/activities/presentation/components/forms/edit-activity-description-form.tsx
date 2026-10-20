@@ -45,7 +45,7 @@ export function EditActivityDescriptionForm({
         rows={5}
         value={descriptionText}
         onChange={(e) => setDescriptionText(e.target.value)}
-        className="w-full text-sm leading-relaxed text-slate-700 border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+        className="w-full text-sm leading-relaxed text-slate-700 bg-white border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
         placeholder="Describe la actividad, requisitos para voluntarios y objetivo social..."
         autoFocus
       />

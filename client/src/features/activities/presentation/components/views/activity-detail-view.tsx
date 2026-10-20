@@ -35,28 +35,58 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
         <ActivityDetailHeader activity={activity} />
 
         {/* 
+          Disposición en Móvil / Tablet (< 1024px):
+          Orden solicitado:
+          1. Foto de portada
+          2. Nombre de la actividad
+          3. Detalles en card (fecha, cupos, causas temáticas y ubicación)
+          4. Descripción
+          5. Organizado por
+          6. Participantes
+        */}
+        <div className="lg:hidden flex flex-col mt-2">
+          {/* 1. Foto de portada y badge de estado */}
+          <ActivityDetailHero activity={activity} />
+
+          {/* 2. Nombre de la actividad */}
+          <ActivityDetailTitle activity={activity} />
+
+          {/* 3. Detalles de la actividad dentro de un card */}
+          <div className="bg-slate-50/60 border border-slate-100 rounded-3xl p-5 sm:p-6 shadow-xs mb-6">
+            <ActivityDetailInfo activity={activity} />
+          </div>
+
+          {/* 4. Descripción de la actividad */}
+          <ActivityDetailDescription activity={activity} className="pt-5 border-t border-slate-100" />
+
+          {/* 5. Sección del organizador */}
+          <ActivityDetailOrganizer activity={activity} />
+
+          {/* 6. Participantes confirmados */}
+          <ActivityDetailParticipants activity={activity} />
+        </div>
+
+        {/* 
           Disposición en dos columnas para escritorio (>= 1024px):
           - Columna Izquierda (60% / col-span-7): Foto de portada, Título y Descripción.
-          - Columna Derecha (40% / col-span-5): Datos clave (fecha, cupos, causas, mapa), Organizador y Participantes.
+          - Columna Derecha (40% / col-span-5): Datos clave (fecha, cupos, causas, ubicación) en card, Organizador y Participantes.
         */}
-        <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start mt-2">
+        <div className="hidden lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start mt-2">
           {/* Columna Izquierda (~60%) */}
           <div className="lg:col-span-7 flex flex-col">
             {/* Foto de portada y badge de estado */}
             <ActivityDetailHero activity={activity} />
 
-            {/* Título de la actividad en desktop con soporte para edición si es owner */}
-            <div className="hidden lg:block">
-              <ActivityDetailTitle activity={activity} />
-            </div>
+            {/* Título de la actividad en desktop */}
+            <ActivityDetailTitle activity={activity} />
 
             {/* Descripción de la actividad */}
             <ActivityDetailDescription activity={activity} />
           </div>
 
           {/* Columna Derecha (~40%) */}
-          <div className="lg:col-span-5 flex flex-col lg:bg-slate-50/60 lg:border lg:border-slate-100 lg:rounded-3xl lg:p-6 lg:shadow-xs">
-            {/* Título (visible solo en móvil), Fecha y Hora, Cupos y Ubicación */}
+          <div className="lg:col-span-5 flex flex-col bg-slate-50/60 border border-slate-100 rounded-3xl p-6 shadow-xs">
+            {/* Fecha y Hora, Cupos, Causas y Ubicación */}
             <ActivityDetailInfo activity={activity} />
 
             {/* Sección del organizador */}

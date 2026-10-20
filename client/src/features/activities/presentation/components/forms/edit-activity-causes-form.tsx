@@ -130,7 +130,7 @@ export function EditActivityCausesForm({
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
                     ? "bg-[#6355de] text-white border-[#6355de] shadow-sm shadow-[#6355de]/20"
-                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 border-slate-200"
+                    : "bg-white text-slate-700 hover:bg-slate-100 border-slate-200 shadow-2xs"
                 }`}
               >
                 {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
