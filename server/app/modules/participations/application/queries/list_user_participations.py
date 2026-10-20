@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from app.modules.activities.application.queries.list_causes import CauseDTO
 from app.modules.activities.domain.repositories.activity_repository import (
@@ -50,7 +51,8 @@ class ListUserParticipationsQueryHandler:
         raw_items = self.participation_repository.list_user_participated_activities(
             query.user_id
         )
-        now = datetime.now(timezone.utc)
+        bolivia_tz = ZoneInfo("America/La_Paz")
+        now_bolivia = datetime.now(bolivia_tz)
 
         activity_ids = [act.id for _, act, _, _, _ in raw_items]
         causes_by_activity = (
@@ -62,7 +64,8 @@ class ListUserParticipationsQueryHandler:
         items: list[ParticipatedActivityListItemDTO] = []
         for part, act, enrolled_date, creator_name, creator_image in raw_items:
             act_date = act.date if act.date.tzinfo else act.date.replace(tzinfo=timezone.utc)
-            is_past = act_date < now
+            act_date_bolivia = act_date.astimezone(bolivia_tz)
+            is_past = act_date_bolivia < now_bolivia
             causes_dtos = tuple(
                 CauseDTO(id=c.id, name=c.name, slug=c.slug)
                 for c in causes_by_activity.get(act.id, [])

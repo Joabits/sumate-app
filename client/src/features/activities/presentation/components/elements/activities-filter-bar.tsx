@@ -20,7 +20,7 @@ export function ActivitiesFilterBar<T extends string = string>({
     <div
       role="group"
       aria-label="Filtros de actividades"
-      className="flex items-center justify-start gap-3.5 lg:gap-4.5 overflow-x-auto no-scrollbar pt-4 pb-3.5 lg:pt-5 lg:pb-4 border-b border-slate-100/80 px-1 bg-white shrink-0"
+      className="flex items-center justify-center gap-2.5 sm:gap-4 lg:justify-start lg:gap-4.5 overflow-x-auto no-scrollbar pt-4 pb-3.5 lg:pt-5 lg:pb-4 border-b border-slate-100/80 px-1 bg-white shrink-0 w-full"
     >
       {options.map((option) => {
         const isActive = activeId === option.id;

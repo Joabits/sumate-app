@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Clock, Tag, Users } from "lucide-react";
+import { Clock } from "lucide-react";
 import { ActivityCardShell } from "@/features/activities/presentation/components/elements/activity-card-shell";
 import {
   ActivitiesFilterBar,
@@ -61,38 +61,25 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                 key={item.id}
                 activity={item}
                 priority={index < 3}
-                badge={
-                  item.isPast ? (
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-700/80 text-white backdrop-blur-xs shadow-sm">
+              >
+                <div className="mt-1 flex items-center justify-between text-xs gap-2">
+                  {item.creatorName ? (
+                    <p className="text-xs text-slate-500 truncate">
+                      Por <span className="font-semibold text-slate-700">{item.creatorName}</span>
+                    </p>
+                  ) : (
+                    <div />
+                  )}
+
+                  {item.isPast ? (
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/70">
                       Realizada
                     </span>
                   ) : (
-                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/90 text-white backdrop-blur-xs shadow-sm">
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
                       Próxima
                     </span>
-                  )
-                }
-              >
-                <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-                  <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">
-                    {item.causes && item.causes.length > 0
-                      ? item.causes.map((cause) => cause.name).join(", ")
-                      : "Sin causas"}
-                  </span>
-                </div>
-
-                {item.creatorName && (
-                  <p className="mt-1 text-xs text-slate-500">
-                    Por <span className="font-semibold text-slate-700">{item.creatorName}</span>
-                  </p>
-                )}
-
-                <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
-                  <div className="flex items-center gap-1.5 font-medium text-slate-600">
-                    <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>{item.capacity} cupos totales</span>
-                  </div>
+                  )}
                 </div>
               </ActivityCardShell>
             ))}

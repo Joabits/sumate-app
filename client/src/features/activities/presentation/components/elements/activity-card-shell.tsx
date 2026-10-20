@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar } from "lucide-react";
-import type { ActivityListItem } from "@/features/activities/domain/entities/activity.entity";
+import { Calendar, Tag } from "lucide-react";
+import type { Cause } from "@/features/activities/domain/entities/activity.entity";
 
 export function formatActivityDate(dateString: string): string {
   try {
@@ -31,7 +31,13 @@ export function formatActivityDate(dateString: string): string {
   }
 }
 
-export type ActivityCardCore = Pick<ActivityListItem, "id" | "name" | "imageUrl" | "date">;
+export type ActivityCardCore = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  date: string;
+  causes?: Cause[];
+};
 
 export type ActivityCardShellProps = {
   activity: ActivityCardCore;
@@ -46,7 +52,7 @@ export function ActivityCardShell({
   children,
   priority = false,
 }: ActivityCardShellProps) {
-  const { id, name, imageUrl, date } = activity;
+  const { id, name, imageUrl, date, causes } = activity;
   const formattedDate = formatActivityDate(date);
 
   return (
@@ -81,10 +87,20 @@ export function ActivityCardShell({
               {name}
             </h2>
 
-            <p className="mt-1.5 text-xs font-semibold text-[#6355de] flex items-center gap-1.5">
+            <p className="mt-1 text-xs font-semibold text-[#6355de] flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[#6355de] shrink-0" />
               <span>{formattedDate}</span>
             </p>
+
+            {/* Causas temáticas integradas uniformemente en el shell */}
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-[#6355de]">
+              <Tag className="w-3.5 h-3.5 text-[#6355de]/80 shrink-0" />
+              <span className="truncate font-medium">
+                {causes && causes.length > 0
+                  ? causes.map((c) => c.name).join(", ")
+                  : "Sin causas"}
+              </span>
+            </div>
           </div>
 
           <div className="mt-2">
@@ -95,3 +111,4 @@ export function ActivityCardShell({
     </Link>
   );
 }
+

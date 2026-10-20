@@ -45,17 +45,8 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
       activity={activity}
       priority={priority}
     >
-      <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500">
-        <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-        <span className="truncate">
-          {activity.causes && activity.causes.length > 0
-            ? activity.causes.map((cause) => cause.name).join(", ")
-            : "Sin causas"}
-        </span>
-      </div>
-
       {activity.creatorName && !isMine && (
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="text-xs text-slate-500">
           Por <span className="font-semibold text-slate-700">{activity.creatorName}</span>
         </p>
       )}

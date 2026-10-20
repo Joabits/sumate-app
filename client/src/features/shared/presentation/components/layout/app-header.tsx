@@ -41,17 +41,17 @@ export function AppHeader() {
 
   return (
     <header
-      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-5 lg:px-8 pt-4 pb-2 border-b border-slate-100 lg:border-none"
+      className="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-4 sm:px-5 lg:px-8 pt-4 pb-2 border-b border-slate-100 lg:border-none"
       data-purpose="app-header"
     >
-      <div className="flex items-center justify-between gap-3 lg:gap-6 w-full" data-purpose="search-and-profile">
+      <div className="flex items-center justify-between gap-2.5 sm:gap-3 lg:gap-6 w-full" data-purpose="search-and-profile">
         {/* Buscador interactivo: 20% más largo hacia la derecha (lg:max-w-3xl xl:max-w-4xl) */}
-        <div className="flex-1 lg:max-w-3xl xl:max-w-4xl">
+        <div className="flex-1 min-w-0 lg:max-w-3xl xl:max-w-4xl">
           <button
             type="button"
             onClick={() => router.push("/search")}
             aria-label="Buscar actividades"
-            className="w-full flex items-center justify-start gap-3 px-5 py-2.5 lg:py-3 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-sm lg:text-[15px] text-slate-400 shadow-xs hover:border-slate-300 hover:bg-slate-100/60 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
+            className="w-full flex items-center justify-start gap-2.5 sm:gap-3 px-4 sm:px-5 py-2.5 lg:py-3 bg-slate-50/80 border border-slate-200/80 rounded-2xl text-sm lg:text-[15px] text-slate-400 shadow-xs hover:border-slate-300 hover:bg-slate-100/60 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
           >
             <Search className="w-4 h-4 lg:w-5 lg:h-5 text-slate-400 shrink-0" />
             <span className="truncate font-normal">Buscar actividades por nombre, causa o lugar...</span>
