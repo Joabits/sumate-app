@@ -1,7 +1,7 @@
 """create participations table
 
 Revision ID: 422efb2a2407
-Revises: 
+Revises: 5b8e2c4a7f13
 Create Date: 2026-10-07 20:33:48.710822
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision: str = '422efb2a2407'
-down_revision: Union[str, Sequence[str], None] = None
+down_revision: Union[str, Sequence[str], None] = '5b8e2c4a7f13'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

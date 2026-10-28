@@ -24,6 +24,7 @@ class CreateActivityUseCase:
         self.uow = uow
 
     def execute(self, command: CreateActivityCommand) -> UUID:
+        Activity.ensure_future_date(command.date)
         activity = Activity.create(
             name=command.name,
             owner_id=command.owner_id,

@@ -30,6 +30,10 @@ async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
     console.error(
       "[EmailService] Faltan variables de entorno: BREVO_API_KEY o BREVO_FROM_EMAIL",
     );
+    // En local, sin Brevo, se muestra el enlace en la consola para poder probar
+    if (process.env.NODE_ENV === "development") {
+      console.info(`[EmailService] Correo para ${to.email} (${subject}): ${text ?? ""}`);
+    }
     return;
   }
 

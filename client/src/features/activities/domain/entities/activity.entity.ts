@@ -38,6 +38,7 @@ export type ActivityListItem = Pick<
   | "creatorImage"
 > & {
   causes?: Cause[];
+  registeredCount?: number;
 };
 
 export type MyActivityListItem = ActivityListItem & {

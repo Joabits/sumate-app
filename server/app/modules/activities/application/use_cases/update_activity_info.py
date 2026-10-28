@@ -36,6 +36,9 @@ class UpdateActivityInfoUseCase:
         if activity.owner_id != command.owner_id:
             raise ForbiddenException("Solo el organizador puede editar los datos de la actividad.")
 
+        if command.date is not None:
+            Activity.ensure_future_date(command.date)
+
         activity.update_info(
             name=command.name,
             date=command.date,

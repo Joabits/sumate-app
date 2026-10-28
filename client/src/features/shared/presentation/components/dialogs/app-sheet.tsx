@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import {
   Sheet,
   SheetContent,
@@ -31,6 +31,14 @@ export type AppSheetProps = {
   showHeader?: boolean;
 };
 
+const DESKTOP_QUERY = "(min-width: 1024px)";
+
+function subscribeToDesktop(onChange: () => void) {
+  const mediaQuery = window.matchMedia(DESKTOP_QUERY);
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
 export function AppSheet({
   open,
   onOpenChange,
@@ -49,16 +57,11 @@ export function AppSheet({
   showHeader = true,
 }: AppSheetProps) {
   // Detección reactiva de escritorio (>= 1024px)
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(min-width: 1024px)");
-    setIsDesktop(mediaQuery.matches);
-
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
+  const isDesktop = useSyncExternalStore(
+    subscribeToDesktop,
+    () => window.matchMedia(DESKTOP_QUERY).matches,
+    () => false,
+  );
 
   // En móvil/tablet es bottom sheet por defecto; en desktop es side right sheet
   const resolvedSide: AppSheetSide = side ? side : isDesktop ? "right" : "bottom";

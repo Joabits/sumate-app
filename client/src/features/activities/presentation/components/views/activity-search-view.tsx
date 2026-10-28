@@ -23,7 +23,6 @@ export function ActivitySearchView() {
     hasSearched,
     isLoading,
     items,
-    hasActiveFilters,
     activeFiltersCount,
   } = useActivitySearch();
 

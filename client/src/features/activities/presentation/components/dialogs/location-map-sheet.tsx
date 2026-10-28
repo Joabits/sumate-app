@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
 import { Loader2, LocateFixed, X } from "lucide-react";
+import type { LeafletMouseEvent, Map as LeafletMap, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import type { ActivityDetailData } from "@/features/activities/domain/entities/activity.entity";
@@ -19,50 +20,36 @@ type LocationMapSheetProps = {
 const DEFAULT_LAT = -17.3895;
 const DEFAULT_LNG = -66.1568;
 
-export function LocationMapSheet({
+export function LocationMapSheet(props: LocationMapSheetProps) {
+  // El contenido se monta cada vez que se abre, así parte de la ubicación guardada
+  if (!props.isOpen) return null;
+  return <LocationMapSheetContent {...props} />;
+}
+
+function LocationMapSheetContent({
   activity,
-  isOpen,
   onClose,
 }: LocationMapSheetProps) {
   const activityId = activity.id;
-  const initialLat = activity.detail?.latitude;
-  const initialLng = activity.detail?.longitude;
-  const initialPlace = activity.detail?.place;
+  const initialLat = activity.detail?.latitude ?? DEFAULT_LAT;
+  const initialLng = activity.detail?.longitude ?? DEFAULT_LNG;
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markerInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const markerInstanceRef = useRef<Marker | null>(null);
 
   const [selectedCoords, setSelectedCoords] = useState<{
     lat: number;
     lng: number;
   }>({
-    lat: initialLat ?? DEFAULT_LAT,
-    lng: initialLng ?? DEFAULT_LNG,
+    lat: initialLat,
+    lng: initialLng,
   });
 
-  const [place, setPlace] = useState(initialPlace ?? "");
+  const [place, setPlace] = useState(activity.detail?.place ?? "");
 
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (initialLat != null && initialLng != null) {
-      setSelectedCoords({ lat: initialLat, lng: initialLng });
-    }
-    if (initialPlace != null) {
-      setPlace(initialPlace);
-    }
-  }, [initialLat, initialLng, initialPlace, isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-        markerInstanceRef.current = null;
-      }
-      return;
-    }
-
     let isMounted = true;
 
     // Inicializar Leaflet dinámicamente
@@ -73,8 +60,8 @@ export function LocationMapSheet({
         mapInstanceRef.current.remove();
       }
 
-      const centerLat = selectedCoords.lat;
-      const centerLng = selectedCoords.lng;
+      const centerLat = initialLat;
+      const centerLng = initialLng;
 
       const map = L.map(mapContainerRef.current, {
         center: [centerLat, centerLng],
@@ -122,7 +109,7 @@ export function LocationMapSheet({
         setSelectedCoords({ lat: pos.lat, lng: pos.lng });
       });
 
-      map.on("click", (e: any) => {
+      map.on("click", (e: LeafletMouseEvent) => {
         const { lat, lng } = e.latlng;
         marker.setLatLng([lat, lng]);
         setSelectedCoords({ lat, lng });
@@ -147,7 +134,7 @@ export function LocationMapSheet({
         markerInstanceRef.current = null;
       }
     };
-  }, [isOpen]);
+  }, [initialLat, initialLng]);
 
   const handleDetectLocation = () => {
     if (!navigator.geolocation) {
@@ -206,8 +193,6 @@ export function LocationMapSheet({
       onClose();
     });
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">

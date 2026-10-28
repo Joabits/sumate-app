@@ -46,6 +46,9 @@ class SearchActivitiesQueryHandler:
         causes_by_activity = self.activity_repository.get_causes_for_activities(
             activity_ids
         )
+        registered_by_activity = self.activity_repository.get_registered_counts_for_activities(
+            activity_ids
+        )
 
         items = tuple(
             ActivityListItemDTO(
@@ -66,6 +69,7 @@ class SearchActivitiesQueryHandler:
                     CauseDTO(id=c.id, name=c.name, slug=c.slug)
                     for c in causes_by_activity.get(activity.id, [])
                 ),
+                registered_count=registered_by_activity.get(activity.id, 0),
             )
             for activity in activities
         )

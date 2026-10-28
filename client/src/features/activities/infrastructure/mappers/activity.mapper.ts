@@ -48,6 +48,7 @@ export const activityMapper = {
       creatorName: dto.creator_name ?? undefined,
       creatorImage: dto.creator_image ?? undefined,
       causes: (dto.causes ?? []).map(activityMapper.toCause),
+      registeredCount: dto.registered_count,
     };
   },
 

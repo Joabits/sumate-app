@@ -12,7 +12,10 @@ from app.modules.activities.infrastructure.persistence.models.activity_detail_mo
 from app.modules.activities.infrastructure.persistence.models.activity_model import (
     ActivityModel,
 )
-from sqlalchemy import Integer, func
+from app.modules.activities.infrastructure.persistence.models.cause_model import (
+    CauseModel,
+)
+from sqlalchemy import Integer, func, or_
 from sqlmodel import select
 from sqlmodel.sql.expression import SelectOfScalar
 
@@ -31,7 +34,29 @@ def _to_storage_datetime(dt_local: datetime) -> datetime:
 
 def apply_search_query_filter(statement: SelectOfScalar, query: str | None) -> SelectOfScalar:
     if query and query.strip():
-        return statement.where(ActivityModel.name.ilike(f"%{query.strip()}%"))
+        pattern = f"%{query.strip()}%"
+        # Busca en el nombre, en las causas y en el lugar de la actividad
+        by_cause = (
+            select(ActivityCauseModel.activity_id)
+            .join(CauseModel, ActivityCauseModel.cause_id == CauseModel.id)
+            .where(
+                ActivityCauseModel.deleted_date.is_(None),
+                CauseModel.name.ilike(pattern),
+            )
+        )
+        by_place = select(ActivityDetailModel.activity_id).where(
+            or_(
+                ActivityDetailModel.place.ilike(pattern),
+                ActivityDetailModel.address.ilike(pattern),
+            )
+        )
+        return statement.where(
+            or_(
+                ActivityModel.name.ilike(pattern),
+                ActivityModel.id.in_(by_cause),
+                ActivityModel.id.in_(by_place),
+            )
+        )
     return statement
 
 

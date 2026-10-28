@@ -29,7 +29,8 @@ class DeleteActivityUseCase:
         self.participation_repository = participation_repository
         self.uow = uow
 
-    def execute(self, command: DeleteActivityCommand) -> None:
+    def execute(self, command: DeleteActivityCommand) -> str:
+        """Elimina la actividad y retorna la URL de su imagen para poder borrarla."""
         activity = self.activity_repository.get_by_id(
             command.activity_id, for_update=True
         )
@@ -49,3 +50,4 @@ class DeleteActivityUseCase:
 
         self.activity_repository.delete(activity)
         self.uow.commit()
+        return activity.image_url

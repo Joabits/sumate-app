@@ -53,7 +53,7 @@ def test_search_handler_returns_matching_results():
     activity = Activity.create(
         name="Limpieza de Playa",
         owner_id="usr_123",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=10,
         creator_name="Carlos Ruiz",
@@ -149,7 +149,7 @@ def test_search_repo_by_text_matching_and_empty(db_session):
         id=uuid4(),
         name="Reforestación del Cerro San Pedro",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=20,
         status="active",
@@ -185,7 +185,7 @@ def test_search_repo_by_cause_matching_and_empty(db_session):
         id=act_id,
         name="Jornada Ecológica",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=15,
         status="active",
@@ -216,7 +216,7 @@ def test_search_repo_by_capacity_range_matching_and_empty(db_session):
         id=uuid4(),
         name="Taller Reducido",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=5,
         status="active",
@@ -225,7 +225,7 @@ def test_search_repo_by_capacity_range_matching_and_empty(db_session):
         id=uuid4(),
         name="Taller Mediano",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=15,
         status="active",
@@ -234,7 +234,7 @@ def test_search_repo_by_capacity_range_matching_and_empty(db_session):
         id=uuid4(),
         name="Feria Masiva",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc) + timedelta(days=2),
         capacity=50,
         status="active",
@@ -271,7 +271,7 @@ def test_search_repo_by_date_preset_matching_and_empty(db_session):
         id=uuid4(),
         name="Actividad Mañana",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=tomorrow_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
@@ -280,7 +280,7 @@ def test_search_repo_by_date_preset_matching_and_empty(db_session):
         id=uuid4(),
         name="Actividad Próximo Mes",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=next_month_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
@@ -311,7 +311,7 @@ def test_search_repo_by_time_of_day_matching_and_empty(db_session):
         id=uuid4(),
         name="Yoga Matutino",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=morning_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
@@ -320,7 +320,7 @@ def test_search_repo_by_time_of_day_matching_and_empty(db_session):
         id=uuid4(),
         name="Observación Nocturna",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=night_bo.astimezone(timezone.utc).replace(tzinfo=None),
         capacity=10,
         status="active",
@@ -352,7 +352,7 @@ def test_search_repo_by_distance_radius_matching_and_empty(db_session):
         id=act_near_id,
         name="Actividad Cercana (Plaza Colón)",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=10,
         status="active",
@@ -371,7 +371,7 @@ def test_search_repo_by_distance_radius_matching_and_empty(db_session):
         id=act_far_id,
         name="Actividad Lejana (Quillacollo)",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=10,
         status="active",
@@ -390,7 +390,7 @@ def test_search_repo_by_distance_radius_matching_and_empty(db_session):
         id=act_no_coords_id,
         name="Actividad Virtual Sin Coordenadas",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=10,
         status="active",
@@ -442,7 +442,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         id=uuid4(),
         name="Actividad Disponible y Abierta",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=5,
         status="active",
@@ -452,7 +452,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         id=uuid4(),
         name="Actividad En Borrador",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=5,
         status="draft",
@@ -462,7 +462,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         id=uuid4(),
         name="Actividad Convocatoria Cerrada",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=5,
         status="closed",
@@ -472,7 +472,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         id=uuid4(),
         name="Actividad Fecha Pasada",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now - timedelta(days=1),
         capacity=5,
         status="active",
@@ -483,7 +483,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         id=act_full_id,
         name="Actividad Sin Cupos Disponibles",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=now + timedelta(days=2),
         capacity=1,
         status="active",
@@ -522,7 +522,7 @@ def test_search_repo_combined_filters_matching_and_empty(db_session):
         id=act_target_id,
         name="Taller de Pintura y Dibujo",
         owner_id="usr_1",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=tomorrow_morning,
         capacity=15,
         status="active",
@@ -583,3 +583,89 @@ def test_search_repo_combined_filters_matching_and_empty(db_session):
         min_date=now,
     )
     assert len(no_match_wrong_capacity) == 0
+
+
+def test_search_repo_by_text_matches_cause_and_place(db_session):
+    owner = BetterAuthUser(id="usr_1", name="María Gómez", email="maria@example.com")
+    db_session.add(owner)
+
+    cause = CauseModel(id=uuid4(), name="Medio Ambiente", slug="medio-ambiente")
+    act_id = uuid4()
+    act = ActivityModel(
+        id=act_id,
+        name="Jornada de Limpieza",
+        owner_id="usr_1",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
+        date=datetime.now(timezone.utc) + timedelta(days=2),
+        capacity=10,
+        status="active",
+    )
+    db_session.add_all([cause, act])
+    db_session.commit()
+    db_session.add_all([
+        ActivityCauseModel(activity_id=act_id, cause_id=cause.id),
+        ActivityDetailModel(
+            activity_id=act_id,
+            place="Plaza Colón",
+            address="Av. Ballivián, Cochabamba",
+        ),
+    ])
+    db_session.commit()
+
+    repo = SQLModelActivityRepository(db_session)
+    now = datetime.now(timezone.utc)
+
+    assert len(repo.search_activities(query="ambiente", min_date=now)) == 1
+    assert len(repo.search_activities(query="plaza col", min_date=now)) == 1
+    assert len(repo.search_activities(query="ballivián", min_date=now)) == 1
+    assert len(repo.search_activities(query="limpieza", min_date=now)) == 1
+    assert len(repo.search_activities(query="salud", min_date=now)) == 0
+
+
+def test_registered_counts_for_activities(db_session):
+    act_with_people = uuid4()
+    act_empty = uuid4()
+    for act_id in (act_with_people, act_empty):
+        db_session.add(
+            ActivityModel(
+                id=act_id,
+                name="Actividad",
+                owner_id="usr_1",
+                image_url="http://localhost:8000/uploads/activities/test.webp",
+                date=datetime.now(timezone.utc) + timedelta(days=2),
+                capacity=10,
+                status="active",
+            )
+        )
+    db_session.commit()
+    db_session.add_all([
+        ParticipationModel(activity_id=act_with_people, user_id="usr_2"),
+        ParticipationModel(activity_id=act_with_people, user_id="usr_3"),
+    ])
+    db_session.commit()
+
+    repo = SQLModelActivityRepository(db_session)
+    counts = repo.get_registered_counts_for_activities([act_with_people, act_empty])
+
+    assert counts == {act_with_people: 2, act_empty: 0}
+    assert repo.get_registered_counts_for_activities([]) == {}
+
+
+def test_search_handler_includes_registered_count():
+    activity = Activity.create(
+        name="Feria Solidaria",
+        owner_id="usr_123",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
+        date=datetime.now(timezone.utc) + timedelta(days=2),
+        capacity=3,
+    )
+    repo = MagicMock()
+    repo.search_activities.return_value = [activity]
+    repo.get_causes_for_activities.return_value = {}
+    repo.get_registered_counts_for_activities.return_value = {activity.id: 1}
+
+    handler = SearchActivitiesQueryHandler(repo)
+    result = handler.execute(SearchActivitiesQuery(query="feria"))
+
+    assert result.items[0].capacity == 3
+    assert result.items[0].registered_count == 1

@@ -86,8 +86,8 @@ from app.modules.activities.infrastructure.api.schemas.activity_schemas import (
     UpdateDescriptionRequest,
     UpdateLocationRequest,
 )
-from app.modules.activities.infrastructure.external.cloudinary_service import (
-    CloudinaryService,
+from app.modules.activities.infrastructure.external.image_storage_service import (
+    ImageStorageService,
 )
 from app.modules.activities.infrastructure.persistence.repositories.sqlmodel_activity_repository import (
     SQLModelActivityRepository,
@@ -114,19 +114,24 @@ async def create_activity(
     uow: UoWDep,
     image: Annotated[UploadFile, File(description="Imagen de la actividad")] = ...,
 ) -> Response:
-    image_url = await CloudinaryService.upload_activity_cover(image)
+    image_url = await ImageStorageService.upload_activity_cover(image)
 
     repository = SQLModelActivityRepository(uow.session)
     use_case = CreateActivityUseCase(repository, uow)
-    use_case.execute(
-        CreateActivityCommand(
-            name=payload.name,
-            owner_id=current_user.user_id,
-            image_url=image_url,
-            date=payload.date,
-            capacity=payload.capacity,
+    try:
+        use_case.execute(
+            CreateActivityCommand(
+                name=payload.name,
+                owner_id=current_user.user_id,
+                image_url=image_url,
+                date=payload.date,
+                capacity=payload.capacity,
+            )
         )
-    )
+    except Exception:
+        # Si la actividad no se guardó, la imagen subida ya no sirve
+        ImageStorageService.delete_activity_cover(image_url)
+        raise
 
     return Response(status_code=status.HTTP_201_CREATED)
 
@@ -183,6 +188,7 @@ def list_explore_activities(
                     CauseRead(id=c.id, name=c.name, slug=c.slug)
                     for c in item.causes
                 ],
+                registered_count=item.registered_count,
             )
             for item in dto.items
         ]
@@ -236,7 +242,7 @@ def list_my_activities(
 )
 def search_activities(
     db: DBSession,
-    q: Annotated[str | None, Query(description="Término de búsqueda por nombre de la actividad")] = None,
+    q: Annotated[str | None, Query(description="Término de búsqueda por nombre, causa o lugar de la actividad")] = None,
     time_of_day: Annotated[TimeOfDayFilter, Query(description="Filtro de momento del día")] = TimeOfDayFilter.any,
     date_preset: Annotated[DatePresetFilter, Query(description="Filtro de temporalidad de fecha")] = DatePresetFilter.upcoming,
     capacity_range: Annotated[CapacityRangeFilter, Query(description="Filtro de plazas/cupos totales configurados")] = CapacityRangeFilter.any,
@@ -276,6 +282,7 @@ def search_activities(
                     CauseRead(id=c.id, name=c.name, slug=c.slug)
                     for c in item.causes
                 ],
+                registered_count=item.registered_count,
             )
             for item in dto.items
         ]
@@ -412,17 +419,24 @@ async def update_activity_image(
     uow: UoWDep,
     image: Annotated[UploadFile, File(description="Nueva imagen de portada")],
 ) -> Response:
-    image_url = await CloudinaryService.upload_activity_cover(image)
+    image_url = await ImageStorageService.upload_activity_cover(image)
 
     repository = SQLModelActivityRepository(uow.session)
     use_case = UpdateActivityImageUseCase(repository, uow)
-    use_case.execute(
-        UpdateActivityImageCommand(
-            activity_id=activity_id,
-            owner_id=current_user.user_id,
-            image_url=image_url,
+    try:
+        previous_image_url = use_case.execute(
+            UpdateActivityImageCommand(
+                activity_id=activity_id,
+                owner_id=current_user.user_id,
+                image_url=image_url,
+            )
         )
-    )
+    except Exception:
+        ImageStorageService.delete_activity_cover(image_url)
+        raise
+
+    # La imagen anterior ya no la usa nadie
+    ImageStorageService.delete_activity_cover(previous_image_url)
     return Response(status_code=status.HTTP_200_OK)
 
 
@@ -586,12 +600,13 @@ def delete_activity(
         participation_repository=participation_repo,
         uow=uow,
     )
-    use_case.execute(
+    image_url = use_case.execute(
         DeleteActivityCommand(
             activity_id=activity_id,
             owner_id=current_user.user_id,
         )
     )
+    ImageStorageService.delete_activity_cover(image_url)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

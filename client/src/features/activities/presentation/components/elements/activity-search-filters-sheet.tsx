@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Clock,
   Sparkles,
@@ -125,12 +125,15 @@ export function ActivitySearchFiltersSheet({
 }: ActivitySearchFiltersSheetProps) {
   const causes = useCausesStore((state) => state.causes);
   const [sections, setSections] = useState(DEFAULT_SECTIONS_STATE);
+  const [wasOpen, setWasOpen] = useState(open);
 
-  useEffect(() => {
+  // Al cerrarse el panel, las secciones vuelven a como estaban al inicio
+  if (open !== wasOpen) {
+    setWasOpen(open);
     if (!open) {
       setSections(DEFAULT_SECTIONS_STATE);
     }
-  }, [open]);
+  }
 
   const toggleSection = (key: keyof typeof DEFAULT_SECTIONS_STATE) => {
     setSections((prev) => ({ ...prev, [key]: !prev[key] }));

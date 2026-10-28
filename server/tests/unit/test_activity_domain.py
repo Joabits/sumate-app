@@ -8,7 +8,7 @@ def test_activity_creation_defaults_to_draft():
     activity = Activity.create(
         name="Reforestación San Pedro",
         owner_id="usr_123",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc),
         capacity=15,
     )
@@ -22,7 +22,7 @@ def test_activity_capacity_must_be_positive_integer():
         Activity.create(
             name="Actividad Cero",
             owner_id="usr_123",
-            image_url="https://res.cloudinary.com/test.webp",
+            image_url="http://localhost:8000/uploads/activities/test.webp",
             date=datetime.now(timezone.utc),
             capacity=0,
         )
@@ -31,7 +31,7 @@ def test_activity_capacity_must_be_positive_integer():
         Activity.create(
             name="Actividad Negativa",
             owner_id="usr_123",
-            image_url="https://res.cloudinary.com/test.webp",
+            image_url="http://localhost:8000/uploads/activities/test.webp",
             date=datetime.now(timezone.utc),
             capacity=-5,
         )
@@ -58,7 +58,7 @@ def test_list_explore_activities_query_handler_propagates_creator_image():
     activity = Activity.create(
         name="Actividad Prueba",
         owner_id="usr_123",
-        image_url="https://res.cloudinary.com/test.webp",
+        image_url="http://localhost:8000/uploads/activities/test.webp",
         date=datetime.now(timezone.utc),
         capacity=5,
         creator_name="Ana Pérez",
@@ -84,7 +84,7 @@ def test_invalid_activity_capacity_exception():
         Activity.create(
             name="Exceso de Plazas",
             owner_id="usr_123",
-            image_url="https://res.cloudinary.com/test.webp",
+            image_url="http://localhost:8000/uploads/activities/test.webp",
             date=datetime.now(timezone.utc),
             capacity=10001,
         )

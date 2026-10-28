@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { Cause } from "@/features/activities/domain/entities/activity.entity";
 import { useCausesStore } from "../../stores/causes.store";
 
@@ -9,11 +9,9 @@ type CausesInitializerProps = {
 };
 
 export function CausesInitializer({ initialCauses }: CausesInitializerProps) {
-  const initialized = useRef(false);
-
-  if (!initialized.current && initialCauses && initialCauses.length > 0) {
+  // Se cargan una sola vez antes del primer render de las pantallas que las usan
+  if (!useCausesStore.getState().isLoaded && initialCauses && initialCauses.length > 0) {
     useCausesStore.getState().setCauses(initialCauses);
-    initialized.current = true;
   }
 
   useEffect(() => {

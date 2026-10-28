@@ -76,6 +76,12 @@ class ActivityRepository(ABC):
         ...
 
     @abstractmethod
+    def get_registered_counts_for_activities(
+        self, activity_ids: list[UUID]
+    ) -> dict[UUID, int]:
+        ...
+
+    @abstractmethod
     def replace_activity_causes(
         self, activity_id: UUID, cause_ids: list[UUID]
     ) -> None:

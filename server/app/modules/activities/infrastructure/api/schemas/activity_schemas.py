@@ -81,6 +81,7 @@ class ActivityListItemRead(SQLModel):
     creator_name: str | None = None
     creator_image: str | None = None
     causes: list[CauseRead] = []
+    registered_count: int = 0
 
 
 class ActivityListRead(SQLModel):

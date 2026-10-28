@@ -126,6 +126,14 @@ class Activity:
         return date
 
     @staticmethod
+    def ensure_future_date(date: datetime, now: datetime | None = None) -> None:
+        """Al crear o reprogramar, la fecha no puede ser anterior a la actual."""
+        current_time = now or datetime.now(timezone.utc)
+        activity_date = date if date.tzinfo is not None else date.replace(tzinfo=timezone.utc)
+        if activity_date <= current_time:
+            raise InvalidActivityDateException("La fecha de la actividad debe ser posterior a la fecha actual.")
+
+    @staticmethod
     def validate_capacity(capacity: int) -> int:
         if not isinstance(capacity, int) or isinstance(capacity, bool) or capacity <= 0:
             raise InvalidActivityCapacityException("La cantidad de plazas debe ser un número entero mayor a cero.")

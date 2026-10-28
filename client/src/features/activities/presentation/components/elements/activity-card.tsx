@@ -1,4 +1,4 @@
-import { Tag, Users } from "lucide-react";
+import { Users } from "lucide-react";
 import type {
   ActivityListItem,
   ActivityScope,
@@ -37,8 +37,9 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
 
   const statusBadge = getStatusBadge();
   const showStatusBadge = scope === "mine" || activity.status !== "active";
-  const myActivity = activity as MyActivityListItem;
   const isMine = scope === "mine";
+  const registeredCount = activity.registeredCount ?? 0;
+  const availableSpots = Math.max(activity.capacity - registeredCount, 0);
 
   return (
     <ActivityCardShell
@@ -54,13 +55,15 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
       <div className="mt-2 flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg">
           <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-          {isMine && typeof myActivity.registeredCount === "number" ? (
+          {isMine ? (
             <span>
-              {myActivity.registeredCount} / {activity.capacity} inscritos
+              {registeredCount} / {activity.capacity} inscritos
             </span>
+          ) : availableSpots === 0 ? (
+            <span>Cupos agotados</span>
           ) : (
             <span>
-              {activity.capacity} {activity.capacity === 1 ? "cupo disponible" : "cupos disponibles"}
+              {availableSpots} {availableSpots === 1 ? "cupo disponible" : "cupos disponibles"}
             </span>
           )}
         </div>

@@ -44,8 +44,10 @@ export function ActivityDetailActions({
   );
   const hasDescription = Boolean(detail?.description?.trim());
   const hasCauses = Boolean(activity.causes && activity.causes.length > 0);
+  // Hora en que se abrió la pantalla, para saber si la actividad ya pasó
+  const [now] = useState(() => Date.now());
   const isPast = Boolean(
-    activity.date && new Date(activity.date).getTime() <= Date.now(),
+    activity.date && new Date(activity.date).getTime() <= now,
   );
   const isFull = (activity.participants?.length ?? 0) >= activity.capacity;
   const [isPending, startTransition] = useTransition();

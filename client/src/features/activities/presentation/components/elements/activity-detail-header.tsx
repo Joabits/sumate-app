@@ -41,8 +41,9 @@ export function ActivityDetailHeader({
           url,
         });
         return;
-      } catch (err: any) {
-        if (err.name === "AbortError") return;
+      } catch (err) {
+        // El usuario cerró el menú de compartir
+        if (err instanceof Error && err.name === "AbortError") return;
       }
     }
 

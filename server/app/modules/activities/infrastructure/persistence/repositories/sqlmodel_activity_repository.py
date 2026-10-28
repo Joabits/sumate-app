@@ -319,6 +319,28 @@ class SQLModelActivityRepository(ActivityRepository):
             result[act_id].append(CauseMapper.to_domain(cause_model))
         return result
 
+    def get_registered_counts_for_activities(
+        self, activity_ids: list[UUID]
+    ) -> dict[UUID, int]:
+        if not activity_ids:
+            return {}
+        statement = (
+            select(
+                ParticipationModel.activity_id,
+                func.count(ParticipationModel.id),
+            )
+            .where(
+                ParticipationModel.activity_id.in_(activity_ids),
+                ParticipationModel.deleted_date.is_(None),
+            )
+            .group_by(ParticipationModel.activity_id)
+        )
+        rows = self.db.exec(statement).all()
+        result: dict[UUID, int] = {act_id: 0 for act_id in activity_ids}
+        for act_id, count in rows:
+            result[act_id] = int(count)
+        return result
+
     def replace_activity_causes(
         self, activity_id: UUID, cause_ids: list[UUID]
     ) -> None:

@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.modules.activities.domain.entities.activity import Activity
 from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
@@ -26,7 +25,8 @@ class UpdateActivityImageUseCase:
         self.activity_repository = activity_repository
         self.uow = uow
 
-    def execute(self, command: UpdateActivityImageCommand) -> Activity:
+    def execute(self, command: UpdateActivityImageCommand) -> str:
+        """Cambia la imagen y retorna la URL de la anterior para poder borrarla."""
         activity = self.activity_repository.get_by_id(command.activity_id)
         if not activity:
             raise ActivityNotFoundException()
@@ -34,7 +34,8 @@ class UpdateActivityImageUseCase:
         if activity.owner_id != command.owner_id:
             raise ForbiddenException("Solo el organizador puede editar la imagen.")
 
+        previous_image_url = activity.image_url
         activity.update_image(command.image_url)
         self.activity_repository.save(activity)
         self.uow.commit()
-        return activity
+        return previous_image_url

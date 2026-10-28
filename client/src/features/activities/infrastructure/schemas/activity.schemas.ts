@@ -27,6 +27,7 @@ export const ActivityListItemResponseSchema = z.object({
   creator_name: z.string().nullable().optional(),
   creator_image: z.string().nullable().optional(),
   causes: z.array(CauseResponseSchema).optional().default([]),
+  registered_count: z.number().int().nonnegative().optional(),
 });
 
 export const ActivityListResponseSchema = z.object({
@@ -98,6 +99,16 @@ export const UpdateActivityInfoSchema = z.object({
   date: z.string().min(1).optional(),
 });
 
+// Mismo límite que acepta el backend para las imágenes
+export const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+
+const FUTURE_DATE_MESSAGE = "La fecha debe ser posterior a la fecha actual.";
+
+function isFutureDate(value: string): boolean {
+  const time = new Date(value).getTime();
+  return !Number.isNaN(time) && time > Date.now();
+}
+
 /**
  * Esquema de validación del formulario de creación de actividades.
  */
@@ -108,7 +119,8 @@ export const CreateActivityFormSchema = z.object({
     .max(120, "El nombre no puede superar los 120 caracteres."),
   date: z
     .string({ message: "La fecha de la actividad es obligatoria." })
-    .min(1, "Por favor selecciona una fecha y hora."),
+    .min(1, "Por favor selecciona una fecha y hora.")
+    .refine(isFutureDate, FUTURE_DATE_MESSAGE),
   capacity: z
     .number({ message: "La cantidad de plazas debe ser un número entero." })
     .int("La cantidad de plazas debe ser un número entero.")
@@ -118,6 +130,10 @@ export const CreateActivityFormSchema = z.object({
     .custom<File>(
       (val) => typeof window !== "undefined" && val instanceof File && val.size > 0,
       { message: "Debes seleccionar una imagen para la actividad." }
+    )
+    .refine(
+      (file) => !(file instanceof File) || file.size <= MAX_IMAGE_SIZE_BYTES,
+      "La imagen no debe superar los 2MB."
     ),
 });
 
@@ -135,7 +151,8 @@ export type EditTitleFormData = z.infer<typeof EditTitleSchema>;
 export const EditDateSchema = z.object({
   date: z
     .string({ message: "La fecha es obligatoria." })
-    .min(1, "Por favor selecciona una fecha y hora."),
+    .min(1, "Por favor selecciona una fecha y hora.")
+    .refine(isFutureDate, FUTURE_DATE_MESSAGE),
 });
 export type EditDateFormData = z.infer<typeof EditDateSchema>;
 

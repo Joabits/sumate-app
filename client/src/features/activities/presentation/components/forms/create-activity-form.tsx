@@ -60,6 +60,9 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       return;
     }
 
+    // El input da la hora local sin zona; se envía en UTC igual que al editar la fecha
+    formData.set("date", new Date(parsed.data.date).toISOString());
+
     const result = await createActivityAction(formData);
 
     if (!result.ok) {
@@ -114,7 +117,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
               Toca para subir una fotografía
             </p>
             <p className="text-xs text-zinc-400 mt-0.5">
-              PNG, JPG o WEBP (máx. 5MB)
+              PNG, JPG o WEBP (máx. 2MB)
             </p>
           </div>
         )}

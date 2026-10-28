@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ActivitySearchView } from "@/features/activities/presentation/components/views/activity-search-view";
 

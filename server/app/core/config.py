@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -80,10 +82,19 @@ class Settings(BaseSettings):
             return [o.strip() for o in value.split(",") if o.strip()]
         return value  # type: ignore[return-value]
 
-    # ── Cloudinary ────────────────────────────────────────────────────────────
-    CLOUDINARY_CLOUD_NAME: str = Field(default="", env="CLOUDINARY_CLOUD_NAME")
-    CLOUDINARY_API_KEY: str = Field(default="", env="CLOUDINARY_API_KEY")
-    CLOUDINARY_API_SECRET: str = Field(default="", env="CLOUDINARY_API_SECRET")
+    # ── Imágenes subidas ──────────────────────────────────────────────────────
+    # Las imágenes se guardan en una carpeta del servidor y FastAPI las sirve en /uploads.
+    # UPLOADS_DIR vacío → carpeta `uploads` dentro de server/.
+    UPLOADS_DIR: str = Field(default="", env="UPLOADS_DIR")
+    # URL pública del backend, con la que se arma la dirección de cada imagen.
+    PUBLIC_URL: str = Field(default="http://localhost:8000", env="PUBLIC_URL")
+
+    @property
+    def uploads_path(self) -> Path:
+        """Carpeta donde se guardan las imágenes subidas."""
+        if self.UPLOADS_DIR.strip():
+            return Path(self.UPLOADS_DIR.strip())
+        return Path(__file__).resolve().parents[2] / "uploads"
 
     @property
     def database_url_normalized(self) -> str:

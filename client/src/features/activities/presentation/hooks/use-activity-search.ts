@@ -3,10 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type {
   ActivityListItem,
-  CapacityRangeFilter,
-  DatePresetFilter,
   SearchFilterState,
-  TimeOfDayFilter,
 } from "../../domain/entities/activity.entity";
 import { activityRepositoryImpl } from "../../infrastructure/repositories/activity.repository";
 
