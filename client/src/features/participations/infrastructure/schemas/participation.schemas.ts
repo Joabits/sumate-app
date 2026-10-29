@@ -17,6 +17,7 @@ export const ParticipatedActivityItemResponseSchema = z.object({
   status: z.string(),
   enrolled_date: z.string(),
   is_past: z.boolean(),
+  participation_status: z.enum(["pending", "accepted", "rejected"]).optional().default("accepted"),
   creator_name: z.string().nullable().optional(),
   creator_image: z.string().nullable().optional(),
   causes: z.array(CauseResponseSchema).optional().default([]),

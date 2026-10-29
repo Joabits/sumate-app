@@ -15,6 +15,7 @@ class ParticipatedActivityItemRead(SQLModel):
     status: str
     enrolled_date: datetime
     is_past: bool
+    participation_status: str = "accepted"
     creator_name: str | None = None
     creator_image: str | None = None
     causes: list[CauseRead] = []

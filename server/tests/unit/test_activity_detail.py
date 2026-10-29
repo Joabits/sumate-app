@@ -25,7 +25,10 @@ from app.modules.activities.application.use_cases.publish_activity import (
 )
 from app.modules.activities.domain.entities.activity import Activity, ActivityStatus
 from app.modules.activities.domain.entities.activity_detail import ActivityDetail
-from app.modules.participations.domain.entities.participation import Participation
+from app.modules.participations.domain.entities.participation import (
+    Participation,
+    ParticipationStatus,
+)
 from app.shared.domain.exceptions import ForbiddenException, ValidationException
 
 
@@ -330,7 +333,9 @@ def test_get_activity_detail_with_participants():
     act_repo.get_detail_by_activity_id.return_value = (activity, detail)
 
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = True
+    part_repo.get_by_activity_and_user.return_value = Participation(
+        id=uuid4(), activity_id=activity_id, user_id="user_2", status=ParticipationStatus.ACCEPTED
+    )
     participation = Participation.create(activity_id=activity_id, user_id="user_2")
     part_repo.list_participants_by_activity_id.return_value = [
         (participation, "Ana Lopez", "https://avatar.com/ana.png")

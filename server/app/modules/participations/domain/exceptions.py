@@ -1,4 +1,9 @@
-from app.shared.domain.exceptions import ConflictException, NotFoundException, ValidationException
+from app.shared.domain.exceptions import (
+    ConflictException,
+    ForbiddenException,
+    NotFoundException,
+    ValidationException,
+)
 
 
 class CannotJoinPastActivityException(ValidationException):
@@ -34,3 +39,18 @@ class ParticipationNotFoundException(NotFoundException):
 class CannotLeavePastActivityException(ValidationException):
     code = "CANNOT_LEAVE_PAST_ACTIVITY"
     message = "No es posible cancelar la participación de una actividad que ya ha concluido o cuya fecha ya transcurrió."
+
+
+class RequestRejectedException(ConflictException):
+    code = "PARTICIPATION_REQUEST_REJECTED"
+    message = "Tu solicitud para esta actividad fue rechazada por el organizador."
+
+
+class RequestNotPendingException(ConflictException):
+    code = "PARTICIPATION_REQUEST_NOT_PENDING"
+    message = "La solicitud ya fue revisada por el organizador."
+
+
+class NotActivityOrganizerException(ForbiddenException):
+    code = "NOT_ACTIVITY_ORGANIZER"
+    message = "Solo el organizador de la actividad puede revisar las solicitudes."

@@ -71,7 +71,15 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                     <div />
                   )}
 
-                  {item.isPast ? (
+                  {item.participationStatus === "pending" ? (
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/70">
+                      Solicitud pendiente
+                    </span>
+                  ) : item.participationStatus === "rejected" ? (
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/70">
+                      Solicitud rechazada
+                    </span>
+                  ) : item.isPast ? (
                     <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/70">
                       Realizada
                     </span>

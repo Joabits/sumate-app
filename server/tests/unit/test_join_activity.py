@@ -9,6 +9,10 @@ from app.modules.participations.application.use_cases.join_activity import (
     JoinActivityCommand,
     JoinActivityUseCase,
 )
+from app.modules.participations.domain.entities.participation import (
+    Participation,
+    ParticipationStatus,
+)
 from app.modules.participations.domain.exceptions import (
     ActivityCapacityExceededException,
     AlreadyParticipatingException,
@@ -37,7 +41,7 @@ def test_join_activity_success():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = False
+    part_repo.get_by_activity_and_user.return_value = None
     part_repo.count_by_activity_id.return_value = 5
     uow = MagicMock()
 
@@ -72,7 +76,7 @@ def test_join_activity_last_remaining_spot_success():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = False
+    part_repo.get_by_activity_and_user.return_value = None
     part_repo.count_by_activity_id.return_value = 9
     uow = MagicMock()
 
@@ -239,7 +243,9 @@ def test_join_activity_already_participating():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = True
+    part_repo.get_by_activity_and_user.return_value = Participation(
+        id=uuid4(), activity_id=activity_id, user_id=user_id, status=ParticipationStatus.ACCEPTED
+    )
     uow = MagicMock()
 
     use_case = JoinActivityUseCase(act_repo, part_repo, uow)
@@ -270,7 +276,7 @@ def test_join_activity_capacity_exceeded():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = False
+    part_repo.get_by_activity_and_user.return_value = None
     part_repo.count_by_activity_id.return_value = 5
     uow = MagicMock()
 
@@ -302,7 +308,7 @@ def test_join_activity_capacity_strictly_greater_than_max_fails():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = False
+    part_repo.get_by_activity_and_user.return_value = None
     part_repo.count_by_activity_id.return_value = 6
     uow = MagicMock()
 
@@ -335,7 +341,7 @@ def test_join_activity_rolls_back_if_part_repo_fails():
     act_repo = MagicMock()
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
-    part_repo.is_participating.return_value = False
+    part_repo.get_by_activity_and_user.return_value = None
     part_repo.count_by_activity_id.return_value = 2
     part_repo.save.side_effect = RuntimeError("Database error")
     uow = MagicMock()

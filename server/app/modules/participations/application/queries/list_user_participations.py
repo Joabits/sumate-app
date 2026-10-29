@@ -23,6 +23,7 @@ class ParticipatedActivityListItemDTO:
     status: str
     enrolled_date: datetime
     is_past: bool
+    participation_status: str = "accepted"
     creator_name: str | None = None
     creator_image: str | None = None
     causes: tuple[CauseDTO, ...] = ()
@@ -81,6 +82,7 @@ class ListUserParticipationsQueryHandler:
                     status=act.status.value if hasattr(act.status, "value") else str(act.status),
                     enrolled_date=enrolled_date,
                     is_past=is_past,
+                    participation_status=part.status.value,
                     creator_name=creator_name,
                     creator_image=creator_image,
                     causes=causes_dtos,

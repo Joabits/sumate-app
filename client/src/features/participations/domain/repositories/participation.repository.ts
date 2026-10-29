@@ -12,14 +12,24 @@ import type { ParticipatedActivityListItem } from "../entities/participation.ent
 
 export interface ParticipationRepository {
   /**
-   * Registra la participación del usuario actual en una actividad.
+   * Envía la solicitud de participación del usuario actual (queda pendiente).
    */
   joinActivity(activityId: string): Promise<ApiActionResult>;
 
   /**
-   * Cancela la participación del usuario actual en una actividad.
+   * Cancela la solicitud o participación del usuario actual en una actividad.
    */
   leaveActivity(activityId: string): Promise<ApiActionResult>;
+
+  /**
+   * El organizador acepta la solicitud de un voluntario.
+   */
+  acceptRequest(activityId: string, participantId: string): Promise<ApiActionResult>;
+
+  /**
+   * El organizador rechaza la solicitud de un voluntario.
+   */
+  rejectRequest(activityId: string, participantId: string): Promise<ApiActionResult>;
 
   /**
    * Lista las actividades en las que participa o ha participado el usuario actual.

@@ -8,9 +8,15 @@ from app.modules.activities.infrastructure.persistence.mappers.activity_mapper i
 from app.modules.activities.infrastructure.persistence.models.activity_model import (
     ActivityModel,
 )
-from app.modules.participations.domain.entities.participation import Participation
+from app.modules.participations.domain.entities.participation import (
+    Participation,
+    ParticipationStatus,
+)
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
+)
+from app.modules.participations.infrastructure.persistence.filters import (
+    confirmed_participation,
 )
 from app.modules.participations.infrastructure.persistence.mappers.participation_mapper import (
     ParticipationMapper,
@@ -36,6 +42,7 @@ class SQLModelParticipationRepository(ParticipationRepository):
 
         record.activity_id = participation.activity_id
         record.user_id = participation.user_id
+        record.status = participation.status.value
         record.modified_date = datetime.now(timezone.utc)
 
     def get_by_activity_and_user(
@@ -54,18 +61,18 @@ class SQLModelParticipationRepository(ParticipationRepository):
     def count_by_activity_id(self, activity_id: UUID) -> int:
         statement = select(func.count(ParticipationModel.id)).where(
             ParticipationModel.activity_id == activity_id,
-            ParticipationModel.deleted_date.is_(None),
+            confirmed_participation(),
         )
         count = self.db.exec(statement).one()
         return int(count)
 
-    def is_participating(self, activity_id: UUID, user_id: str) -> bool:
-        statement = select(ParticipationModel.id).where(
+    def delete_unconfirmed_by_activity_id(self, activity_id: UUID) -> None:
+        statement = select(ParticipationModel).where(
             ParticipationModel.activity_id == activity_id,
-            ParticipationModel.user_id == user_id,
-            ParticipationModel.deleted_date.is_(None),
+            ParticipationModel.status != ParticipationStatus.ACCEPTED.value,
         )
-        return self.db.exec(statement).first() is not None
+        for record in self.db.exec(statement).all():
+            self.db.delete(record)
 
     def delete(self, activity_id: UUID, user_id: str) -> bool:
         statement = select(ParticipationModel).where(
@@ -110,7 +117,9 @@ class SQLModelParticipationRepository(ParticipationRepository):
         ]
 
     def list_participants_by_activity_id(
-        self, activity_id: UUID
+        self,
+        activity_id: UUID,
+        status: ParticipationStatus = ParticipationStatus.ACCEPTED,
     ) -> list[tuple[Participation, str, str | None]]:
         statement = (
             select(
@@ -122,6 +131,7 @@ class SQLModelParticipationRepository(ParticipationRepository):
             .where(
                 ParticipationModel.activity_id == activity_id,
                 ParticipationModel.deleted_date.is_(None),
+                ParticipationModel.status == status.value,
             )
             .order_by(ParticipationModel.created_date.asc())
         )

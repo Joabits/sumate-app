@@ -12,3 +12,5 @@ class ParticipationModel(BaseModel, table=True):
 
     activity_id: UUID = Field(foreign_key="activity.id", index=True, nullable=False)
     user_id: str = Field(index=True, nullable=False)
+    # pending → solicitud enviada; accepted / rejected → decisión del organizador
+    status: str = Field(default="pending", max_length=20, index=True, nullable=False)

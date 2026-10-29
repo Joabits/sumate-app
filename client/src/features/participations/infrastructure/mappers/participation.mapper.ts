@@ -25,6 +25,7 @@ export const participationMapper = {
       status: dto.status,
       enrolledDate: dto.enrolled_date,
       isPast: dto.is_past,
+      participationStatus: dto.participation_status,
       creatorName: dto.creator_name ?? undefined,
       creatorImage: dto.creator_image ?? undefined,
       causes: (dto.causes ?? []).map(activityMapper.toCause),

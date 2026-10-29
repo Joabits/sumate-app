@@ -35,16 +35,16 @@ export function ConfirmJoinDialog({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-1">
             <CheckCircle2 className="h-7 w-7" />
           </div>
-          <AlertDialogTitle>Confirmar asistencia</AlertDialogTitle>
+          <AlertDialogTitle>Solicitar participar</AlertDialogTitle>
           <AlertDialogDescription>
             {activityName ? (
               <>
-                ¿Deseas confirmar tu participación como voluntario en{" "}
+                ¿Deseas enviar tu solicitud para participar como voluntario en{" "}
                 <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?
-                Al confirmar, se reservará tu plaza de inmediato.
+                El organizador la revisará y tu plaza quedará reservada cuando la acepte.
               </>
             ) : (
-              "¿Deseas confirmar tu participación como voluntario en esta actividad? Al confirmar, se reservará tu plaza de inmediato."
+              "¿Deseas enviar tu solicitud para participar como voluntario en esta actividad? El organizador la revisará y tu plaza quedará reservada cuando la acepte."
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -64,10 +64,10 @@ export function ConfirmJoinDialog({
             {isPending ? (
               <>
                 <Spinner className="size-4 mr-2" />
-                <span>Confirmando...</span>
+                <span>Enviando...</span>
               </>
             ) : (
-              "Confirmar asistencia"
+              "Enviar solicitud"
             )}
           </Button>
         </AlertDialogFooter>

@@ -7,13 +7,17 @@ from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
-from app.modules.participations.domain.entities.participation import Participation
+from app.modules.participations.domain.entities.participation import (
+    Participation,
+    ParticipationStatus,
+)
 from app.modules.participations.domain.exceptions import (
     ActivityCapacityExceededException,
     AlreadyParticipatingException,
     CannotJoinInactiveActivityException,
     CannotJoinOwnActivityException,
     CannotJoinPastActivityException,
+    RequestRejectedException,
 )
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
@@ -28,6 +32,8 @@ class JoinActivityCommand:
 
 
 class JoinActivityUseCase:
+    """El voluntario solicita participar; la solicitud queda pendiente."""
+
     def __init__(
         self,
         activity_repository: ActivityRepository,
@@ -60,9 +66,12 @@ class JoinActivityUseCase:
         if act_date <= now:
             raise CannotJoinPastActivityException()
 
-        if self.participation_repository.is_participating(
+        existing = self.participation_repository.get_by_activity_and_user(
             command.activity_id, command.user_id
-        ):
+        )
+        if existing is not None:
+            if existing.status == ParticipationStatus.REJECTED:
+                raise RequestRejectedException()
             raise AlreadyParticipatingException()
 
         current_count = self.participation_repository.count_by_activity_id(

@@ -488,7 +488,7 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
         capacity=1,
         status="active",
     )
-    part_full = ParticipationModel(activity_id=act_full_id, user_id="usr_2")
+    part_full = ParticipationModel(activity_id=act_full_id, user_id="usr_2", status="accepted")
 
     db_session.add_all([act_valid, act_draft, act_closed, act_past, act_full, part_full])
     db_session.commit()
@@ -639,8 +639,10 @@ def test_registered_counts_for_activities(db_session):
         )
     db_session.commit()
     db_session.add_all([
-        ParticipationModel(activity_id=act_with_people, user_id="usr_2"),
-        ParticipationModel(activity_id=act_with_people, user_id="usr_3"),
+        ParticipationModel(activity_id=act_with_people, user_id="usr_2", status="accepted"),
+        ParticipationModel(activity_id=act_with_people, user_id="usr_3", status="accepted"),
+        # Las solicitudes pendientes no ocupan cupo
+        ParticipationModel(activity_id=act_with_people, user_id="usr_4", status="pending"),
     ])
     db_session.commit()
 

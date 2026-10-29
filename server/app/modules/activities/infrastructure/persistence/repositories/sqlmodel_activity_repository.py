@@ -37,6 +37,9 @@ from app.modules.activities.infrastructure.persistence.models.activity_model imp
 from app.modules.activities.infrastructure.persistence.models.cause_model import (
     CauseModel,
 )
+from app.modules.participations.infrastructure.persistence.filters import (
+    confirmed_participation,
+)
 from app.modules.participations.infrastructure.persistence.models.participation_model import (
     ParticipationModel,
 )
@@ -125,7 +128,7 @@ class SQLModelActivityRepository(ActivityRepository):
                 ParticipationModel.activity_id,
                 func.count(ParticipationModel.id).label("registered_count"),
             )
-            .where(ParticipationModel.deleted_date.is_(None))
+            .where(confirmed_participation())
             .group_by(ParticipationModel.activity_id)
             .subquery()
         )
@@ -174,7 +177,7 @@ class SQLModelActivityRepository(ActivityRepository):
                 ParticipationModel.activity_id,
                 func.count(ParticipationModel.id).label("registered_count"),
             )
-            .where(ParticipationModel.deleted_date.is_(None))
+            .where(confirmed_participation())
             .group_by(ParticipationModel.activity_id)
             .subquery()
         )
@@ -331,7 +334,7 @@ class SQLModelActivityRepository(ActivityRepository):
             )
             .where(
                 ParticipationModel.activity_id.in_(activity_ids),
-                ParticipationModel.deleted_date.is_(None),
+                confirmed_participation(),
             )
             .group_by(ParticipationModel.activity_id)
         )

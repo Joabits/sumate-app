@@ -44,3 +44,43 @@ export async function leaveActivityAction(activityId: string): Promise<ApiAction
 
   return result;
 }
+
+async function reviewRequest(
+  activityId: string,
+  participantId: string,
+  decision: "accept" | "reject",
+): Promise<ApiActionResult> {
+  if (!activityId?.trim() || !participantId?.trim()) {
+    return errorResult("Solicitud inválida.");
+  }
+
+  const result =
+    decision === "accept"
+      ? await participationRepositoryImpl.acceptRequest(activityId, participantId)
+      : await participationRepositoryImpl.rejectRequest(activityId, participantId);
+
+  if (result.ok) {
+    revalidatePath(`/activities/${activityId}`);
+    revalidatePath("/explore");
+    revalidatePath("/my-activities");
+    updateTag("activities");
+    updateTag(`activity-${activityId}`);
+    updateTag("participations");
+  }
+
+  return result;
+}
+
+export async function acceptRequestAction(
+  activityId: string,
+  participantId: string,
+): Promise<ApiActionResult> {
+  return reviewRequest(activityId, participantId, "accept");
+}
+
+export async function rejectRequestAction(
+  activityId: string,
+  participantId: string,
+): Promise<ApiActionResult> {
+  return reviewRequest(activityId, participantId, "reject");
+}

@@ -3,7 +3,10 @@ from datetime import datetime
 from uuid import UUID
 
 from app.modules.activities.domain.entities.activity import Activity
-from app.modules.participations.domain.entities.participation import Participation
+from app.modules.participations.domain.entities.participation import (
+    Participation,
+    ParticipationStatus,
+)
 
 
 class ParticipationRepository(ABC):
@@ -15,18 +18,21 @@ class ParticipationRepository(ABC):
     def get_by_activity_and_user(
         self, activity_id: UUID, user_id: str
     ) -> Participation | None:
+        """Solicitud del usuario en la actividad, en cualquier estado."""
         ...
 
     @abstractmethod
     def count_by_activity_id(self, activity_id: UUID) -> int:
-        ...
-
-    @abstractmethod
-    def is_participating(self, activity_id: UUID, user_id: str) -> bool:
+        """Cuenta solo las participaciones confirmadas (aceptadas)."""
         ...
 
     @abstractmethod
     def delete(self, activity_id: UUID, user_id: str) -> bool:
+        ...
+
+    @abstractmethod
+    def delete_unconfirmed_by_activity_id(self, activity_id: UUID) -> None:
+        """Borra las solicitudes pendientes y rechazadas de una actividad."""
         ...
 
     @abstractmethod
@@ -37,6 +43,8 @@ class ParticipationRepository(ABC):
 
     @abstractmethod
     def list_participants_by_activity_id(
-        self, activity_id: UUID
+        self,
+        activity_id: UUID,
+        status: ParticipationStatus = ParticipationStatus.ACCEPTED,
     ) -> list[tuple[Participation, str, str | None]]:
         ...

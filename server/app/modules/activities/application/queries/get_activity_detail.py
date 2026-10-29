@@ -7,6 +7,7 @@ from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
+from app.modules.participations.domain.entities.participation import ParticipationStatus
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
 )
@@ -49,7 +50,9 @@ class ActivityDetailDTO:
     creator_name: str | None = None
     creator_image: str | None = None
     is_participating: bool = False
+    participation_status: str | None = None
     participants: list[ActivityParticipantDetailDTO] = field(default_factory=list)
+    pending_requests: list[ActivityParticipantDetailDTO] = field(default_factory=list)
     detail: ActivityDetailDataDTO | None = None
     causes: tuple[CauseDTO, ...] = ()
 
@@ -78,27 +81,28 @@ class GetActivityDetailQueryHandler:
         if activity_status == "draft" and activity.owner_id != query.current_user_id:
             raise ActivityNotFoundException()
 
-        is_participating = False
+        is_owner = bool(query.current_user_id and activity.owner_id == query.current_user_id)
+
+        participation_status: str | None = None
         if self.participation_repository and query.current_user_id:
-            is_participating = self.participation_repository.is_participating(
+            own_request = self.participation_repository.get_by_activity_and_user(
                 query.activity_id, query.current_user_id
             )
+            if own_request is not None:
+                participation_status = own_request.status.value
+        is_participating = participation_status == ParticipationStatus.ACCEPTED.value
 
         participants: list[ActivityParticipantDetailDTO] = []
+        pending_requests: list[ActivityParticipantDetailDTO] = []
         if self.participation_repository:
-            raw_participants = (
-                self.participation_repository.list_participants_by_activity_id(
-                    query.activity_id
-                )
+            participants = self._list_participants(
+                query.activity_id, ParticipationStatus.ACCEPTED
             )
-            participants = [
-                ActivityParticipantDetailDTO(
-                    id=part.user_id,
-                    name=user_name,
-                    image=user_image,
+            # Solo el organizador ve quién está esperando respuesta
+            if is_owner:
+                pending_requests = self._list_participants(
+                    query.activity_id, ParticipationStatus.PENDING
                 )
-                for part, user_name, user_image in raw_participants
-            ]
 
         detail_dto = (
             ActivityDetailDataDTO(
@@ -120,8 +124,6 @@ class GetActivityDetailQueryHandler:
             for c in causes_entities
         )
 
-        is_owner = bool(query.current_user_id and activity.owner_id == query.current_user_id)
-
         return ActivityDetailDTO(
             id=activity.id,
             name=activity.name,
@@ -134,7 +136,24 @@ class GetActivityDetailQueryHandler:
             creator_name=activity.creator_name,
             creator_image=activity.creator_image,
             is_participating=is_participating,
+            participation_status=participation_status,
             participants=participants,
+            pending_requests=pending_requests,
             detail=detail_dto,
             causes=causes_dtos,
         )
+
+    def _list_participants(
+        self, activity_id: UUID, status: ParticipationStatus
+    ) -> list[ActivityParticipantDetailDTO]:
+        raw_participants = self.participation_repository.list_participants_by_activity_id(
+            activity_id, status
+        )
+        return [
+            ActivityParticipantDetailDTO(
+                id=part.user_id,
+                name=user_name,
+                image=user_image,
+            )
+            for part, user_name, user_image in raw_participants
+        ]

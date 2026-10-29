@@ -4,11 +4,13 @@ import { useState, useTransition } from "react";
 import {
   Check,
   CheckCircle2,
+  Clock,
   Loader2,
   Lock,
   Rocket,
   RotateCcw,
   UserMinus,
+  XCircle,
 } from "lucide-react";
 import type { ActivityDetailData } from "@/features/activities/domain/entities/activity.entity";
 import { appToast } from "@/features/shared/presentation/components/notifications/toast";
@@ -37,8 +39,11 @@ export function ActivityDetailActions({
     status,
     isOwner,
     isParticipating,
+    participationStatus,
     detail,
   } = activity;
+  const isRequestPending = participationStatus === "pending";
+  const isRequestRejected = participationStatus === "rejected";
   const hasLocation = Boolean(
     detail?.latitude != null && detail?.longitude != null,
   );
@@ -59,14 +64,14 @@ export function ActivityDetailActions({
       const res = await joinActivityAction(activityId);
       if (!res.ok) {
         appToast.error(
-          "Error al unirse a la actividad",
-          res.errors?.[0] ?? "No se pudo registrar tu participación.",
+          "Error al enviar la solicitud",
+          res.errors?.[0] ?? "No se pudo registrar tu solicitud.",
         );
         return;
       }
       setJoinDialogOpen(false);
       appToast.success(
-        "¡Excelente! Has confirmado tu asistencia a la actividad.",
+        "¡Solicitud enviada! El organizador la revisará pronto.",
       );
     });
   };
@@ -82,7 +87,11 @@ export function ActivityDetailActions({
         return;
       }
       setLeaveDialogOpen(false);
-      appToast.success("Has cancelado tu confirmación de asistencia.");
+      appToast.success(
+        isRequestPending
+          ? "Has cancelado tu solicitud de participación."
+          : "Has cancelado tu confirmación de asistencia.",
+      );
     });
   };
 
@@ -191,6 +200,27 @@ export function ActivityDetailActions({
                   <UserMinus className="w-5 h-5 stroke-current" />
                   <span>Cancelar participación</span>
                 </button>
+              ) : isRequestPending ? (
+                <button
+                  type="button"
+                  onClick={() => setLeaveDialogOpen(true)}
+                  disabled={isPending}
+                  aria-label="Solicitud pendiente. Pulsa para cancelar la solicitud"
+                  title="Pulsa para cancelar tu solicitud"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 cursor-pointer bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                  <Clock className="w-5 h-5 stroke-current" />
+                  <span>Solicitud pendiente</span>
+                </button>
+              ) : isRequestRejected ? (
+                <button
+                  type="button"
+                  disabled
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                >
+                  <XCircle className="w-4 h-4" />
+                  <span>Solicitud rechazada</span>
+                </button>
               ) : isFull ? (
                 <button
                   type="button"
@@ -205,11 +235,11 @@ export function ActivityDetailActions({
                   type="button"
                   onClick={() => setJoinDialogOpen(true)}
                   disabled={isPending}
-                  aria-label="Confirmar asistencia al evento"
+                  aria-label="Solicitar participar en el evento"
                   className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] cursor-pointer bg-[#6355de] hover:bg-[#5244cc] text-white"
                 >
                   <Check className="w-5 h-5 stroke-current" />
-                  <span>Participar</span>
+                  <span>Solicitar participar</span>
                 </button>
               )
             ) : (
@@ -308,6 +338,7 @@ export function ActivityDetailActions({
         onConfirm={handleConfirmLeave}
         isPending={isPending}
         activityName={activityName}
+        isRequest={isRequestPending}
       />
     </>
   );

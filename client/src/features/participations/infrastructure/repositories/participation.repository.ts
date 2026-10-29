@@ -24,7 +24,23 @@ export const participationRepositoryImpl: ParticipationRepository = {
     return apiRequestStatus({
       url: `${BASE_URL}/${activityId}`,
       method: "POST",
-      fallbackMessage: "Error al unirse a la actividad.",
+      fallbackMessage: "Error al enviar la solicitud de participación.",
+    });
+  },
+
+  async acceptRequest(activityId: string, participantId: string): Promise<ApiActionResult> {
+    return apiRequestStatus({
+      url: `${BASE_URL}/${activityId}/requests/${encodeURIComponent(participantId)}/accept`,
+      method: "POST",
+      fallbackMessage: "Error al aceptar la solicitud.",
+    });
+  },
+
+  async rejectRequest(activityId: string, participantId: string): Promise<ApiActionResult> {
+    return apiRequestStatus({
+      url: `${BASE_URL}/${activityId}/requests/${encodeURIComponent(participantId)}/reject`,
+      method: "POST",
+      fallbackMessage: "Error al rechazar la solicitud.",
     });
   },
 

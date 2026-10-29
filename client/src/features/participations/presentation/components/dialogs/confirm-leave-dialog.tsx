@@ -19,6 +19,8 @@ type ConfirmLeaveDialogProps = {
   onConfirm: () => void;
   isPending: boolean;
   activityName?: string;
+  /** true cuando lo que se cancela es una solicitud aún pendiente */
+  isRequest?: boolean;
 };
 
 export function ConfirmLeaveDialog({
@@ -27,7 +29,13 @@ export function ConfirmLeaveDialog({
   onConfirm,
   isPending,
   activityName,
+  isRequest = false,
 }: ConfirmLeaveDialogProps) {
+  const subject = isRequest ? "tu solicitud de participación" : "tu participación";
+  const consequence = isRequest
+    ? "El organizador ya no la verá en su lista de solicitudes."
+    : "Tu cupo reservado quedará disponible para que otro voluntario pueda unirse.";
+
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent className="rounded-3xl p-6 sm:p-7 max-w-sm sm:max-w-md">
@@ -35,16 +43,18 @@ export function ConfirmLeaveDialog({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100 text-rose-600 mb-1">
             <AlertCircle className="h-7 w-7" />
           </div>
-          <AlertDialogTitle>Cancelar participación</AlertDialogTitle>
+          <AlertDialogTitle>
+            {isRequest ? "Cancelar solicitud" : "Cancelar participación"}
+          </AlertDialogTitle>
           <AlertDialogDescription>
             {activityName ? (
               <>
-                ¿Estás seguro de que deseas cancelar tu participación en{" "}
-                <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?
-                Tu cupo reservado quedará disponible para que otro voluntario pueda unirse.
+                ¿Estás seguro de que deseas cancelar {subject} en{" "}
+                <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?{" "}
+                {consequence}
               </>
             ) : (
-              "¿Estás seguro de que deseas cancelar tu participación? Tu cupo reservado quedará disponible para que otro voluntario pueda unirse."
+              `¿Estás seguro de que deseas cancelar ${subject}? ${consequence}`
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -53,7 +63,7 @@ export function ConfirmLeaveDialog({
             disabled={isPending}
             className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
           >
-            Mantener mi lugar
+            {isRequest ? "Mantener mi solicitud" : "Mantener mi lugar"}
           </AlertDialogCancel>
           <Button
             type="button"
@@ -67,6 +77,8 @@ export function ConfirmLeaveDialog({
                 <Spinner className="size-4 mr-2" />
                 <span>Cancelando...</span>
               </>
+            ) : isRequest ? (
+              "Sí, cancelar solicitud"
             ) : (
               "Sí, cancelar participación"
             )}
