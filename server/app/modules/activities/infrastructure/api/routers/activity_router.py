@@ -354,11 +354,11 @@ def get_activity_detail(
         status=dto.status,
         is_owner=dto.is_owner,
         is_participating=dto.is_participating,
-        participation_status=dto.participation_status,
+        estado_solicitud=dto.estado_solicitud,
         participants=participants_data,
-        pending_requests=[
+        solicitudes_pendientes=[
             ActivityParticipantRead(id=p.id, name=p.name, image=p.image)
-            for p in dto.pending_requests
+            for p in dto.solicitudes_pendientes
         ],
         detail=detail_data,
         causes=causes_data,

@@ -39,11 +39,11 @@ export function ActivityDetailActions({
     status,
     isOwner,
     isParticipating,
-    participationStatus,
+    estadoSolicitud,
     detail,
   } = activity;
-  const isRequestPending = participationStatus === "pending";
-  const isRequestRejected = participationStatus === "rejected";
+  const solicitudPendiente = estadoSolicitud === "pendiente";
+  const solicitudRechazada = estadoSolicitud === "rechazada";
   const hasLocation = Boolean(
     detail?.latitude != null && detail?.longitude != null,
   );
@@ -88,7 +88,7 @@ export function ActivityDetailActions({
       }
       setLeaveDialogOpen(false);
       appToast.success(
-        isRequestPending
+        solicitudPendiente
           ? "Has cancelado tu solicitud de participación."
           : "Has cancelado tu confirmación de asistencia.",
       );
@@ -200,7 +200,7 @@ export function ActivityDetailActions({
                   <UserMinus className="w-5 h-5 stroke-current" />
                   <span>Cancelar participación</span>
                 </button>
-              ) : isRequestPending ? (
+              ) : solicitudPendiente ? (
                 <button
                   type="button"
                   onClick={() => setLeaveDialogOpen(true)}
@@ -212,7 +212,7 @@ export function ActivityDetailActions({
                   <Clock className="w-5 h-5 stroke-current" />
                   <span>Solicitud pendiente</span>
                 </button>
-              ) : isRequestRejected ? (
+              ) : solicitudRechazada ? (
                 <button
                   type="button"
                   disabled
@@ -338,7 +338,7 @@ export function ActivityDetailActions({
         onConfirm={handleConfirmLeave}
         isPending={isPending}
         activityName={activityName}
-        isRequest={isRequestPending}
+        esSolicitud={solicitudPendiente}
       />
     </>
   );

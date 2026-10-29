@@ -8,8 +8,8 @@ from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
 from app.modules.participations.domain.entities.participation import (
+    EstadoParticipacion,
     Participation,
-    ParticipationStatus,
 )
 from app.modules.participations.domain.exceptions import (
     ActivityCapacityExceededException,
@@ -17,7 +17,7 @@ from app.modules.participations.domain.exceptions import (
     CannotJoinInactiveActivityException,
     CannotJoinOwnActivityException,
     CannotJoinPastActivityException,
-    RequestRejectedException,
+    SolicitudRechazadaException,
 )
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
@@ -66,12 +66,12 @@ class JoinActivityUseCase:
         if act_date <= now:
             raise CannotJoinPastActivityException()
 
-        existing = self.participation_repository.get_by_activity_and_user(
+        solicitud_existente = self.participation_repository.get_by_activity_and_user(
             command.activity_id, command.user_id
         )
-        if existing is not None:
-            if existing.status == ParticipationStatus.REJECTED:
-                raise RequestRejectedException()
+        if solicitud_existente is not None:
+            if solicitud_existente.estado == EstadoParticipacion.RECHAZADA:
+                raise SolicitudRechazadaException()
             raise AlreadyParticipatingException()
 
         current_count = self.participation_repository.count_by_activity_id(

@@ -1,13 +1,13 @@
 from sqlalchemy import and_
 from sqlalchemy.sql.elements import ColumnElement
 
-from app.modules.participations.domain.entities.participation import ParticipationStatus
+from app.modules.participations.domain.entities.participation import EstadoParticipacion
 from app.modules.participations.infrastructure.persistence.models.participation_model import (
     ParticipationModel,
 )
 
 
-def confirmed_participation() -> ColumnElement[bool]:
+def participacion_confirmada() -> ColumnElement[bool]:
     """Condición única de lo que cuenta como participación confirmada (ocupa un cupo).
 
     Todas las consultas que cuentan inscritos deben usar esta función,
@@ -15,5 +15,5 @@ def confirmed_participation() -> ColumnElement[bool]:
     """
     return and_(
         ParticipationModel.deleted_date.is_(None),
-        ParticipationModel.status == ParticipationStatus.ACCEPTED.value,
+        ParticipationModel.status == EstadoParticipacion.ACEPTADA.value,
     )

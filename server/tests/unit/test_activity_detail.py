@@ -27,7 +27,7 @@ from app.modules.activities.domain.entities.activity import Activity, ActivitySt
 from app.modules.activities.domain.entities.activity_detail import ActivityDetail
 from app.modules.participations.domain.entities.participation import (
     Participation,
-    ParticipationStatus,
+    EstadoParticipacion,
 )
 from app.shared.domain.exceptions import ForbiddenException, ValidationException
 
@@ -334,7 +334,7 @@ def test_get_activity_detail_with_participants():
 
     part_repo = MagicMock()
     part_repo.get_by_activity_and_user.return_value = Participation(
-        id=uuid4(), activity_id=activity_id, user_id="user_2", status=ParticipationStatus.ACCEPTED
+        id=uuid4(), activity_id=activity_id, user_id="user_2", estado=EstadoParticipacion.ACEPTADA
     )
     participation = Participation.create(activity_id=activity_id, user_id="user_2")
     part_repo.list_participants_by_activity_id.return_value = [

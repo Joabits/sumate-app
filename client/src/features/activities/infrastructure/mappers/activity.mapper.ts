@@ -93,13 +93,13 @@ export const activityMapper = {
       creatorImage: dto.creator_image ?? undefined,
       isOwner: dto.is_owner,
       isParticipating: dto.is_participating ?? false,
-      participationStatus: dto.participation_status ?? null,
+      estadoSolicitud: dto.estado_solicitud ?? null,
       participants: (dto.participants ?? []).map((p) => ({
         id: p.id,
         name: p.name,
         image: p.image ?? null,
       })),
-      pendingRequests: (dto.pending_requests ?? []).map((p) => ({
+      solicitudesPendientes: (dto.solicitudes_pendientes ?? []).map((p) => ({
         id: p.id,
         name: p.name,
         image: p.image ?? null,

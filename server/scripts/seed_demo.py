@@ -52,7 +52,7 @@ ACTIVITIES = [
         "lng": -66.1720,
         "description": "Jornada de recolección de residuos y reforestación en la zona baja del parque. Lleva gorra, agua y guantes.",
         "participants": ["demo-sofia", "demo-carlos"],
-        "pending": ["demo-luis", "demo-maria"],
+        "pendientes": ["demo-luis", "demo-maria"],
     },
     {
         "name": "Apoyo escolar en matemáticas",
@@ -81,7 +81,7 @@ ACTIVITIES = [
         "lng": -66.1571,
         "description": "Ayuda a registrar mascotas, orientar a los vecinos y apoyar a los veterinarios durante la jornada.",
         "participants": ["demo-carlos"],
-        "pending": [],
+        "pendientes": [],
     },
     {
         "name": "Acompañamiento en el hogar de ancianos",
@@ -110,7 +110,7 @@ ACTIVITIES = [
         "lng": None,
         "description": "Taller introductorio de programación con Scratch y Python para adolescentes. Se necesitan mentores.",
         "participants": ["demo-carlos"],
-        "pending": ["demo-sofia", "demo-luis"],
+        "pendientes": ["demo-sofia", "demo-luis"],
     },
     {
         "name": "Torneo deportivo solidario",
@@ -139,8 +139,8 @@ ACTIVITIES = [
         "lng": -66.1545,
         "description": "Pintaremos un mural junto a los comerciantes del mercado. No necesitas experiencia, solo ganas.",
         "participants": ["demo-ana"],
-        "pending": ["demo-carlos"],
-        "rejected": ["demo-luis"],
+        "pendientes": ["demo-carlos"],
+        "rechazadas": ["demo-luis"],
     },
     {
         "name": "Feria de salud preventiva",
@@ -227,14 +227,14 @@ def seed_activities(session: Session) -> None:
         )
         for slug in item["causes"]:
             session.add(ActivityCauseModel(activity_id=activity.id, cause_id=causes[slug]))
-        requests = (
-            [(user_id, "accepted") for user_id in item["participants"]]
-            + [(user_id, "pending") for user_id in item.get("pending", [])]
-            + [(user_id, "rejected") for user_id in item.get("rejected", [])]
+        solicitudes = (
+            [(user_id, "aceptada") for user_id in item["participants"]]
+            + [(user_id, "pendiente") for user_id in item.get("pendientes", [])]
+            + [(user_id, "rechazada") for user_id in item.get("rechazadas", [])]
         )
-        for user_id, status in requests:
+        for user_id, estado in solicitudes:
             session.add(
-                ParticipationModel(activity_id=activity.id, user_id=user_id, status=status)
+                ParticipationModel(activity_id=activity.id, user_id=user_id, status=estado)
             )
 
 

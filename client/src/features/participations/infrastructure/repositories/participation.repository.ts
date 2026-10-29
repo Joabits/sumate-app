@@ -17,7 +17,7 @@ import type { ParticipationRepository } from "../../domain/repositories/particip
 import { participationMapper } from "../mappers/participation.mapper";
 import { ParticipatedActivityListResponseSchema } from "../schemas/participation.schemas";
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/participations`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/participaciones`;
 
 export const participationRepositoryImpl: ParticipationRepository = {
   async joinActivity(activityId: string): Promise<ApiActionResult> {
@@ -28,17 +28,17 @@ export const participationRepositoryImpl: ParticipationRepository = {
     });
   },
 
-  async acceptRequest(activityId: string, participantId: string): Promise<ApiActionResult> {
+  async aceptarSolicitud(activityId: string, participanteId: string): Promise<ApiActionResult> {
     return apiRequestStatus({
-      url: `${BASE_URL}/${activityId}/requests/${encodeURIComponent(participantId)}/accept`,
+      url: `${BASE_URL}/${activityId}/solicitudes/${encodeURIComponent(participanteId)}/aceptar`,
       method: "POST",
       fallbackMessage: "Error al aceptar la solicitud.",
     });
   },
 
-  async rejectRequest(activityId: string, participantId: string): Promise<ApiActionResult> {
+  async rechazarSolicitud(activityId: string, participanteId: string): Promise<ApiActionResult> {
     return apiRequestStatus({
-      url: `${BASE_URL}/${activityId}/requests/${encodeURIComponent(participantId)}/reject`,
+      url: `${BASE_URL}/${activityId}/solicitudes/${encodeURIComponent(participanteId)}/rechazar`,
       method: "POST",
       fallbackMessage: "Error al rechazar la solicitud.",
     });

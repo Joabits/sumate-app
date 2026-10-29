@@ -12,7 +12,7 @@ import { ActivityDetailInfo } from "../elements/activity-detail-info";
 import { ActivityDetailTitle } from "../elements/activity-detail-title";
 import { ActivityDetailOrganizer } from "../elements/activity-detail-organizer";
 import { ActivityDetailParticipants } from "../elements/activity-detail-participants";
-import { ActivityDetailPendingRequests } from "../elements/activity-detail-pending-requests";
+import { SolicitudesPendientes } from "../elements/solicitudes-pendientes";
 
 type ActivityDetailViewProps = {
   activity: ActivityDetailData;
@@ -64,7 +64,7 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
           <ActivityDetailOrganizer activity={activity} />
 
           {/* 6. Solicitudes pendientes (solo organizador) y participantes confirmados */}
-          <ActivityDetailPendingRequests activity={activity} />
+          <SolicitudesPendientes activity={activity} />
           <ActivityDetailParticipants activity={activity} />
         </div>
 
@@ -95,7 +95,7 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
             <ActivityDetailOrganizer activity={activity} />
 
             {/* Solicitudes pendientes (solo organizador) y participantes confirmados */}
-            <ActivityDetailPendingRequests activity={activity} />
+            <SolicitudesPendientes activity={activity} />
             <ActivityDetailParticipants activity={activity} />
           </div>
         </div>

@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from enum import StrEnum
 from uuid import UUID, uuid4
 
-from app.modules.participations.domain.exceptions import RequestNotPendingException
+from app.modules.participations.domain.exceptions import SolicitudYaRevisadaException
 
 
-class ParticipationStatus(StrEnum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-    REJECTED = "rejected"
+class EstadoParticipacion(StrEnum):
+    PENDIENTE = "pendiente"
+    ACEPTADA = "aceptada"
+    RECHAZADA = "rechazada"
 
 
 @dataclass
@@ -16,7 +16,7 @@ class Participation:
     id: UUID
     activity_id: UUID
     user_id: str
-    status: ParticipationStatus = ParticipationStatus.PENDING
+    estado: EstadoParticipacion = EstadoParticipacion.PENDIENTE
 
     @classmethod
     def create(
@@ -29,15 +29,15 @@ class Participation:
             id=uuid4(),
             activity_id=activity_id,
             user_id=user_id,
-            status=ParticipationStatus.PENDING,
+            estado=EstadoParticipacion.PENDIENTE,
         )
 
-    def accept(self) -> None:
-        if self.status != ParticipationStatus.PENDING:
-            raise RequestNotPendingException()
-        self.status = ParticipationStatus.ACCEPTED
+    def aceptar(self) -> None:
+        if self.estado != EstadoParticipacion.PENDIENTE:
+            raise SolicitudYaRevisadaException()
+        self.estado = EstadoParticipacion.ACEPTADA
 
-    def reject(self) -> None:
-        if self.status != ParticipationStatus.PENDING:
-            raise RequestNotPendingException()
-        self.status = ParticipationStatus.REJECTED
+    def rechazar(self) -> None:
+        if self.estado != EstadoParticipacion.PENDIENTE:
+            raise SolicitudYaRevisadaException()
+        self.estado = EstadoParticipacion.RECHAZADA

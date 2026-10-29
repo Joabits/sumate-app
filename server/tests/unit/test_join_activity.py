@@ -11,7 +11,7 @@ from app.modules.participations.application.use_cases.join_activity import (
 )
 from app.modules.participations.domain.entities.participation import (
     Participation,
-    ParticipationStatus,
+    EstadoParticipacion,
 )
 from app.modules.participations.domain.exceptions import (
     ActivityCapacityExceededException,
@@ -244,7 +244,7 @@ def test_join_activity_already_participating():
     act_repo.get_by_id.return_value = activity
     part_repo = MagicMock()
     part_repo.get_by_activity_and_user.return_value = Participation(
-        id=uuid4(), activity_id=activity_id, user_id=user_id, status=ParticipationStatus.ACCEPTED
+        id=uuid4(), activity_id=activity_id, user_id=user_id, estado=EstadoParticipacion.ACEPTADA
     )
     uow = MagicMock()
 

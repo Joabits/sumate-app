@@ -24,12 +24,12 @@ export interface ParticipationRepository {
   /**
    * El organizador acepta la solicitud de un voluntario.
    */
-  acceptRequest(activityId: string, participantId: string): Promise<ApiActionResult>;
+  aceptarSolicitud(activityId: string, participanteId: string): Promise<ApiActionResult>;
 
   /**
    * El organizador rechaza la solicitud de un voluntario.
    */
-  rejectRequest(activityId: string, participantId: string): Promise<ApiActionResult>;
+  rechazarSolicitud(activityId: string, participanteId: string): Promise<ApiActionResult>;
 
   /**
    * Lista las actividades en las que participa o ha participado el usuario actual.

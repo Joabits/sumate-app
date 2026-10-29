@@ -20,7 +20,7 @@ type ConfirmLeaveDialogProps = {
   isPending: boolean;
   activityName?: string;
   /** true cuando lo que se cancela es una solicitud aún pendiente */
-  isRequest?: boolean;
+  esSolicitud?: boolean;
 };
 
 export function ConfirmLeaveDialog({
@@ -29,10 +29,10 @@ export function ConfirmLeaveDialog({
   onConfirm,
   isPending,
   activityName,
-  isRequest = false,
+  esSolicitud = false,
 }: ConfirmLeaveDialogProps) {
-  const subject = isRequest ? "tu solicitud de participación" : "tu participación";
-  const consequence = isRequest
+  const sujeto = esSolicitud ? "tu solicitud de participación" : "tu participación";
+  const consecuencia = esSolicitud
     ? "El organizador ya no la verá en su lista de solicitudes."
     : "Tu cupo reservado quedará disponible para que otro voluntario pueda unirse.";
 
@@ -44,17 +44,17 @@ export function ConfirmLeaveDialog({
             <AlertCircle className="h-7 w-7" />
           </div>
           <AlertDialogTitle>
-            {isRequest ? "Cancelar solicitud" : "Cancelar participación"}
+            {esSolicitud ? "Cancelar solicitud" : "Cancelar participación"}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {activityName ? (
               <>
-                ¿Estás seguro de que deseas cancelar {subject} en{" "}
+                ¿Estás seguro de que deseas cancelar {sujeto} en{" "}
                 <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span>?{" "}
-                {consequence}
+                {consecuencia}
               </>
             ) : (
-              `¿Estás seguro de que deseas cancelar ${subject}? ${consequence}`
+              `¿Estás seguro de que deseas cancelar ${sujeto}? ${consecuencia}`
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -63,7 +63,7 @@ export function ConfirmLeaveDialog({
             disabled={isPending}
             className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
           >
-            {isRequest ? "Mantener mi solicitud" : "Mantener mi lugar"}
+            {esSolicitud ? "Mantener mi solicitud" : "Mantener mi lugar"}
           </AlertDialogCancel>
           <Button
             type="button"
@@ -77,7 +77,7 @@ export function ConfirmLeaveDialog({
                 <Spinner className="size-4 mr-2" />
                 <span>Cancelando...</span>
               </>
-            ) : isRequest ? (
+            ) : esSolicitud ? (
               "Sí, cancelar solicitud"
             ) : (
               "Sí, cancelar participación"

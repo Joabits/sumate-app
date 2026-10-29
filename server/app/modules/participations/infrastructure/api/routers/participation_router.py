@@ -16,10 +16,10 @@ from app.modules.participations.application.use_cases.leave_activity import (
     LeaveActivityCommand,
     LeaveActivityUseCase,
 )
-from app.modules.participations.application.use_cases.review_participation_request import (
-    AcceptParticipationRequestUseCase,
-    RejectParticipationRequestUseCase,
-    ReviewParticipationRequestCommand,
+from app.modules.participations.application.use_cases.revisar_solicitud import (
+    AceptarSolicitudUseCase,
+    RechazarSolicitudUseCase,
+    RevisarSolicitudCommand,
 )
 from app.modules.activities.infrastructure.api.schemas.cause_schemas import (
     CauseRead,
@@ -33,7 +33,7 @@ from app.modules.participations.infrastructure.persistence.repositories.sqlmodel
 )
 from fastapi import APIRouter, Response, status
 
-router = APIRouter(prefix="/participations", tags=["Participaciones"])
+router = APIRouter(prefix="/participaciones", tags=["Participaciones"])
 
 
 @router.get(
@@ -61,7 +61,7 @@ def list_my_participations(
                 status=item.status,
                 enrolled_date=item.enrolled_date,
                 is_past=item.is_past,
-                participation_status=item.participation_status,
+                estado_solicitud=item.estado_solicitud,
                 creator_name=item.creator_name,
                 creator_image=item.creator_image,
                 causes=[
@@ -129,54 +129,54 @@ def leave_activity(
 
 
 @router.post(
-    "/{activity_id}/requests/{participant_id}/accept",
+    "/{activity_id}/solicitudes/{participante_id}/aceptar",
     status_code=status.HTTP_200_OK,
     summary="Aceptar una solicitud de participación (solo organizador)",
 )
-def accept_participation_request(
+def aceptar_solicitud(
     activity_id: UUID,
-    participant_id: str,
+    participante_id: str,
     current_user: CurrentUser,
     db: DBSession,
     uow: UoWDep,
 ) -> Response:
-    use_case = AcceptParticipationRequestUseCase(
+    use_case = AceptarSolicitudUseCase(
         activity_repository=SQLModelActivityRepository(db),
         participation_repository=SQLModelParticipationRepository(db),
         uow=uow,
     )
     use_case.execute(
-        ReviewParticipationRequestCommand(
+        RevisarSolicitudCommand(
             activity_id=activity_id,
-            participant_id=participant_id,
-            organizer_id=current_user.user_id,
+            participante_id=participante_id,
+            organizador_id=current_user.user_id,
         )
     )
     return Response(status_code=status.HTTP_200_OK)
 
 
 @router.post(
-    "/{activity_id}/requests/{participant_id}/reject",
+    "/{activity_id}/solicitudes/{participante_id}/rechazar",
     status_code=status.HTTP_200_OK,
     summary="Rechazar una solicitud de participación (solo organizador)",
 )
-def reject_participation_request(
+def rechazar_solicitud(
     activity_id: UUID,
-    participant_id: str,
+    participante_id: str,
     current_user: CurrentUser,
     db: DBSession,
     uow: UoWDep,
 ) -> Response:
-    use_case = RejectParticipationRequestUseCase(
+    use_case = RechazarSolicitudUseCase(
         activity_repository=SQLModelActivityRepository(db),
         participation_repository=SQLModelParticipationRepository(db),
         uow=uow,
     )
     use_case.execute(
-        ReviewParticipationRequestCommand(
+        RevisarSolicitudCommand(
             activity_id=activity_id,
-            participant_id=participant_id,
-            organizer_id=current_user.user_id,
+            participante_id=participante_id,
+            organizador_id=current_user.user_id,
         )
     )
     return Response(status_code=status.HTTP_200_OK)

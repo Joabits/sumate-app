@@ -70,9 +70,9 @@ export const ActivityDetailDataResponseSchema = z.object({
   creator_image: z.string().nullable().optional(),
   is_owner: z.boolean(),
   is_participating: z.boolean().optional().default(false),
-  participation_status: z.enum(["pending", "accepted", "rejected"]).nullable().optional().default(null),
+  estado_solicitud: z.enum(["pendiente", "aceptada", "rechazada"]).nullable().optional().default(null),
   participants: z.array(ActivityParticipantResponseSchema).optional().default([]),
-  pending_requests: z.array(ActivityParticipantResponseSchema).optional().default([]),
+  solicitudes_pendientes: z.array(ActivityParticipantResponseSchema).optional().default([]),
   detail: ActivityDetailResponseSchema.nullable().optional(),
   causes: z.array(CauseResponseSchema).optional().default([]),
 });

@@ -4,8 +4,8 @@ from uuid import UUID
 
 from app.modules.activities.domain.entities.activity import Activity
 from app.modules.participations.domain.entities.participation import (
+    EstadoParticipacion,
     Participation,
-    ParticipationStatus,
 )
 
 
@@ -31,7 +31,7 @@ class ParticipationRepository(ABC):
         ...
 
     @abstractmethod
-    def delete_unconfirmed_by_activity_id(self, activity_id: UUID) -> None:
+    def eliminar_no_confirmadas(self, activity_id: UUID) -> None:
         """Borra las solicitudes pendientes y rechazadas de una actividad."""
         ...
 
@@ -45,6 +45,6 @@ class ParticipationRepository(ABC):
     def list_participants_by_activity_id(
         self,
         activity_id: UUID,
-        status: ParticipationStatus = ParticipationStatus.ACCEPTED,
+        estado: EstadoParticipacion = EstadoParticipacion.ACEPTADA,
     ) -> list[tuple[Participation, str, str | None]]:
         ...

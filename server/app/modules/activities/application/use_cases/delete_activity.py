@@ -48,7 +48,7 @@ class DeleteActivityUseCase:
                 "No se puede eliminar una actividad que ya cuenta con participantes inscritos."
             )
 
-        self.participation_repository.delete_unconfirmed_by_activity_id(command.activity_id)
+        self.participation_repository.eliminar_no_confirmadas(command.activity_id)
         self.activity_repository.delete(activity)
         self.uow.commit()
         return activity.image_url

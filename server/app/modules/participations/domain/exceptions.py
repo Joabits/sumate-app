@@ -41,16 +41,16 @@ class CannotLeavePastActivityException(ValidationException):
     message = "No es posible cancelar la participación de una actividad que ya ha concluido o cuya fecha ya transcurrió."
 
 
-class RequestRejectedException(ConflictException):
-    code = "PARTICIPATION_REQUEST_REJECTED"
+class SolicitudRechazadaException(ConflictException):
+    code = "SOLICITUD_RECHAZADA"
     message = "Tu solicitud para esta actividad fue rechazada por el organizador."
 
 
-class RequestNotPendingException(ConflictException):
-    code = "PARTICIPATION_REQUEST_NOT_PENDING"
+class SolicitudYaRevisadaException(ConflictException):
+    code = "SOLICITUD_YA_REVISADA"
     message = "La solicitud ya fue revisada por el organizador."
 
 
-class NotActivityOrganizerException(ForbiddenException):
-    code = "NOT_ACTIVITY_ORGANIZER"
+class NoEsOrganizadorException(ForbiddenException):
+    code = "NO_ES_ORGANIZADOR"
     message = "Solo el organizador de la actividad puede revisar las solicitudes."

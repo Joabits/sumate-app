@@ -9,14 +9,14 @@ from app.modules.activities.infrastructure.persistence.models.activity_model imp
     ActivityModel,
 )
 from app.modules.participations.domain.entities.participation import (
+    EstadoParticipacion,
     Participation,
-    ParticipationStatus,
 )
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
 )
-from app.modules.participations.infrastructure.persistence.filters import (
-    confirmed_participation,
+from app.modules.participations.infrastructure.persistence.filtros import (
+    participacion_confirmada,
 )
 from app.modules.participations.infrastructure.persistence.mappers.participation_mapper import (
     ParticipationMapper,
@@ -42,7 +42,7 @@ class SQLModelParticipationRepository(ParticipationRepository):
 
         record.activity_id = participation.activity_id
         record.user_id = participation.user_id
-        record.status = participation.status.value
+        record.status = participation.estado.value
         record.modified_date = datetime.now(timezone.utc)
 
     def get_by_activity_and_user(
@@ -61,15 +61,15 @@ class SQLModelParticipationRepository(ParticipationRepository):
     def count_by_activity_id(self, activity_id: UUID) -> int:
         statement = select(func.count(ParticipationModel.id)).where(
             ParticipationModel.activity_id == activity_id,
-            confirmed_participation(),
+            participacion_confirmada(),
         )
         count = self.db.exec(statement).one()
         return int(count)
 
-    def delete_unconfirmed_by_activity_id(self, activity_id: UUID) -> None:
+    def eliminar_no_confirmadas(self, activity_id: UUID) -> None:
         statement = select(ParticipationModel).where(
             ParticipationModel.activity_id == activity_id,
-            ParticipationModel.status != ParticipationStatus.ACCEPTED.value,
+            ParticipationModel.status != EstadoParticipacion.ACEPTADA.value,
         )
         for record in self.db.exec(statement).all():
             self.db.delete(record)
@@ -119,7 +119,7 @@ class SQLModelParticipationRepository(ParticipationRepository):
     def list_participants_by_activity_id(
         self,
         activity_id: UUID,
-        status: ParticipationStatus = ParticipationStatus.ACCEPTED,
+        estado: EstadoParticipacion = EstadoParticipacion.ACEPTADA,
     ) -> list[tuple[Participation, str, str | None]]:
         statement = (
             select(
@@ -131,7 +131,7 @@ class SQLModelParticipationRepository(ParticipationRepository):
             .where(
                 ParticipationModel.activity_id == activity_id,
                 ParticipationModel.deleted_date.is_(None),
-                ParticipationModel.status == status.value,
+                ParticipationModel.status == estado.value,
             )
             .order_by(ParticipationModel.created_date.asc())
         )

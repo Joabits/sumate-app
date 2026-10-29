@@ -55,7 +55,7 @@ export type ActivityDetail = {
   description: string | null;
 };
 
-export type ParticipationRequestStatus = "pending" | "accepted" | "rejected";
+export type EstadoSolicitud = "pendiente" | "aceptada" | "rechazada";
 
 export type ActivityParticipant = {
   id: string;
@@ -67,10 +67,10 @@ export type ActivityDetailData = Activity & {
   isOwner: boolean;
   isParticipating?: boolean;
   /** Estado de la solicitud del usuario actual (null si no ha solicitado). */
-  participationStatus: ParticipationRequestStatus | null;
+  estadoSolicitud: EstadoSolicitud | null;
   participants: ActivityParticipant[];
   /** Solicitudes pendientes de revisión (solo llegan al organizador). */
-  pendingRequests: ActivityParticipant[];
+  solicitudesPendientes: ActivityParticipant[];
   detail: ActivityDetail | null;
   causes: Cause[];
 };

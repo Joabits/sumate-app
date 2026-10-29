@@ -6,7 +6,7 @@ from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
-from app.modules.participations.domain.entities.participation import ParticipationStatus
+from app.modules.participations.domain.entities.participation import EstadoParticipacion
 from app.modules.participations.domain.exceptions import (
     CannotLeavePastActivityException,
     ParticipationNotFoundException,
@@ -49,10 +49,10 @@ class LeaveActivityUseCase:
             raise CannotLeavePastActivityException()
 
         # Una solicitud rechazada no se puede borrar: así no se puede volver a solicitar
-        participation = self.participation_repository.get_by_activity_and_user(
+        solicitud = self.participation_repository.get_by_activity_and_user(
             command.activity_id, command.user_id
         )
-        if participation is None or participation.status == ParticipationStatus.REJECTED:
+        if solicitud is None or solicitud.estado == EstadoParticipacion.RECHAZADA:
             raise ParticipationNotFoundException()
 
         deleted = self.participation_repository.delete(

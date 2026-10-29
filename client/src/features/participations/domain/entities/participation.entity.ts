@@ -6,7 +6,7 @@
 
 import type {
   Cause,
-  ParticipationRequestStatus,
+  EstadoSolicitud,
 } from "@/features/activities/domain/entities/activity.entity";
 
 export type Participation = {
@@ -26,7 +26,7 @@ export type ParticipatedActivityListItem = {
   status: string;
   enrolledDate: string;
   isPast: boolean;
-  participationStatus: ParticipationRequestStatus;
+  estadoSolicitud: EstadoSolicitud;
   creatorName?: string;
   creatorImage?: string;
   causes?: Cause[];

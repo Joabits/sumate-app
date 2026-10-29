@@ -45,19 +45,19 @@ export async function leaveActivityAction(activityId: string): Promise<ApiAction
   return result;
 }
 
-async function reviewRequest(
+async function revisarSolicitud(
   activityId: string,
-  participantId: string,
-  decision: "accept" | "reject",
+  participanteId: string,
+  decision: "aceptar" | "rechazar",
 ): Promise<ApiActionResult> {
-  if (!activityId?.trim() || !participantId?.trim()) {
+  if (!activityId?.trim() || !participanteId?.trim()) {
     return errorResult("Solicitud inválida.");
   }
 
   const result =
-    decision === "accept"
-      ? await participationRepositoryImpl.acceptRequest(activityId, participantId)
-      : await participationRepositoryImpl.rejectRequest(activityId, participantId);
+    decision === "aceptar"
+      ? await participationRepositoryImpl.aceptarSolicitud(activityId, participanteId)
+      : await participationRepositoryImpl.rechazarSolicitud(activityId, participanteId);
 
   if (result.ok) {
     revalidatePath(`/activities/${activityId}`);
@@ -71,16 +71,16 @@ async function reviewRequest(
   return result;
 }
 
-export async function acceptRequestAction(
+export async function aceptarSolicitudAction(
   activityId: string,
-  participantId: string,
+  participanteId: string,
 ): Promise<ApiActionResult> {
-  return reviewRequest(activityId, participantId, "accept");
+  return revisarSolicitud(activityId, participanteId, "aceptar");
 }
 
-export async function rejectRequestAction(
+export async function rechazarSolicitudAction(
   activityId: string,
-  participantId: string,
+  participanteId: string,
 ): Promise<ApiActionResult> {
-  return reviewRequest(activityId, participantId, "reject");
+  return revisarSolicitud(activityId, participanteId, "rechazar");
 }
