@@ -63,7 +63,7 @@ export function SolicitudesPendientes({ activity }: SolicitudesPendientesProps) 
       <div className="flex items-center justify-between mb-3">
         <h3
           id="titulo-solicitudes-pendientes"
-          className="text-xs font-semibold tracking-wider text-slate-400 uppercase"
+          className="text-xs font-semibold tracking-wider text-slate-500 uppercase"
         >
           Solicitudes pendientes
         </h3>
@@ -119,7 +119,7 @@ export function SolicitudesPendientes({ activity }: SolicitudesPendientesProps) 
                   onClick={() => manejarDecision(p.id, p.name, "rechazar")}
                   disabled={enProceso}
                   aria-label={`Rechazar solicitud de ${p.name}`}
-                  className="flex items-center gap-1 h-9 px-3 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {estaOcupado && ocupado?.decision === "rechazar" ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -133,7 +133,7 @@ export function SolicitudesPendientes({ activity }: SolicitudesPendientesProps) 
                   onClick={() => manejarDecision(p.id, p.name, "aceptar")}
                   disabled={enProceso || cuposLlenos}
                   aria-label={`Aceptar solicitud de ${p.name}`}
-                  className="flex items-center gap-1 h-9 px-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {estaOcupado && ocupado?.decision === "aceptar" ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

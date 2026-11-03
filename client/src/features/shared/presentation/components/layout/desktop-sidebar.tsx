@@ -62,7 +62,7 @@ export function DesktopSidebar() {
 
       {/* Pie de navegación lateral */}
       <div className="px-6 py-5">
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           © {new Date().getFullYear()} Súmate
         </p>
       </div>

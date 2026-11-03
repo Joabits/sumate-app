@@ -247,11 +247,15 @@ function LocationMapSheetContent({
         {/* Footer con input de lugar y botón de confirmar ubicación */}
         <div className="p-4 sm:p-5 bg-white border-t border-slate-100 space-y-3.5 w-full">
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-700 flex items-center justify-between">
+            <label
+              htmlFor="place"
+              className="text-xs font-semibold text-slate-700 flex items-center justify-between"
+            >
               <span>Nombre o referencia del lugar</span>
               <span className="text-[11px] font-normal text-slate-400">Requerido</span>
             </label>
             <input
+              id="place"
               type="text"
               name="place"
               autoComplete="off"

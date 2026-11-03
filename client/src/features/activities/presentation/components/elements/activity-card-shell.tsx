@@ -58,6 +58,7 @@ export function ActivityCardShell({
   return (
     <Link
       href={`/activities/${id}`}
+      aria-label={name}
       className="block group pb-3 mb-3 border-b border-slate-100 last:border-b-0 last:mb-0 last:pb-0 lg:border-none lg:p-0 lg:mb-0 lg:pb-0 transition-all"
     >
       <article
