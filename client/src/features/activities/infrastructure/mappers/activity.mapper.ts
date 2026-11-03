@@ -104,6 +104,12 @@ export const activityMapper = {
         name: p.name,
         image: p.image ?? null,
       })),
+      posicionEnEspera: dto.posicion_en_espera ?? null,
+      listaDeEspera: (dto.lista_de_espera ?? []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        image: p.image ?? null,
+      })),
       detail: activityMapper.toActivityDetail(dto.detail),
       causes: (dto.causes ?? []).map(activityMapper.toCause),
     };

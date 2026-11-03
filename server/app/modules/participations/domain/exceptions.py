@@ -54,3 +54,8 @@ class SolicitudYaRevisadaException(ConflictException):
 class NoEsOrganizadorException(ForbiddenException):
     code = "NO_ES_ORGANIZADOR"
     message = "Solo el organizador de la actividad puede revisar las solicitudes."
+
+
+class NoEstaEnListaDeEsperaException(ConflictException):
+    code = "NO_ESTA_EN_LISTA_DE_ESPERA"
+    message = "La solicitud no está en la lista de espera."

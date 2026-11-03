@@ -140,10 +140,10 @@ class SQLModelActivityRepository(ActivityRepository):
             )
             .outerjoin(BetterAuthUser, ActivityModel.owner_id == BetterAuthUser.id)
             .outerjoin(subquery, ActivityModel.id == subquery.c.activity_id)
+            # Las actividades llenas también aparecen: se puede entrar a su lista de espera
             .where(
                 ActivityModel.deleted_date.is_(None),
                 ActivityModel.status == "active",
-                ActivityModel.capacity > func.coalesce(subquery.c.registered_count, 0),
             )
         )
 

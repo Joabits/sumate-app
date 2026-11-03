@@ -21,6 +21,8 @@ type ConfirmLeaveDialogProps = {
   activityName?: string;
   /** true cuando lo que se cancela es una solicitud aún pendiente */
   esSolicitud?: boolean;
+  /** true cuando la persona sale de la lista de espera */
+  enListaDeEspera?: boolean;
 };
 
 export function ConfirmLeaveDialog({
@@ -30,11 +32,18 @@ export function ConfirmLeaveDialog({
   isPending,
   activityName,
   esSolicitud = false,
+  enListaDeEspera = false,
 }: ConfirmLeaveDialogProps) {
-  const sujeto = esSolicitud ? "tu solicitud de participación" : "tu participación";
-  const consecuencia = esSolicitud
-    ? "El organizador ya no la verá en su lista de solicitudes."
-    : "Tu cupo reservado quedará disponible para que otro voluntario pueda unirse.";
+  const sujeto = enListaDeEspera
+    ? "tu lugar en la lista de espera"
+    : esSolicitud
+      ? "tu solicitud de participación"
+      : "tu participación";
+  const consecuencia = enListaDeEspera
+    ? "Perderás tu puesto y las personas detrás de ti avanzarán."
+    : esSolicitud
+      ? "El organizador ya no la verá en su lista de solicitudes."
+      : "Tu cupo quedará libre y, si hay lista de espera, entrará la primera persona.";
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
@@ -44,7 +53,11 @@ export function ConfirmLeaveDialog({
             <AlertCircle className="h-7 w-7" />
           </div>
           <AlertDialogTitle>
-            {esSolicitud ? "Cancelar solicitud" : "Cancelar participación"}
+            {enListaDeEspera
+              ? "Salir de la lista de espera"
+              : esSolicitud
+                ? "Cancelar solicitud"
+                : "Cancelar participación"}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {activityName ? (
@@ -63,7 +76,11 @@ export function ConfirmLeaveDialog({
             disabled={isPending}
             className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
           >
-            {esSolicitud ? "Mantener mi solicitud" : "Mantener mi lugar"}
+            {enListaDeEspera
+              ? "Mantener mi puesto"
+              : esSolicitud
+                ? "Mantener mi solicitud"
+                : "Mantener mi lugar"}
           </AlertDialogCancel>
           <Button
             type="button"
@@ -77,6 +94,8 @@ export function ConfirmLeaveDialog({
                 <Spinner className="size-4 mr-2" />
                 <span>Cancelando...</span>
               </>
+            ) : enListaDeEspera ? (
+              "Sí, salir de la lista"
             ) : esSolicitud ? (
               "Sí, cancelar solicitud"
             ) : (

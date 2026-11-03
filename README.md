@@ -27,3 +27,34 @@ El objetivo principal es reducir las barreras de participación juvenil en causa
 
 * **Frontend:** Next.js (TypeScript, Tailwind CSS)
 * **Backend:** FastAPI (Python, SQLAlchemy, PostgreSQL)
+
+---
+
+## Datos de prueba y pruebas E2E
+
+Semilla de las pruebas: un solo comando dentro de `server`, con la base ya migrada (`alembic upgrade head`). Carga las causas, crea los usuarios de prueba si faltan y deja sus actividades como al principio. No toca a otros usuarios.
+
+```
+python scripts/seed_pruebas.py
+```
+
+Usuarios de prueba (contraseña `Demo12345`):
+
+| Correo | Rol en las pruebas |
+|---|---|
+| ana@sumate.dev | Organizadora: publica, acepta o rechaza solicitudes, cierra y reabre convocatorias |
+| maria@sumate.dev | Voluntaria: busca, solicita participar y entra a una lista de espera |
+| luis@sumate.dev | Voluntario: tiene el único cupo del Taller de primeros auxilios y lo cancela |
+| sofia@sumate.dev | Voluntaria: primera en la lista de espera |
+| carlos@sumate.dev | Voluntario: segundo en la lista de espera; Ana rechaza otra de sus solicitudes |
+| nuevo@sumate.dev | Pedro: sin actividades ni solicitudes, para ver los estados vacíos |
+
+Pruebas E2E con Playwright, dentro de `client` y con la app levantada. Antes de cada corrida Playwright carga la semilla solo, por eso las pruebas pasan desde cero todas las veces:
+
+```
+pnpm exec playwright test
+pnpm exec playwright test --headed
+pnpm exec playwright test --ui
+```
+
+La matriz de pruebas y los resultados antes y después de la lista de espera están en [docs/evidencias/tarea-6.md](docs/evidencias/tarea-6.md).

@@ -55,7 +55,7 @@ export type ActivityDetail = {
   description: string | null;
 };
 
-export type EstadoSolicitud = "pendiente" | "aceptada" | "rechazada";
+export type EstadoSolicitud = "pendiente" | "aceptada" | "rechazada" | "en_espera";
 
 export type ActivityParticipant = {
   id: string;
@@ -71,6 +71,10 @@ export type ActivityDetailData = Activity & {
   participants: ActivityParticipant[];
   /** Solicitudes pendientes de revisión (solo llegan al organizador). */
   solicitudesPendientes: ActivityParticipant[];
+  /** Puesto del usuario actual en la lista de espera (1 = el próximo en entrar). */
+  posicionEnEspera: number | null;
+  /** Lista de espera en orden de llegada (solo llega al organizador). */
+  listaDeEspera: ActivityParticipant[];
   detail: ActivityDetail | null;
   causes: Cause[];
 };

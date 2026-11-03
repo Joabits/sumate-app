@@ -66,6 +66,19 @@ class SQLModelParticipationRepository(ParticipationRepository):
         count = self.db.exec(statement).one()
         return int(count)
 
+    def listar_en_espera(self, activity_id: UUID) -> list[Participation]:
+        statement = (
+            select(ParticipationModel)
+            .where(
+                ParticipationModel.activity_id == activity_id,
+                ParticipationModel.deleted_date.is_(None),
+                ParticipationModel.status == EstadoParticipacion.EN_ESPERA.value,
+            )
+            # Orden de llegada: la primera en solicitar es la primera en entrar
+            .order_by(ParticipationModel.created_date.asc())
+        )
+        return [ParticipationMapper.to_domain(r) for r in self.db.exec(statement).all()]
+
     def eliminar_no_confirmadas(self, activity_id: UUID) -> None:
         statement = select(ParticipationModel).where(
             ParticipationModel.activity_id == activity_id,

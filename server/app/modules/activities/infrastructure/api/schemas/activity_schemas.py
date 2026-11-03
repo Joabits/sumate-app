@@ -134,11 +134,15 @@ class ActivityDetailRead(SQLModel):
     status: str
     is_owner: bool
     is_participating: bool = False
-    # Estado de la solicitud del usuario actual: pendiente | aceptada | rechazada | None
+    # Estado de la solicitud del usuario actual: pendiente | aceptada | rechazada | en_espera | None
     estado_solicitud: str | None = None
     participants: list[ActivityParticipantRead] = []
     # Solicitudes pendientes; solo se envían al organizador
     solicitudes_pendientes: list[ActivityParticipantRead] = []
+    # Puesto del usuario actual en la lista de espera (1 = el próximo en entrar)
+    posicion_en_espera: int | None = None
+    # Lista de espera en orden de llegada; solo se envía al organizador
+    lista_de_espera: list[ActivityParticipantRead] = []
     detail: ActivityDetailDataRead | None = None
     causes: list[CauseRead] = []
 

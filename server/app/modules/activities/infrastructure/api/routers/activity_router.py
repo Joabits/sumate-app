@@ -360,6 +360,11 @@ def get_activity_detail(
             ActivityParticipantRead(id=p.id, name=p.name, image=p.image)
             for p in dto.solicitudes_pendientes
         ],
+        posicion_en_espera=dto.posicion_en_espera,
+        lista_de_espera=[
+            ActivityParticipantRead(id=p.id, name=p.name, image=p.image)
+            for p in dto.lista_de_espera
+        ],
         detail=detail_data,
         causes=causes_data,
     )

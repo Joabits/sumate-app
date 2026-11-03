@@ -5,6 +5,7 @@ import {
   Check,
   CheckCircle2,
   Clock,
+  ListOrdered,
   Loader2,
   Lock,
   Rocket,
@@ -40,10 +41,12 @@ export function ActivityDetailActions({
     isOwner,
     isParticipating,
     estadoSolicitud,
+    posicionEnEspera,
     detail,
   } = activity;
   const solicitudPendiente = estadoSolicitud === "pendiente";
   const solicitudRechazada = estadoSolicitud === "rechazada";
+  const enListaDeEspera = estadoSolicitud === "en_espera";
   const hasLocation = Boolean(
     detail?.latitude != null && detail?.longitude != null,
   );
@@ -60,6 +63,8 @@ export function ActivityDetailActions({
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false);
 
   const handleConfirmJoin = () => {
+    // Si los cupos están llenos, la solicitud entra a la lista de espera
+    const aListaDeEspera = isFull;
     startTransition(async () => {
       const res = await joinActivityAction(activityId);
       if (!res.ok) {
@@ -71,7 +76,9 @@ export function ActivityDetailActions({
       }
       setJoinDialogOpen(false);
       appToast.success(
-        "¡Solicitud enviada! El organizador la revisará pronto.",
+        aListaDeEspera
+          ? "Te uniste a la lista de espera."
+          : "¡Solicitud enviada! El organizador la revisará pronto.",
       );
     });
   };
@@ -88,9 +95,11 @@ export function ActivityDetailActions({
       }
       setLeaveDialogOpen(false);
       appToast.success(
-        solicitudPendiente
-          ? "Has cancelado tu solicitud de participación."
-          : "Has cancelado tu confirmación de asistencia.",
+        enListaDeEspera
+          ? "Saliste de la lista de espera."
+          : solicitudPendiente
+            ? "Has cancelado tu solicitud de participación."
+            : "Has cancelado tu confirmación de asistencia.",
       );
     });
   };
@@ -212,6 +221,18 @@ export function ActivityDetailActions({
                   <Clock className="w-5 h-5 stroke-current" />
                   <span>Solicitud pendiente</span>
                 </button>
+              ) : enListaDeEspera ? (
+                <button
+                  type="button"
+                  onClick={() => setLeaveDialogOpen(true)}
+                  disabled={isPending}
+                  aria-label={`En lista de espera, puesto ${posicionEnEspera ?? ""}. Pulsa para salir de la lista`}
+                  title="Pulsa para salir de la lista de espera"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-sky-700/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700 cursor-pointer bg-sky-700 hover:bg-sky-800 text-white"
+                >
+                  <ListOrdered className="w-5 h-5 stroke-current" />
+                  <span>En lista de espera, puesto {posicionEnEspera}</span>
+                </button>
               ) : solicitudRechazada ? (
                 <button
                   type="button"
@@ -224,11 +245,12 @@ export function ActivityDetailActions({
               ) : isFull ? (
                 <button
                   type="button"
-                  disabled
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                  onClick={() => setJoinDialogOpen(true)}
+                  disabled={isPending}
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-sky-700/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700 cursor-pointer bg-sky-700 hover:bg-sky-800 text-white"
                 >
-                  <Lock className="w-4 h-4" />
-                  <span>Cupos agotados</span>
+                  <ListOrdered className="w-5 h-5 stroke-current" />
+                  <span>Unirme a la lista de espera</span>
                 </button>
               ) : (
                 <button
@@ -331,6 +353,7 @@ export function ActivityDetailActions({
         onConfirm={handleConfirmJoin}
         isPending={isPending}
         activityName={activityName}
+        listaDeEspera={isFull}
       />
       <ConfirmLeaveDialog
         isOpen={leaveDialogOpen}
@@ -339,6 +362,7 @@ export function ActivityDetailActions({
         isPending={isPending}
         activityName={activityName}
         esSolicitud={solicitudPendiente}
+        enListaDeEspera={enListaDeEspera}
       />
     </>
   );

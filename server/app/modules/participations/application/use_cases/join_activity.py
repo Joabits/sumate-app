@@ -12,7 +12,6 @@ from app.modules.participations.domain.entities.participation import (
     Participation,
 )
 from app.modules.participations.domain.exceptions import (
-    ActivityCapacityExceededException,
     AlreadyParticipatingException,
     CannotJoinInactiveActivityException,
     CannotJoinOwnActivityException,
@@ -32,7 +31,10 @@ class JoinActivityCommand:
 
 
 class JoinActivityUseCase:
-    """El voluntario solicita participar; la solicitud queda pendiente."""
+    """El voluntario solicita participar.
+
+    Si hay cupos la solicitud queda pendiente; si están llenos, en lista de espera.
+    """
 
     def __init__(
         self,
@@ -74,16 +76,20 @@ class JoinActivityUseCase:
                 raise SolicitudRechazadaException()
             raise AlreadyParticipatingException()
 
-        current_count = self.participation_repository.count_by_activity_id(
+        aceptados = self.participation_repository.count_by_activity_id(
             command.activity_id
         )
-        if current_count >= activity.capacity:
-            raise ActivityCapacityExceededException()
-
-        participation = Participation.create(
-            activity_id=command.activity_id,
-            user_id=command.user_id,
-        )
+        if aceptados >= activity.capacity:
+            # Cupos llenos: la solicitud espera su turno en la lista de espera
+            participation = Participation.crear_en_espera(
+                activity_id=command.activity_id,
+                user_id=command.user_id,
+            )
+        else:
+            participation = Participation.create(
+                activity_id=command.activity_id,
+                user_id=command.user_id,
+            )
         self.participation_repository.save(participation)
         self.uow.commit()
         return participation

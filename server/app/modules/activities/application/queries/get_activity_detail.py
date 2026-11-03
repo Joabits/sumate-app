@@ -53,6 +53,9 @@ class ActivityDetailDTO:
     estado_solicitud: str | None = None
     participants: list[ActivityParticipantDetailDTO] = field(default_factory=list)
     solicitudes_pendientes: list[ActivityParticipantDetailDTO] = field(default_factory=list)
+    # Puesto del usuario actual en la lista de espera (1 = el próximo en entrar)
+    posicion_en_espera: int | None = None
+    lista_de_espera: list[ActivityParticipantDetailDTO] = field(default_factory=list)
     detail: ActivityDetailDataDTO | None = None
     causes: tuple[CauseDTO, ...] = ()
 
@@ -94,6 +97,8 @@ class GetActivityDetailQueryHandler:
 
         participants: list[ActivityParticipantDetailDTO] = []
         solicitudes_pendientes: list[ActivityParticipantDetailDTO] = []
+        lista_de_espera: list[ActivityParticipantDetailDTO] = []
+        posicion_en_espera: int | None = None
         if self.participation_repository:
             participants = self._listar_participantes(
                 query.activity_id, EstadoParticipacion.ACEPTADA
@@ -102,6 +107,21 @@ class GetActivityDetailQueryHandler:
             if is_owner:
                 solicitudes_pendientes = self._listar_participantes(
                     query.activity_id, EstadoParticipacion.PENDIENTE
+                )
+            if is_owner or estado_solicitud == EstadoParticipacion.EN_ESPERA.value:
+                en_espera = self._listar_participantes(
+                    query.activity_id, EstadoParticipacion.EN_ESPERA
+                )
+                if is_owner:
+                    lista_de_espera = en_espera
+                # El voluntario solo ve su puesto, no los nombres de los demás
+                posicion_en_espera = next(
+                    (
+                        puesto
+                        for puesto, p in enumerate(en_espera, start=1)
+                        if p.id == query.current_user_id
+                    ),
+                    None,
                 )
 
         detail_dto = (
@@ -139,6 +159,8 @@ class GetActivityDetailQueryHandler:
             estado_solicitud=estado_solicitud,
             participants=participants,
             solicitudes_pendientes=solicitudes_pendientes,
+            posicion_en_espera=posicion_en_espera,
+            lista_de_espera=lista_de_espera,
             detail=detail_dto,
             causes=causes_dtos,
         )
