@@ -21,7 +21,7 @@ export default function SignupPage() {
       </div>
 
       <div className="pt-6 pb-3 space-y-4 w-full">
-        <p className="text-center text-[11px] text-zinc-400 px-4 leading-snug">
+        <p className="text-center text-[11px] text-zinc-500 px-4 leading-snug">
           Al registrarte, aceptas nuestros{" "}
           <a href="#" className="underline hover:text-zinc-600">
             Términos de servicio

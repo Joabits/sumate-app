@@ -17,7 +17,7 @@ export function ActivityDetailOrganizer({
       className="mt-6 pt-5 border-t border-slate-100"
       data-purpose="event-organizer-section"
     >
-      <h3 className="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-3">
+      <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase mb-3">
         Organizado por
       </h3>
       <div className="flex items-center justify-between">

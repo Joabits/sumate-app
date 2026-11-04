@@ -6,6 +6,9 @@ from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
+from app.modules.participations.application.use_cases.lista_de_espera import (
+    llenar_cupos_desde_lista_de_espera,
+)
 from app.modules.participations.domain.entities.participation import EstadoParticipacion
 from app.modules.participations.domain.exceptions import (
     CannotLeavePastActivityException,
@@ -35,7 +38,10 @@ class LeaveActivityUseCase:
         self.uow = uow
 
     def execute(self, command: LeaveActivityCommand) -> None:
-        activity = self.activity_repository.get_by_id(command.activity_id)
+        # FOR UPDATE: nadie más toma el cupo mientras entra el primero en espera
+        activity = self.activity_repository.get_by_id(
+            command.activity_id, for_update=True
+        )
         if not activity:
             raise ActivityNotFoundException()
 
@@ -61,5 +67,9 @@ class LeaveActivityUseCase:
         )
         if not deleted:
             raise ParticipationNotFoundException()
+
+        # Si quien cancela ocupaba un cupo, entra el primero de la lista de espera
+        if solicitud.estado == EstadoParticipacion.ACEPTADA:
+            llenar_cupos_desde_lista_de_espera(activity, self.participation_repository)
 
         self.uow.commit()

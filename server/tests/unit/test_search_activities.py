@@ -431,7 +431,7 @@ def test_search_repo_by_distance_radius_matching_and_empty(db_session):
     assert len(res_outside) == 0
 
 
-def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_session):
+def test_search_repo_excludes_inactive_and_past_but_keeps_full_for_waitlist(db_session):
     owner = BetterAuthUser(id="usr_1", name="María Gómez", email="maria@example.com")
     volunteer = BetterAuthUser(id="usr_2", name="Pedro", email="pedro@example.com")
     db_session.add_all([owner, volunteer])
@@ -496,9 +496,8 @@ def test_search_repo_availability_rule_excludes_inactive_past_and_full(db_sessio
     repo = SQLModelActivityRepository(db_session)
     results = repo.search_activities(min_date=now)
 
-    assert len(results) == 1
-    assert results[0].id == act_valid.id
-    assert results[0].name == "Actividad Disponible y Abierta"
+    # La actividad llena sigue apareciendo para que se pueda entrar a su lista de espera
+    assert {r.id for r in results} == {act_valid.id, act_full_id}
 
 
 def test_search_repo_combined_filters_matching_and_empty(db_session):

@@ -14,7 +14,6 @@ from app.modules.participations.domain.entities.participation import (
     EstadoParticipacion,
 )
 from app.modules.participations.domain.exceptions import (
-    ActivityCapacityExceededException,
     AlreadyParticipatingException,
     CannotJoinInactiveActivityException,
     CannotJoinOwnActivityException,
@@ -258,7 +257,8 @@ def test_join_activity_already_participating():
     uow.commit.assert_not_called()
 
 
-def test_join_activity_capacity_exceeded():
+def test_join_activity_full_goes_to_waitlist():
+    # Lista de espera: con los cupos llenos la solicitud ya no se rechaza, espera su turno
     activity_id = uuid4()
     user_id = "volunteer_1"
     future_date = datetime.now(timezone.utc) + timedelta(days=2)
@@ -281,16 +281,16 @@ def test_join_activity_capacity_exceeded():
     uow = MagicMock()
 
     use_case = JoinActivityUseCase(act_repo, part_repo, uow)
-    with pytest.raises(ActivityCapacityExceededException):
-        use_case.execute(
-            JoinActivityCommand(activity_id=activity_id, user_id=user_id)
-        )
+    participation = use_case.execute(
+        JoinActivityCommand(activity_id=activity_id, user_id=user_id)
+    )
 
-    part_repo.save.assert_not_called()
-    uow.commit.assert_not_called()
+    assert participation.estado == EstadoParticipacion.EN_ESPERA
+    part_repo.save.assert_called_once_with(participation)
+    uow.commit.assert_called_once()
 
 
-def test_join_activity_capacity_strictly_greater_than_max_fails():
+def test_join_activity_over_capacity_goes_to_waitlist():
     activity_id = uuid4()
     user_id = "volunteer_1"
     future_date = datetime.now(timezone.utc) + timedelta(days=2)
@@ -313,13 +313,11 @@ def test_join_activity_capacity_strictly_greater_than_max_fails():
     uow = MagicMock()
 
     use_case = JoinActivityUseCase(act_repo, part_repo, uow)
-    with pytest.raises(ActivityCapacityExceededException):
-        use_case.execute(
-            JoinActivityCommand(activity_id=activity_id, user_id=user_id)
-        )
+    participation = use_case.execute(
+        JoinActivityCommand(activity_id=activity_id, user_id=user_id)
+    )
 
-    part_repo.save.assert_not_called()
-    uow.commit.assert_not_called()
+    assert participation.estado == EstadoParticipacion.EN_ESPERA
 
 
 def test_join_activity_rolls_back_if_part_repo_fails():

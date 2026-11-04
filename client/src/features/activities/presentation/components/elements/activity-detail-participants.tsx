@@ -23,7 +23,7 @@ export function ActivityDetailParticipants({
       data-purpose="event-participants-section"
     >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-semibold tracking-wider text-slate-400 uppercase">
+        <h3 className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
           Participantes
         </h3>
         {participants.length > 0 && (

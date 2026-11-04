@@ -60,7 +60,7 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
               {registeredCount} / {activity.capacity} inscritos
             </span>
           ) : availableSpots === 0 ? (
-            <span>Cupos agotados</span>
+            <span>Cupos llenos · lista de espera</span>
           ) : (
             <span>
               {availableSpots} {availableSpots === 1 ? "cupo disponible" : "cupos disponibles"}

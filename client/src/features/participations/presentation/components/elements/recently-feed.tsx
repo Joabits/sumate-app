@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Clock } from "lucide-react";
 import { ActivityCardShell } from "@/features/activities/presentation/components/elements/activity-card-shell";
 import {
@@ -53,6 +54,12 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
             <p className="text-sm text-zinc-500 mt-1 max-w-xs leading-relaxed">
               Aún no te has sumado a ninguna actividad. ¡Explora y participa!
             </p>
+            <Link
+              href="/explore"
+              className="mt-5 inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white bg-[#6355de] hover:bg-[#5244cc] active:scale-95 transition-all"
+            >
+              Explorar actividades
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col lg:grid lg:grid-cols-3 lg:gap-6">
@@ -74,6 +81,10 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                   {item.estadoSolicitud === "pendiente" ? (
                     <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/70">
                       Solicitud pendiente
+                    </span>
+                  ) : item.estadoSolicitud === "en_espera" ? (
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200/70">
+                      En lista de espera
                     </span>
                   ) : item.estadoSolicitud === "rechazada" ? (
                     <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/70">

@@ -27,6 +27,11 @@ class ParticipationRepository(ABC):
         ...
 
     @abstractmethod
+    def listar_en_espera(self, activity_id: UUID) -> list[Participation]:
+        """Solicitudes en lista de espera, de la más antigua a la más reciente."""
+        ...
+
+    @abstractmethod
     def delete(self, activity_id: UUID, user_id: str) -> bool:
         ...
 

@@ -9,6 +9,9 @@ from app.modules.activities.domain.exceptions import (
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
+from app.modules.participations.application.use_cases.lista_de_espera import (
+    llenar_cupos_desde_lista_de_espera,
+)
 from app.modules.participations.domain.repositories.participation_repository import (
     ParticipationRepository,
 )
@@ -52,5 +55,7 @@ class UpdateActivityCapacityUseCase:
 
         activity.update_capacity(command.capacity)
         self.activity_repository.save(activity)
+        # Si hay cupos nuevos, entran los primeros de la lista de espera
+        llenar_cupos_desde_lista_de_espera(activity, self.participation_repository)
         self.uow.commit()
         return activity
