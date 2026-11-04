@@ -31,7 +31,8 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:3000',
+    /* Se puede probar otra copia de la app con E2E_BASE_URL (por ejemplo http://localhost:3001) */
+    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3000',
     /* Si un elemento no aparece, la acción falla a los 15 segundos */
     actionTimeout: 15_000,
     /* Fechas y textos como los ve un usuario en Bolivia */

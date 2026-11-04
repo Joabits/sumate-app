@@ -9,6 +9,7 @@ from app.modules.activities.infrastructure.persistence.models.activity_model imp
     ActivityModel,
 )
 from app.modules.participations.domain.entities.participation import (
+    ESTADOS_QUE_SE_CANCELAN,
     EstadoParticipacion,
     Participation,
 )
@@ -43,6 +44,9 @@ class SQLModelParticipationRepository(ParticipationRepository):
         record.activity_id = participation.activity_id
         record.user_id = participation.user_id
         record.status = participation.estado.value
+        record.estado_anterior = (
+            participation.estado_anterior.value if participation.estado_anterior else None
+        )
         record.modified_date = datetime.now(timezone.utc)
 
     def get_by_activity_and_user(
@@ -76,6 +80,14 @@ class SQLModelParticipationRepository(ParticipationRepository):
             )
             # Orden de llegada: la primera en solicitar es la primera en entrar
             .order_by(ParticipationModel.created_date.asc())
+        )
+        return [ParticipationMapper.to_domain(r) for r in self.db.exec(statement).all()]
+
+    def listar_postulantes(self, activity_id: UUID) -> list[Participation]:
+        statement = select(ParticipationModel).where(
+            ParticipationModel.activity_id == activity_id,
+            ParticipationModel.deleted_date.is_(None),
+            ParticipationModel.status.in_([e.value for e in ESTADOS_QUE_SE_CANCELAN]),
         )
         return [ParticipationMapper.to_domain(r) for r in self.db.exec(statement).all()]
 

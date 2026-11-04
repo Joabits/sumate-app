@@ -50,6 +50,9 @@ class _RevisarSolicitudUseCase:
         if actividad.owner_id != command.organizador_id:
             raise NoEsOrganizadorException()
 
+        # Después de cancelar no se acepta ni se rechaza a nadie
+        actividad.ensure_not_cancelled()
+
         solicitud = self.participation_repository.get_by_activity_and_user(
             command.activity_id, command.participante_id
         )

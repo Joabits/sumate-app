@@ -3,6 +3,7 @@ from datetime import datetime
 from uuid import UUID
 
 from app.modules.activities.application.queries.list_causes import CauseDTO
+from app.modules.activities.domain.entities.activity import ActivityStatus
 from app.modules.activities.domain.exceptions import ActivityNotFoundException
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
@@ -18,6 +19,8 @@ class ActivityParticipantDetailDTO:
     id: str
     name: str
     image: str | None = None
+    # Solo en postulantes cancelados: el estado que tenían antes de la cancelación
+    estado_anterior: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,6 +59,10 @@ class ActivityDetailDTO:
     # Puesto del usuario actual en la lista de espera (1 = el próximo en entrar)
     posicion_en_espera: int | None = None
     lista_de_espera: list[ActivityParticipantDetailDTO] = field(default_factory=list)
+    # Motivo con el que la organización canceló la actividad
+    motivo_cancelacion: str | None = None
+    # Postulantes afectados por la cancelación, con su estado anterior (solo organizador)
+    postulantes_cancelados: list[ActivityParticipantDetailDTO] = field(default_factory=list)
     detail: ActivityDetailDataDTO | None = None
     causes: tuple[CauseDTO, ...] = ()
 
@@ -99,6 +106,7 @@ class GetActivityDetailQueryHandler:
         solicitudes_pendientes: list[ActivityParticipantDetailDTO] = []
         lista_de_espera: list[ActivityParticipantDetailDTO] = []
         posicion_en_espera: int | None = None
+        postulantes_cancelados: list[ActivityParticipantDetailDTO] = []
         if self.participation_repository:
             participants = self._listar_participantes(
                 query.activity_id, EstadoParticipacion.ACEPTADA
@@ -122,6 +130,11 @@ class GetActivityDetailQueryHandler:
                         if p.id == query.current_user_id
                     ),
                     None,
+                )
+            # Al cancelar, el organizador ve a quién afectó y en qué estado estaba cada uno
+            if is_owner and activity_status == ActivityStatus.CANCELLED.value:
+                postulantes_cancelados = self._listar_participantes(
+                    query.activity_id, EstadoParticipacion.CANCELADA
                 )
 
         detail_dto = (
@@ -161,6 +174,8 @@ class GetActivityDetailQueryHandler:
             solicitudes_pendientes=solicitudes_pendientes,
             posicion_en_espera=posicion_en_espera,
             lista_de_espera=lista_de_espera,
+            motivo_cancelacion=activity.motivo_cancelacion,
+            postulantes_cancelados=postulantes_cancelados,
             detail=detail_dto,
             causes=causes_dtos,
         )
@@ -176,6 +191,7 @@ class GetActivityDetailQueryHandler:
                 id=part.user_id,
                 name=user_name,
                 image=user_image,
+                estado_anterior=part.estado_anterior.value if part.estado_anterior else None,
             )
             for part, user_name, user_image in raw_participants
         ]

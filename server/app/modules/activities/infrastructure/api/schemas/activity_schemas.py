@@ -120,6 +120,8 @@ class ActivityParticipantRead(SQLModel):
     id: str
     name: str
     image: str | None = None
+    # Solo en postulantes cancelados: el estado que tenían antes de la cancelación
+    estado_anterior: str | None = None
 
 
 class ActivityDetailRead(SQLModel):
@@ -143,8 +145,16 @@ class ActivityDetailRead(SQLModel):
     posicion_en_espera: int | None = None
     # Lista de espera en orden de llegada; solo se envía al organizador
     lista_de_espera: list[ActivityParticipantRead] = []
+    # Motivo con el que la organización canceló la actividad
+    motivo_cancelacion: str | None = None
+    # Postulantes afectados por la cancelación, con su estado anterior; solo al organizador
+    postulantes_cancelados: list[ActivityParticipantRead] = []
     detail: ActivityDetailDataRead | None = None
     causes: list[CauseRead] = []
+
+
+class CancelarActividadRequest(SQLModel):
+    motivo: str
 
 
 class UpdateLocationRequest(SQLModel):

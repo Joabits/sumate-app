@@ -27,6 +27,10 @@ export type ParticipatedActivityListItem = {
   enrolledDate: string;
   isPast: boolean;
   estadoSolicitud: EstadoSolicitud;
+  /** Si la organización canceló la actividad: su motivo. */
+  motivoCancelacion: string | null;
+  /** Si la organización canceló la actividad: el estado que tenía la solicitud. */
+  estadoAnterior: EstadoSolicitud | null;
   creatorName?: string;
   creatorImage?: string;
   causes?: Cause[];

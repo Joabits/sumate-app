@@ -45,6 +45,9 @@ class LeaveActivityUseCase:
         if not activity:
             raise ActivityNotFoundException()
 
+        # Las solicitudes de una actividad cancelada se conservan en el historial
+        activity.ensure_not_cancelled()
+
         now = datetime.now(timezone.utc)
         act_date = (
             activity.date

@@ -1,7 +1,11 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from app.modules.activities.domain.exceptions import ActivityNotFoundException
+from app.modules.activities.domain.entities.activity import ActivityStatus
+from app.modules.activities.domain.exceptions import (
+    ActividadCanceladaException,
+    ActivityNotFoundException,
+)
 from app.modules.activities.domain.repositories.activity_repository import (
     ActivityRepository,
 )
@@ -39,6 +43,12 @@ class DeleteActivityUseCase:
 
         if activity.owner_id != command.owner_id:
             raise ForbiddenException("Solo el organizador puede eliminar la actividad.")
+
+        # Se conserva para que cada voluntario vea el motivo en su historial
+        if activity.status == ActivityStatus.CANCELLED:
+            raise ActividadCanceladaException(
+                "Una actividad cancelada no se elimina: los voluntarios ven el motivo en su historial."
+            )
 
         participants = self.participation_repository.list_participants_by_activity_id(
             command.activity_id

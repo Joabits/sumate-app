@@ -21,6 +21,7 @@ class ActivityMapper:
             status=model.status,
             creator_name=creator_name,
             creator_image=creator_image,
+            motivo_cancelacion=model.motivo_cancelacion,
         )
 
     @staticmethod
@@ -33,4 +34,5 @@ class ActivityMapper:
             date=entity.date,
             capacity=entity.capacity,
             status=entity.status.value if hasattr(entity.status, "value") else str(entity.status),
+            motivo_cancelacion=entity.motivo_cancelacion,
         )

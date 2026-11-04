@@ -23,7 +23,7 @@ export const ActivityListItemResponseSchema = z.object({
   date: z.string(),
   owner_id: z.string(),
   capacity: z.number().int().positive(),
-  status: z.enum(["draft", "active", "closed"]),
+  status: z.enum(["draft", "active", "closed", "cancelled"]),
   creator_name: z.string().nullable().optional(),
   creator_image: z.string().nullable().optional(),
   causes: z.array(CauseResponseSchema).optional().default([]),
@@ -56,6 +56,7 @@ export const ActivityParticipantResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   image: z.string().nullable().optional(),
+  estado_anterior: z.enum(["pendiente", "aceptada", "rechazada", "en_espera"]).nullable().optional().default(null),
 });
 
 export const ActivityDetailDataResponseSchema = z.object({
@@ -65,16 +66,18 @@ export const ActivityDetailDataResponseSchema = z.object({
   date: z.string(),
   owner_id: z.string(),
   capacity: z.number().int().positive(),
-  status: z.enum(["draft", "active", "closed"]),
+  status: z.enum(["draft", "active", "closed", "cancelled"]),
   creator_name: z.string().nullable().optional(),
   creator_image: z.string().nullable().optional(),
   is_owner: z.boolean(),
   is_participating: z.boolean().optional().default(false),
-  estado_solicitud: z.enum(["pendiente", "aceptada", "rechazada", "en_espera"]).nullable().optional().default(null),
+  estado_solicitud: z.enum(["pendiente", "aceptada", "rechazada", "en_espera", "cancelada"]).nullable().optional().default(null),
   participants: z.array(ActivityParticipantResponseSchema).optional().default([]),
   solicitudes_pendientes: z.array(ActivityParticipantResponseSchema).optional().default([]),
   posicion_en_espera: z.number().int().positive().nullable().optional().default(null),
   lista_de_espera: z.array(ActivityParticipantResponseSchema).optional().default([]),
+  motivo_cancelacion: z.string().nullable().optional().default(null),
+  postulantes_cancelados: z.array(ActivityParticipantResponseSchema).optional().default([]),
   detail: ActivityDetailResponseSchema.nullable().optional(),
   causes: z.array(CauseResponseSchema).optional().default([]),
 });

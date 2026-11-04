@@ -104,6 +104,11 @@ export interface ActivityRepository {
   closeActivity(id: string): Promise<ApiActionResult>;
 
   /**
+   * Cancela una actividad publicada. El motivo es obligatorio y lo ven los voluntarios.
+   */
+  cancelarActividad(id: string, motivo: string): Promise<ApiActionResult>;
+
+  /**
    * Reabre la convocatoria de una actividad cerrada.
    */
   reopenActivity(id: string): Promise<ApiActionResult>;

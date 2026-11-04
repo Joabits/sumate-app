@@ -56,6 +56,9 @@ class JoinActivityUseCase:
         if activity.owner_id == command.user_id:
             raise CannotJoinOwnActivityException()
 
+        # Una actividad cancelada ya no recibe solicitudes
+        activity.ensure_not_cancelled()
+
         if activity.status != ActivityStatus.ACTIVE:
             raise CannotJoinInactiveActivityException()
 

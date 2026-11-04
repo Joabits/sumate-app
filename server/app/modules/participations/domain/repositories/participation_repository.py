@@ -32,6 +32,11 @@ class ParticipationRepository(ABC):
         ...
 
     @abstractmethod
+    def listar_postulantes(self, activity_id: UUID) -> list[Participation]:
+        """Solicitudes pendientes, aceptadas y en lista de espera de una actividad."""
+        ...
+
+    @abstractmethod
     def delete(self, activity_id: UUID, user_id: str) -> bool:
         ...
 

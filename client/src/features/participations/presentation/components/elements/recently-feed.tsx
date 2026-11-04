@@ -8,6 +8,7 @@ import {
   ActivitiesFilterBar,
   type FilterOption,
 } from "@/features/activities/presentation/components/elements/activities-filter-bar";
+import { NOMBRE_ESTADO_SOLICITUD } from "@/features/activities/domain/entities/activity.entity";
 import type {
   ParticipatedActivityListItem,
   ParticipationFilter,
@@ -86,6 +87,10 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                     <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-sky-50 text-sky-800 border border-sky-200/70">
                       En lista de espera
                     </span>
+                  ) : item.estadoSolicitud === "cancelada" ? (
+                    <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/70">
+                      Cancelada
+                    </span>
                   ) : item.estadoSolicitud === "rechazada" ? (
                     <span className="shrink-0 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/70">
                       Solicitud rechazada
@@ -100,6 +105,15 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                     </span>
                   )}
                 </div>
+                {item.estadoSolicitud === "cancelada" && (
+                  <p className="mt-2 text-xs leading-snug text-rose-900 bg-rose-50 border border-rose-100 rounded-lg px-2.5 py-1.5">
+                    {`Cancelada por la organización${
+                      item.estadoAnterior
+                        ? ` (estabas: ${NOMBRE_ESTADO_SOLICITUD[item.estadoAnterior].toLowerCase()})`
+                        : ""
+                    }. Motivo: ${item.motivoCancelacion ?? "sin motivo"}`}
+                  </p>
+                )}
               </ActivityCardShell>
             ))}
           </div>

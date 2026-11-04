@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Eye, Pencil, Share2, Trash2 } from "lucide-react";
+import { Ban, ChevronLeft, Eye, Pencil, Share2, Trash2 } from "lucide-react";
 import type { ActivityDetailData } from "@/features/activities/domain/entities/activity.entity";
 import { AppAlertDialog } from "@/features/shared/presentation/components/dialogs/app-alert-dialog";
 import { appToast } from "@/features/shared/presentation/components/notifications/toast";
 import { deleteActivityAction } from "../../actions/activity.action";
+import { CancelarActividadDialog } from "../dialogs/cancelar-actividad-dialog";
 import { useActivityDetailUiStore } from "../../stores/activity-detail-ui.store";
 
 type ActivityDetailHeaderProps = {
@@ -18,10 +19,18 @@ export function ActivityDetailHeader({
 }: ActivityDetailHeaderProps) {
   const router = useRouter();
   const { isEditMode, toggleEditMode } = useActivityDetailUiStore();
-  const { id: activityId, name: activityName, isOwner } = activity;
+  const { id: activityId, name: activityName, isOwner, status } = activity;
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, startDeleting] = useTransition();
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  // Hora en que se abrió la pantalla, para saber si la actividad ya pasó
+  const [now] = useState(() => Date.now());
+  const isPast = new Date(activity.date).getTime() <= now;
+  const cancelada = status === "cancelled";
+  // Solo se cancela una actividad publicada que todavía no ocurrió
+  const puedeCancelar =
+    isOwner && (status === "active" || status === "closed") && !isPast;
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -105,7 +114,23 @@ export function ActivityDetailHeader({
             </span>
           </button>
 
-          {isOwner && (
+          {puedeCancelar && (
+            <button
+              type="button"
+              onClick={() => setIsCancelDialogOpen(true)}
+              aria-label="Cancelar actividad"
+              title="Cancelar actividad"
+              className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-amber-100 transition-all cursor-pointer"
+            >
+              <Ban className="w-4.5 h-4.5 shrink-0" />
+              <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                Cancelar
+              </span>
+            </button>
+          )}
+
+          {/* Una actividad cancelada ya no se edita ni se elimina: se conserva para el historial */}
+          {isOwner && !cancelada && (
             <>
               <button
                 type="button"
@@ -162,6 +187,15 @@ export function ActivityDetailHeader({
           cancelText="Cancelar"
           actionDisabled={isDeleting}
           onAction={handleConfirmDelete}
+        />
+      )}
+
+      {puedeCancelar && (
+        <CancelarActividadDialog
+          activityId={activityId}
+          activityName={activityName}
+          isOpen={isCancelDialogOpen}
+          onOpenChange={setIsCancelDialogOpen}
         />
       )}
     </>

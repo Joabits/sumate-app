@@ -13,3 +13,5 @@ class ActivityModel(BaseModel, table=True):
     date: datetime = Field(index=True, nullable=False)
     status: str = Field(default="draft", index=True, nullable=False)
     capacity: int = Field(default=1, nullable=False)
+    # Solo se llena cuando la organización cancela la actividad
+    motivo_cancelacion: str | None = Field(default=None, max_length=500, nullable=True)

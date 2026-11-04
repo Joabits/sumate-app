@@ -30,6 +30,11 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
           label: "Cerrada",
           className: "bg-slate-100 text-slate-600 border border-slate-200/70",
         };
+      case "cancelled":
+        return {
+          label: "Cancelada",
+          className: "bg-rose-50 text-rose-700 border border-rose-200/70",
+        };
       default:
         return null;
     }

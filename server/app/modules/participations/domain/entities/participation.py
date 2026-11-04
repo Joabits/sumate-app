@@ -14,6 +14,16 @@ class EstadoParticipacion(StrEnum):
     RECHAZADA = "rechazada"
     # Los cupos estaban llenos: espera a que alguien cancele
     EN_ESPERA = "en_espera"
+    # La organización canceló la actividad
+    CANCELADA = "cancelada"
+
+
+# Solicitudes que pasan a canceladas cuando la organización cancela la actividad
+ESTADOS_QUE_SE_CANCELAN = (
+    EstadoParticipacion.PENDIENTE,
+    EstadoParticipacion.ACEPTADA,
+    EstadoParticipacion.EN_ESPERA,
+)
 
 
 @dataclass
@@ -22,6 +32,8 @@ class Participation:
     activity_id: UUID
     user_id: str
     estado: EstadoParticipacion = EstadoParticipacion.PENDIENTE
+    # Estado que tenía antes de que la organización cancelara la actividad
+    estado_anterior: EstadoParticipacion | None = None
 
     @classmethod
     def create(
@@ -60,6 +72,13 @@ class Participation:
         if self.estado != EstadoParticipacion.PENDIENTE:
             raise SolicitudYaRevisadaException()
         self.estado = EstadoParticipacion.RECHAZADA
+
+    def cancelar_por_organizacion(self) -> None:
+        """La actividad se canceló: la solicitud queda cancelada y guarda su estado anterior."""
+        if self.estado not in ESTADOS_QUE_SE_CANCELAN:
+            raise SolicitudYaRevisadaException()
+        self.estado_anterior = self.estado
+        self.estado = EstadoParticipacion.CANCELADA
 
     def ocupar_cupo_liberado(self) -> None:
         """Se liberó un cupo y esta solicitud era la primera en espera: queda aceptada."""

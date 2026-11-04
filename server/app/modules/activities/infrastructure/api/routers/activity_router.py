@@ -21,6 +21,10 @@ from app.modules.activities.application.queries.search_activities import (
     SearchActivitiesQuery,
     SearchActivitiesQueryHandler,
 )
+from app.modules.activities.application.use_cases.cancelar_actividad import (
+    CancelarActividadCommand,
+    CancelarActividadUseCase,
+)
 from app.modules.activities.application.use_cases.close_activity import (
     CloseActivityCommand,
     CloseActivityUseCase,
@@ -72,6 +76,7 @@ from app.modules.activities.infrastructure.api.schemas.activity_schemas import (
     ActivityListItemRead,
     ActivityListRead,
     ActivityParticipantRead,
+    CancelarActividadRequest,
     CapacityRangeFilter,
     CauseListRead,
     CauseRead,
@@ -365,6 +370,13 @@ def get_activity_detail(
             ActivityParticipantRead(id=p.id, name=p.name, image=p.image)
             for p in dto.lista_de_espera
         ],
+        motivo_cancelacion=dto.motivo_cancelacion,
+        postulantes_cancelados=[
+            ActivityParticipantRead(
+                id=p.id, name=p.name, image=p.image, estado_anterior=p.estado_anterior
+            )
+            for p in dto.postulantes_cancelados
+        ],
         detail=detail_data,
         causes=causes_data,
     )
@@ -588,6 +600,32 @@ def reopen_activity(
         ReopenActivityCommand(
             activity_id=activity_id,
             owner_id=current_user.user_id,
+        )
+    )
+    return Response(status_code=status.HTTP_200_OK)
+
+
+@router.post(
+    "/{activity_id}/cancelar",
+    status_code=status.HTTP_200_OK,
+    summary="Cancelar una actividad publicada con un motivo (solo organizador)",
+)
+def cancelar_actividad(
+    activity_id: UUID,
+    payload: CancelarActividadRequest,
+    current_user: CurrentUser,
+    uow: UoWDep,
+) -> Response:
+    use_case = CancelarActividadUseCase(
+        activity_repository=SQLModelActivityRepository(uow.session),
+        participation_repository=SQLModelParticipationRepository(uow.session),
+        uow=uow,
+    )
+    use_case.execute(
+        CancelarActividadCommand(
+            activity_id=activity_id,
+            organizador_id=current_user.user_id,
+            motivo=payload.motivo,
         )
     )
     return Response(status_code=status.HTTP_200_OK)

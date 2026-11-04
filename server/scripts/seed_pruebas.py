@@ -113,6 +113,22 @@ ACTIVIDADES_PRUEBAS = [
         "status": "closed",
     },
     {
+        # Cancelar actividad: un cupo y postulantes en tres estados
+        "name": "Taller de huertos urbanos",
+        "owner": "demo-ana",
+        "image": IMG.format("1416879595882-3373a0480b5b"),
+        "days": 8,
+        "capacity": 1,
+        "causes": ["medio-ambiente", "comunidad"],
+        "place": "Huerto del Parque Lincoln",
+        "lat": -17.3810,
+        "lng": -66.1630,
+        "description": "Preparamos almácigos y enseñamos a cuidar un huerto en casa.",
+        "participants": ["demo-luis"],
+        "pendientes": ["demo-maria"],
+        "en_espera": ["demo-sofia"],
+    },
+    {
         # Borrador sin descripción, causas ni ubicación: no se puede publicar
         "name": "Colecta de ropa de invierno",
         "owner": "demo-ana",
@@ -219,6 +235,7 @@ def crear_actividades(session: Session, actividades: list[dict]) -> None:
             [(user_id, "aceptada") for user_id in item["participants"]]
             + [(user_id, "pendiente") for user_id in item.get("pendientes", [])]
             + [(user_id, "rechazada") for user_id in item.get("rechazadas", [])]
+            + [(user_id, "en_espera") for user_id in item.get("en_espera", [])]
         )
         for user_id, estado in solicitudes:
             session.add(

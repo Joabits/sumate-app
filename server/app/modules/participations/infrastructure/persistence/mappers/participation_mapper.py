@@ -15,6 +15,9 @@ class ParticipationMapper:
             activity_id=model.activity_id,
             user_id=model.user_id,
             estado=EstadoParticipacion(model.status),
+            estado_anterior=(
+                EstadoParticipacion(model.estado_anterior) if model.estado_anterior else None
+            ),
         )
 
     @staticmethod
@@ -24,4 +27,5 @@ class ParticipationMapper:
             activity_id=domain.activity_id,
             user_id=domain.user_id,
             status=domain.estado.value,
+            estado_anterior=domain.estado_anterior.value if domain.estado_anterior else None,
         )

@@ -29,6 +29,7 @@ const MINE_FILTERS: FilterOption[] = [
   { id: "draft", label: "Borrador" },
   { id: "active", label: "Activas" },
   { id: "closed", label: "Cerradas" },
+  { id: "cancelled", label: "Canceladas" },
 ];
 
 function parseActivityDate(dateString: string): Date {

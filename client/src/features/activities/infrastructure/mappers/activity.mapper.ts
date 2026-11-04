@@ -105,6 +105,13 @@ export const activityMapper = {
         image: p.image ?? null,
       })),
       posicionEnEspera: dto.posicion_en_espera ?? null,
+      motivoCancelacion: dto.motivo_cancelacion ?? null,
+      postulantesCancelados: (dto.postulantes_cancelados ?? []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        image: p.image ?? null,
+        estadoAnterior: p.estado_anterior ?? null,
+      })),
       listaDeEspera: (dto.lista_de_espera ?? []).map((p) => ({
         id: p.id,
         name: p.name,

@@ -14,3 +14,5 @@ class ParticipationModel(BaseModel, table=True):
     user_id: str = Field(index=True, nullable=False)
     # pendiente → solicitud enviada; aceptada / rechazada → decisión del organizador
     status: str = Field(default="pendiente", max_length=20, index=True, nullable=False)
+    # Estado antes de que la organización cancelara la actividad (historial)
+    estado_anterior: str | None = Field(default=None, max_length=20, nullable=True)

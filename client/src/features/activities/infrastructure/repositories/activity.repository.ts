@@ -212,6 +212,15 @@ export const activityRepositoryImpl: ActivityRepository = {
     });
   },
 
+  async cancelarActividad(id: string, motivo: string): Promise<ApiActionResult> {
+    return apiRequestStatus({
+      url: `${BASE_URL}/${id}/cancelar`,
+      method: "POST",
+      body: { motivo },
+      fallbackMessage: "Error al cancelar la actividad.",
+    });
+  },
+
   async reopenActivity(id: string): Promise<ApiActionResult> {
     return apiRequestStatus({
       url: `${BASE_URL}/${id}/reopen`,

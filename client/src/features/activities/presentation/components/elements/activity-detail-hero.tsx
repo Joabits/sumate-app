@@ -79,6 +79,15 @@ export function ActivityDetailHero({
             </span>
           </div>
         );
+      case "cancelled":
+        return (
+          <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-rose-500 mr-2" />
+            <span className="text-xs font-semibold text-rose-700 tracking-tight">
+              Cancelada
+            </span>
+          </div>
+        );
     }
   };
 

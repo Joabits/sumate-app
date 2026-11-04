@@ -221,6 +221,7 @@ class SQLModelActivityRepository(ActivityRepository):
         record.image_url = activity.image_url
         record.date = activity.date
         record.capacity = activity.capacity
+        record.motivo_cancelacion = activity.motivo_cancelacion
         record.status = (
             activity.status.value
             if hasattr(activity.status, "value")

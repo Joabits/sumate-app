@@ -5,7 +5,8 @@
  * TypeScript puro sin dependencias de infraestructura ni frameworks.
  */
 
-export type ActivityStatus = "draft" | "active" | "closed";
+/** cancelled: la organización la canceló con un motivo y ya no admite cambios. */
+export type ActivityStatus = "draft" | "active" | "closed" | "cancelled";
 
 export type Cause = {
   id: string;
@@ -55,12 +56,28 @@ export type ActivityDetail = {
   description: string | null;
 };
 
-export type EstadoSolicitud = "pendiente" | "aceptada" | "rechazada" | "en_espera";
+export type EstadoSolicitud =
+  | "pendiente"
+  | "aceptada"
+  | "rechazada"
+  | "en_espera"
+  | "cancelada";
+
+/** Cómo se muestra cada estado de una solicitud en pantalla. */
+export const NOMBRE_ESTADO_SOLICITUD: Record<EstadoSolicitud, string> = {
+  pendiente: "Pendiente",
+  aceptada: "Aceptada",
+  rechazada: "Rechazada",
+  en_espera: "En lista de espera",
+  cancelada: "Cancelada por la organización",
+};
 
 export type ActivityParticipant = {
   id: string;
   name: string;
   image: string | null;
+  /** Solo en postulantes cancelados: el estado que tenían antes de la cancelación. */
+  estadoAnterior?: EstadoSolicitud | null;
 };
 
 export type ActivityDetailData = Activity & {
@@ -75,6 +92,10 @@ export type ActivityDetailData = Activity & {
   posicionEnEspera: number | null;
   /** Lista de espera en orden de llegada (solo llega al organizador). */
   listaDeEspera: ActivityParticipant[];
+  /** Motivo con el que la organización canceló la actividad. */
+  motivoCancelacion: string | null;
+  /** Postulantes afectados por la cancelación, con su estado anterior (solo organizador). */
+  postulantesCancelados: ActivityParticipant[];
   detail: ActivityDetail | null;
   causes: Cause[];
 };

@@ -68,6 +68,8 @@ def list_my_participations(
                     CauseRead(id=c.id, name=c.name, slug=c.slug)
                     for c in item.causes
                 ],
+                motivo_cancelacion=item.motivo_cancelacion,
+                estado_anterior=item.estado_anterior,
             )
             for item in dto.items
         ]

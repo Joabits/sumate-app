@@ -1,4 +1,8 @@
-from app.shared.domain.exceptions import NotFoundException, ValidationException
+from app.shared.domain.exceptions import (
+    ConflictException,
+    NotFoundException,
+    ValidationException,
+)
 
 
 class ActivityNotFoundException(NotFoundException):
@@ -40,3 +44,14 @@ class CapacityLessThanRegisteredException(ValidationException):
             code="CAPACITY_LESS_THAN_REGISTERED",
         )
 
+
+
+class ActividadCanceladaException(ConflictException):
+    """La organización canceló la actividad: ya no admite cambios ni solicitudes."""
+    code = "ACTIVIDAD_CANCELADA"
+    message = "La actividad fue cancelada por la organización."
+
+
+class MotivoCancelacionObligatorioException(ValidationException):
+    code = "MOTIVO_CANCELACION_OBLIGATORIO"
+    message = "Escribe el motivo de la cancelación."

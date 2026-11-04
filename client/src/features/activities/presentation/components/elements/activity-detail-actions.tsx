@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import {
+  Ban,
   Check,
   CheckCircle2,
   Clock,
@@ -170,6 +171,23 @@ export function ActivityDetailActions({
 
   if (isPast) {
     return null;
+  }
+
+  if (status === "cancelled") {
+    return (
+      <div className="fixed bottom-6 inset-x-0 pointer-events-none z-40">
+        <div className="w-full max-w-md lg:max-w-6xl mx-auto px-5 lg:px-8 flex justify-end">
+          <button
+            type="button"
+            disabled
+            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-700 font-semibold text-sm cursor-not-allowed shadow-sm"
+          >
+            <Ban className="w-4 h-4" />
+            <span>Actividad cancelada</span>
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -19,6 +19,9 @@ class ParticipatedActivityItemRead(SQLModel):
     creator_name: str | None = None
     creator_image: str | None = None
     causes: list[CauseRead] = []
+    # Si la organización canceló la actividad: su motivo y el estado que tenía la solicitud
+    motivo_cancelacion: str | None = None
+    estado_anterior: str | None = None
 
 
 class ParticipatedActivityListRead(SQLModel):

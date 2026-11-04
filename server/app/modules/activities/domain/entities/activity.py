@@ -3,18 +3,24 @@ from enum import StrEnum
 from uuid import UUID, uuid4
 
 from app.modules.activities.domain.exceptions import (
+    ActividadCanceladaException,
     InvalidActivityCapacityException,
     InvalidActivityDateException,
     InvalidActivityImageException,
     InvalidActivityNameException,
+    MotivoCancelacionObligatorioException,
 )
 from app.shared.domain.exceptions import ValidationException
+
+MAXIMO_MOTIVO_CANCELACION = 500
 
 
 class ActivityStatus(StrEnum):
     DRAFT = "draft"
     ACTIVE = "active"
     CLOSED = "closed"
+    # La organización la canceló con un motivo; ya no admite cambios
+    CANCELLED = "cancelled"
 
 
 class Activity:
@@ -31,6 +37,7 @@ class Activity:
         status: ActivityStatus | str = ActivityStatus.DRAFT,
         creator_name: str | None = None,
         creator_image: str | None = None,
+        motivo_cancelacion: str | None = None,
     ) -> None:
         self.id = id
         self.name = self.normalize_name(name)
@@ -41,6 +48,7 @@ class Activity:
         self.status = ActivityStatus(status) if isinstance(status, str) else status
         self.creator_name = creator_name
         self.creator_image = creator_image
+        self.motivo_cancelacion = motivo_cancelacion
 
     @classmethod
     def create(
@@ -85,12 +93,41 @@ class Activity:
         self.image_url = self.validate_image_url(image_url)
 
     def publish(self) -> None:
+        self.ensure_not_cancelled()
         if self.status == ActivityStatus.ACTIVE:
             return
         self.status = ActivityStatus.ACTIVE
 
     def close(self) -> None:
+        self.ensure_not_cancelled()
         self.status = ActivityStatus.CLOSED
+
+    def cancelar(self, motivo: str, now: datetime | None = None) -> None:
+        """La organización cancela una oportunidad publicada. El motivo es obligatorio."""
+        self.ensure_not_cancelled()
+        if self.status == ActivityStatus.DRAFT:
+            raise ValidationException(
+                "Un borrador no se cancela porque nadie lo ve; puedes eliminarlo."
+            )
+        current_time = now or datetime.now(timezone.utc)
+        activity_date = self.date if self.date.tzinfo is not None else self.date.replace(tzinfo=timezone.utc)
+        if activity_date <= current_time:
+            raise ValidationException("No se puede cancelar una actividad que ya pasó.")
+
+        motivo_limpio = (motivo or "").strip()
+        if not motivo_limpio:
+            raise MotivoCancelacionObligatorioException()
+        if len(motivo_limpio) > MAXIMO_MOTIVO_CANCELACION:
+            raise ValidationException(
+                f"El motivo no puede superar los {MAXIMO_MOTIVO_CANCELACION} caracteres."
+            )
+
+        self.status = ActivityStatus.CANCELLED
+        self.motivo_cancelacion = motivo_limpio
+
+    def ensure_not_cancelled(self) -> None:
+        if self.status == ActivityStatus.CANCELLED:
+            raise ActividadCanceladaException()
 
     def reopen(self, now: datetime | None = None) -> None:
         if self.status != ActivityStatus.CLOSED:

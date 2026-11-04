@@ -27,6 +27,9 @@ class ParticipatedActivityListItemDTO:
     creator_name: str | None = None
     creator_image: str | None = None
     causes: tuple[CauseDTO, ...] = ()
+    # Si la organización canceló la actividad: su motivo y el estado que tenía la solicitud
+    motivo_cancelacion: str | None = None
+    estado_anterior: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,6 +89,8 @@ class ListUserParticipationsQueryHandler:
                     creator_name=creator_name,
                     creator_image=creator_image,
                     causes=causes_dtos,
+                    motivo_cancelacion=act.motivo_cancelacion,
+                    estado_anterior=part.estado_anterior.value if part.estado_anterior else None,
                 )
             )
 

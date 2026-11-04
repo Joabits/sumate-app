@@ -14,6 +14,8 @@ import { ActivityDetailOrganizer } from "../elements/activity-detail-organizer";
 import { ActivityDetailParticipants } from "../elements/activity-detail-participants";
 import { SolicitudesPendientes } from "../elements/solicitudes-pendientes";
 import { ListaDeEspera } from "../elements/lista-de-espera";
+import { AvisoCancelacion } from "../elements/aviso-cancelacion";
+import { PostulantesCancelados } from "../elements/postulantes-cancelados";
 
 type ActivityDetailViewProps = {
   activity: ActivityDetailData;
@@ -35,6 +37,9 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
       <main className="w-full max-w-md lg:max-w-6xl mx-auto flex-1 pb-28 px-5 lg:px-8 pt-2 sm:pt-4">
         {/* Cabecera superior común con volver atrás (con texto en desktop), compartir, editar y eliminar */}
         <ActivityDetailHeader activity={activity} />
+
+        {/* Si la organización canceló la actividad, todos ven el aviso y el motivo */}
+        <AvisoCancelacion activity={activity} />
 
         {/* 
           Disposición en Móvil / Tablet (< 1024px):
@@ -67,6 +72,7 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
           {/* 6. Solicitudes pendientes (solo organizador) y participantes confirmados */}
           <SolicitudesPendientes activity={activity} />
           <ListaDeEspera activity={activity} />
+          <PostulantesCancelados activity={activity} />
           <ActivityDetailParticipants activity={activity} />
         </div>
 
@@ -99,6 +105,7 @@ export function ActivityDetailView({ activity }: ActivityDetailViewProps) {
             {/* Solicitudes pendientes (solo organizador) y participantes confirmados */}
             <SolicitudesPendientes activity={activity} />
             <ListaDeEspera activity={activity} />
+            <PostulantesCancelados activity={activity} />
             <ActivityDetailParticipants activity={activity} />
           </div>
         </div>

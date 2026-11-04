@@ -199,6 +199,30 @@ export async function reopenActivityAction(id: string): Promise<ApiActionResult>
   return result;
 }
 
+export async function cancelarActividadAction(
+  id: string,
+  motivo: string,
+): Promise<ApiActionResult> {
+  if (!motivo.trim()) {
+    return errorResult("Escribe el motivo de la cancelación.");
+  }
+
+  const result = await activityRepositoryImpl.cancelarActividad(id, motivo.trim());
+
+  if (result.ok) {
+    revalidatePath(`/activities/${id}`);
+    revalidatePath("/my-activities");
+    revalidatePath("/explore");
+    revalidatePath("/recently");
+    updateTag("activities");
+    updateTag(`activity-${id}`);
+    updateTag("participations");
+    updateTag("participations-me");
+  }
+
+  return result;
+}
+
 export async function deleteActivityAction(id: string): Promise<ApiActionResult> {
   const result = await activityRepositoryImpl.deleteActivity(id);
 
