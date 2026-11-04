@@ -2,7 +2,7 @@
 
 Fork: https://github.com/Joabits/sumate-app  
 Caso: Voluntariado Cerca (Súmate)  
-Commit de la funcionalidad: [46cf244 feat: cancelar una oportunidad con motivo obligatorio](https://github.com/Joabits/sumate-app/commit/46cf244)
+Commit de la funcionalidad: [71f44c2 feat: cancelar una oportunidad con motivo obligatorio](https://github.com/Joabits/sumate-app/commit/71f44c2)
 
 ## Funcionalidad del caso: cancelar una oportunidad
 
