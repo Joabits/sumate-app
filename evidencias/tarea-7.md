@@ -2,7 +2,37 @@
 
 Fork: https://github.com/Joabits/sumate-app  
 Caso: Voluntariado Cerca (Súmate)  
+Feedback recibido: [feedback de Jose Brayan Gonzales Alba (StudyMatch)](https://github.com/BrayanG123/2do_Proyeccto_IHC/blob/main/clase-19-feedback-a-otro-proyecto/gonzales-alba/feedback.md), probó el commit aaff86a  
+Commit de la mejora: [d10b5ec fix: acceso directo para crear una actividad desde Explorar](https://github.com/Joabits/sumate-app/commit/d10b5ec)  
 Commit de la funcionalidad: [71f44c2 feat: cancelar una oportunidad con motivo obligatorio](https://github.com/Joabits/sumate-app/commit/71f44c2)
+
+## Mejora por feedback: crear una actividad desde Explorar
+
+Qué ocurrió: en su segundo flujo, publicar una actividad, el evaluador escribió que tuvo que ir a otra sección para crearla: «Colocaría un botón de acceso directo a crear una actividad ya que tuve que ir a otra sección (Mis actividades) para poder crearla».  
+Cómo repetirlo: iniciar sesión como Ana, que entra a Explorar. En Explorar no hay ningún botón para crear; hay que tocar Mis actividades y después Crear actividad.  
+Qué cambiamos: Explorar muestra el mismo botón Crear actividad que Mis actividades. Al crear desde ahí la app pasa a Mis actividades, porque la actividad nueva queda como borrador y desde ahí se completa y se publica.  
+Dónde: [explore/page.tsx](../client/src/app/%28main%29/explore/page.tsx#L19) y [create-activity-sheet.tsx](../client/src/features/activities/presentation/components/dialogs/create-activity-sheet.tsx#L23)  
+Cómo lo comprobamos: la prueba E2E [Ana crea una actividad desde Explorar sin pasar por Mis actividades](../client/tests/publicar-oportunidad.spec.ts#L100) abre el formulario desde Explorar, crea la actividad y la encuentra como borrador en Mis actividades.  
+Funcionó: la prueba pasa y la suite completa, con lo de la Tarea 6 y la cancelación, pasó 30 de 30 en tres corridas seguidas.
+
+| | Antes | Después |
+|---|---|---|
+| Para abrir el formulario desde Explorar | Dos toques: Mis actividades y Crear actividad | Un toque: Crear actividad |
+| Botón Crear actividad en Explorar | No existe | Abajo a la derecha, igual que en Mis actividades |
+
+La otra observación del evaluador, que Explorar parece un blog de noticias, queda anotada para una próxima mejora.
+
+Antes, Explorar no tiene cómo crear una actividad:
+
+![](tarea-7/fix-antes-explorar.png)
+
+Después, Explorar tiene el botón Crear actividad:
+
+![](tarea-7/fix-despues-explorar.png)
+
+Al tocarlo se abre el formulario sin salir de Explorar:
+
+![](tarea-7/fix-despues-formulario.png)
 
 ## Funcionalidad del caso: cancelar una oportunidad
 
