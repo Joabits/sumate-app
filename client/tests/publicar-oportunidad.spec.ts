@@ -55,6 +55,10 @@ test('Ana publica una oportunidad y María la encuentra al buscar', async ({ pag
   await page.getByLabel('Nombre o referencia del lugar').fill('Plaza 14 de Septiembre');
   await page.getByRole('button', { name: 'Confirmar Ubicación' }).click();
   await expect(page.getByText('Ubicación actualizada con éxito.')).toBeVisible({ timeout: 20_000 });
+  // La pantalla ya muestra el lugar: la actividad tiene todo lo que pide la publicación
+  await expect(
+    page.getByText('Plaza 14 de Septiembre', { exact: true }).filter({ visible: true }),
+  ).toBeVisible();
 
   // Publicar: aparece el mensaje y la organizadora ya puede cerrar la convocatoria
   await page.getByRole('button', { name: 'Publicar actividad' }).click();
@@ -90,4 +94,26 @@ test('Ana no puede publicar un borrador incompleto y se le dice qué falta', asy
   // Sigue en borrador al recargar
   await page.reload();
   await expect(page.getByRole('button', { name: 'Publicar actividad' })).toBeVisible();
+});
+
+// Mejora por el feedback de la Clase 19: antes había que ir a Mis actividades para crear
+test('Ana crea una actividad desde Explorar sin pasar por Mis actividades', async ({ page }) => {
+  const nombre = `Feria del libro usado ${Date.now()}`;
+
+  await iniciarSesion(page, USUARIOS.ana);
+  await page.goto('/explore');
+  await page.getByRole('button', { name: 'Crear nueva actividad' }).click();
+
+  const selectorDeArchivo = page.waitForEvent('filechooser');
+  await page.getByText('Toca para subir una fotografía').click();
+  await (await selectorDeArchivo).setFiles(path.join(__dirname, 'fixtures', 'portada.png'));
+  await page.getByLabel('Nombre de la actividad').fill(nombre);
+  await page.getByLabel('Fecha de realización').fill(fechaFutura());
+  await page.getByLabel('Cantidad de cupos').fill('8');
+  await page.getByRole('button', { name: 'Registrar actividad' }).click();
+  await expect(page.getByText('¡Actividad creada exitosamente!')).toBeVisible();
+
+  // Queda como borrador en Mis actividades, lista para completarla y publicarla
+  await expect(page).toHaveURL(/\/my-activities/);
+  await expect(page.getByRole('link', { name: nombre })).toContainText('Borrador');
 });

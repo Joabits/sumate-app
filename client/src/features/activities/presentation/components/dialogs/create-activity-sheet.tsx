@@ -1,12 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 import { AppSheet } from "@/features/shared/presentation/components/dialogs/app-sheet";
 import { CreateActivityForm } from "../forms/create-activity-form";
 
-export function CreateActivitySheet() {
+type CreateActivitySheetProps = {
+  /**
+   * Desde Explorar la actividad nueva no aparece (es un borrador propio):
+   * al crearla se lleva a Mis actividades para completarla y publicarla.
+   */
+  irAMisActividadesAlCrear?: boolean;
+};
+
+export function CreateActivitySheet({
+  irAMisActividadesAlCrear = false,
+}: CreateActivitySheetProps) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  const alCrear = () => {
+    setOpen(false);
+    if (irAMisActividadesAlCrear) {
+      router.push("/my-activities");
+    }
+  };
 
   return (
     <>
@@ -35,7 +54,7 @@ export function CreateActivitySheet() {
         bodyClassName="px-6 lg:px-8 py-5"
       >
         <div className="pb-2">
-          <CreateActivityForm onSuccess={() => setOpen(false)} />
+          <CreateActivityForm onSuccess={alCrear} />
         </div>
       </AppSheet>
     </>
