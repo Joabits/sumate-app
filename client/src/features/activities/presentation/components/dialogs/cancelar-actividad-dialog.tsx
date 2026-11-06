@@ -27,7 +27,7 @@ const MAXIMO_MOTIVO = 500;
 
 /**
  * La organización cancela una actividad publicada. El motivo es obligatorio
- * porque cada voluntario afectado lo verá en Mi trayectoria.
+ * porque cada voluntario afectado lo verá en Mis solicitudes.
  */
 export function CancelarActividadDialog({
   activityId,

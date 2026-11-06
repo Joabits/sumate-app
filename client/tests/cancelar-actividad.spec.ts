@@ -37,7 +37,7 @@ test('Ana cancela una oportunidad con postulantes en tres estados y todos ven el
   await ana.reload();
   await expect(ana.getByRole('heading', { name: 'Actividad cancelada por la organización' })).toBeVisible();
 
-  // Cada voluntario afectado ve el motivo en Mi trayectoria
+  // Cada voluntario afectado ve el motivo en Mis solicitudes, sección Historial
   const afectadosPorCorreo: [string, string][] = [
     [USUARIOS.luis, 'aceptada'],
     [USUARIOS.maria, 'pendiente'],
@@ -46,6 +46,7 @@ test('Ana cancela una oportunidad con postulantes en tres estados y todos ven el
   for (const [correo, estadoAnterior] of afectadosPorCorreo) {
     const voluntario = await abrirSesion(correo);
     await voluntario.goto('/recently');
+    await voluntario.getByRole('tab', { name: /Historial/ }).click();
     await expect(voluntario.getByRole('link', { name: TALLER })).toContainText(
       `Cancelada por la organización (estabas: ${estadoAnterior}). Motivo: ${MOTIVO}`,
     );

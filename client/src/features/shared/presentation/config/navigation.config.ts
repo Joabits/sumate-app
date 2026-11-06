@@ -23,7 +23,7 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   },
   {
     id: "recently",
-    label: "Mi trayectoria",
+    label: "Mis solicitudes",
     href: "/recently",
     iconUrl: "/assets/icons/recently.webp",
     enabled: true,

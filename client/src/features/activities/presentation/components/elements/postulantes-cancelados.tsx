@@ -32,7 +32,7 @@ export function PostulantesCancelados({ activity }: PostulantesCanceladosProps) 
         </span>
       </div>
       <p className="mb-3 text-xs text-slate-500">
-        Cada uno ve el motivo en Mi trayectoria. Así estaban al cancelar:
+        Cada uno ve el motivo en Mis solicitudes. Así estaban al cancelar:
       </p>
 
       <ul aria-label="Postulantes afectados" className="space-y-2">
