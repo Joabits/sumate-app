@@ -5,15 +5,15 @@ Cómo funciona:
 ─────────────
 1. Lee DATABASE_URL desde .env (vía core.config.settings).
 2. Normaliza automáticamente el driver a psycopg v3.
-3. Importa shared.infrastructure.db.models  →  ese módulo es el
-   "registry" donde registras todos tus modelos SQLModel.
+3. Importa app.models  →  ese paquete es el "registry" donde se
+   registran todos los modelos SQLModel.
 4. Detecta si la URL es SQLite o PostgreSQL y ajusta los parámetros
    de comparación de tipos y server-defaults en consecuencia.
 
 Para agregar un nuevo modelo al autogenerate:
 ─────────────────────────────────────────────
-    # En app/shared/infrastructure/db/models.py  ← SOLO AHÍ
-    from app.modules.users.infrastructure.persistence.models.user_model import UserModel
+    # En app/models/__init__.py  ← SOLO AHÍ
+    from app.models.profile import Profile
 
 Después ejecuta:
     alembic revision --autogenerate -m "add users table"
@@ -26,7 +26,7 @@ from logging.config import fileConfig
 from pathlib import Path
 
 # ── Asegurar que el root del proyecto esté en sys.path ────────────────────────
-# Esto permite importar `core`, `shared`, etc. desde cualquier directorio de
+# Esto permite importar `app.core`, `app.models`, etc. desde cualquier directorio de
 # trabajo al correr `alembic` desde la raíz del proyecto.
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -42,7 +42,7 @@ from app.core.config import settings  # noqa: E402
 
 # ── Registry de modelos: IMPORTA AQUÍ TODOS TUS MODELOS SQLModel ──────────────
 # Si no importas un modelo, Alembic NO lo detectará en --autogenerate.
-import app.shared.infrastructure.db.models  # noqa: F401, E402
+import app.models  # noqa: F401, E402
 
 # ──────────────────────────────────────────────────────────────────────────────
 config = context.config

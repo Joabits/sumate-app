@@ -1,9 +1,11 @@
-from typing import Iterator
+from collections.abc import Iterator
+from typing import Annotated
 
+from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine
 
+import app.models  # noqa: F401  registra todas las tablas en SQLModel.metadata
 from app.core.config import settings
-import app.shared.infrastructure.db.models  # noqa: F401
 
 # ── Argumentos condicionales según el motor ───────────────────────────────────
 connect_args = {"check_same_thread": False} if settings.is_sqlite else {}
@@ -19,16 +21,19 @@ engine = create_engine(
 
 def init_db() -> None:
     """
-    Crea las tablas definidas en SQLModel.metadata.
+    Crea las tablas definidas en los modelos.
 
-    ⚠️  Úsalo SOLO en DEV cuando no quieras gestionar migraciones.
-    En PROD (o cuando uses Alembic), este método no se llama —
-    las tablas las crea/actualiza `alembic upgrade head`.
+    Úsalo SOLO en DEV con SQLite. En PostgreSQL las tablas las crea
+    `alembic upgrade head`.
     """
     SQLModel.metadata.create_all(engine)
 
 
 def get_session() -> Iterator[Session]:
-    """Dependencia FastAPI que provee una sesión de BD por request."""
+    """Una sesión de BD por request. Si el controlador no hace commit, nada se guarda."""
     with Session(engine) as session:
         yield session
+
+
+DBSession = Annotated[Session, Depends(get_session)]
+"""Sesión de BD inyectada en los controladores."""

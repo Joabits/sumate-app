@@ -1,4 +1,4 @@
-# Entorno local completo: PostgreSQL + FastAPI + Next.js
+# Entorno local completo: PostgreSQL + FastAPI + React (Vite)
 #   docker compose up -d --build
 #   Frontend: http://localhost:3000   API: http://localhost:8001/docs
 services:

@@ -20,11 +20,7 @@ from sqlalchemy import text
 from sqlmodel import Session, select
 
 from app.core.database import engine
-from app.modules.activities.infrastructure.persistence.models.activity_cause_model import ActivityCauseModel
-from app.modules.activities.infrastructure.persistence.models.activity_detail_model import ActivityDetailModel
-from app.modules.activities.infrastructure.persistence.models.activity_model import ActivityModel
-from app.modules.activities.infrastructure.persistence.models.cause_model import CauseModel
-from app.modules.participations.infrastructure.persistence.models.participation_model import ParticipationModel
+from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation
 
 DEMO_PASSWORD = "Demo12345"
 
@@ -199,11 +195,11 @@ def seed_users(session: Session) -> None:
 
 
 def seed_activities(session: Session) -> None:
-    causes = {c.slug: c.id for c in session.exec(select(CauseModel)).all()}
+    causes = {c.slug: c.id for c in session.exec(select(Cause)).all()}
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
     for item in ACTIVITIES:
-        activity = ActivityModel(
+        activity = Activity(
             id=uuid.uuid4(),
             name=item["name"],
             owner_id=item["owner"],
@@ -216,7 +212,7 @@ def seed_activities(session: Session) -> None:
         session.flush()
 
         session.add(
-            ActivityDetailModel(
+            ActivityDetail(
                 activity_id=activity.id,
                 latitude=item["lat"],
                 longitude=item["lng"],
@@ -226,7 +222,7 @@ def seed_activities(session: Session) -> None:
             )
         )
         for slug in item["causes"]:
-            session.add(ActivityCauseModel(activity_id=activity.id, cause_id=causes[slug]))
+            session.add(ActivityCause(activity_id=activity.id, cause_id=causes[slug]))
         solicitudes = (
             [(user_id, "aceptada") for user_id in item["participants"]]
             + [(user_id, "pendiente") for user_id in item.get("pendientes", [])]
@@ -234,7 +230,7 @@ def seed_activities(session: Session) -> None:
         )
         for user_id, estado in solicitudes:
             session.add(
-                ParticipationModel(activity_id=activity.id, user_id=user_id, status=estado)
+                Participation(activity_id=activity.id, user_id=user_id, status=estado)
             )
 
 

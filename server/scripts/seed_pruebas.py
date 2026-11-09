@@ -27,11 +27,7 @@ from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.core.database import engine
-from app.modules.activities.infrastructure.persistence.models.activity_cause_model import ActivityCauseModel
-from app.modules.activities.infrastructure.persistence.models.activity_detail_model import ActivityDetailModel
-from app.modules.activities.infrastructure.persistence.models.activity_model import ActivityModel
-from app.modules.activities.infrastructure.persistence.models.cause_model import CauseModel
-from app.modules.participations.infrastructure.persistence.models.participation_model import ParticipationModel
+from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation
 from seed_causes import seed_causes
 from seed_demo import ACTIVITIES, DEMO_PASSWORD, IMG, USERS, hash_password
 
@@ -175,7 +171,7 @@ def crear_usuarios_faltantes(session: Session) -> None:
 def borrar_actividades_de_prueba(session: Session) -> None:
     ids = [user["id"] for user in USUARIOS]
     actividades = session.exec(
-        select(ActivityModel).where(ActivityModel.owner_id.in_(ids))
+        select(Activity).where(Activity.owner_id.in_(ids))
     ).all()
     actividad_ids = [a.id for a in actividades]
     if not actividad_ids:
@@ -201,11 +197,11 @@ def borrar_actividades_de_prueba(session: Session) -> None:
 
 
 def crear_actividades(session: Session, actividades: list[dict]) -> None:
-    causas = {c.slug: c.id for c in session.exec(select(CauseModel)).all()}
+    causas = {c.slug: c.id for c in session.exec(select(Cause)).all()}
     now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
 
     for item in actividades:
-        actividad = ActivityModel(
+        actividad = Activity(
             id=uuid.uuid4(),
             name=item["name"],
             owner_id=item["owner"],
@@ -219,7 +215,7 @@ def crear_actividades(session: Session, actividades: list[dict]) -> None:
 
         if not item.get("sin_detalle"):
             session.add(
-                ActivityDetailModel(
+                ActivityDetail(
                     activity_id=actividad.id,
                     latitude=item.get("lat"),
                     longitude=item.get("lng"),
@@ -229,7 +225,7 @@ def crear_actividades(session: Session, actividades: list[dict]) -> None:
                 )
             )
         for slug in item["causes"]:
-            session.add(ActivityCauseModel(activity_id=actividad.id, cause_id=causas[slug]))
+            session.add(ActivityCause(activity_id=actividad.id, cause_id=causas[slug]))
 
         solicitudes = (
             [(user_id, "aceptada") for user_id in item["participants"]]
@@ -239,7 +235,7 @@ def crear_actividades(session: Session, actividades: list[dict]) -> None:
         )
         for user_id, estado in solicitudes:
             session.add(
-                ParticipationModel(activity_id=actividad.id, user_id=user_id, status=estado)
+                Participation(activity_id=actividad.id, user_id=user_id, status=estado)
             )
             # Separa las fechas de solicitud para que el orden de llegada sea claro
             session.flush()

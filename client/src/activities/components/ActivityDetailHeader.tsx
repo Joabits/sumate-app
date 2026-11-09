@@ -1,0 +1,195 @@
+import { useState, useTransition } from "react";
+import { useNavigate } from "react-router";
+import { Ban, ChevronLeft, Eye, Pencil, Share2, Trash2 } from "lucide-react";
+import { AppAlertDialog } from "@/shared/components/AppAlertDialog";
+import { appToast } from "@/shared/components/Toast";
+import { CancelarActividadDialog } from "./CancelarActividadDialog";
+import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
+import { useActivities } from "@/activities/hooks/useActivities";
+
+export function ActivityDetailHeader() {
+  const { deleteActivity } = useActivities();
+  const navigate = useNavigate();
+  const { activity, isEditMode, toggleEditMode } = useActivityDetail();
+  const { id: activityId, name: activityName, isOwner, status } = activity;
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, startDeleting] = useTransition();
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  // Hora en que se abrió la pantalla, para saber si la actividad ya pasó
+  const [now] = useState(() => Date.now());
+  const isPast = new Date(activity.date).getTime() <= now;
+  const cancelada = status === "cancelled";
+  // Solo se cancela una actividad publicada que todavía no ocurrió
+  const puedeCancelar =
+    isOwner && (status === "active" || status === "closed") && !isPast;
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/explore");
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: activityName,
+          text: `Te invito a unirte a "${activityName}" en Súmate`,
+          url,
+        });
+        return;
+      } catch (err) {
+        // El usuario cerró el menú de compartir
+        if (err instanceof Error && err.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      appToast.success("Enlace copiado al portapapeles.");
+    } catch {
+      appToast.info("Copia el enlace de la barra de direcciones.");
+    }
+  };
+
+  const handleConfirmDelete = () => {
+    startDeleting(async () => {
+      const res = await deleteActivity(activityId);
+      if (res.ok) {
+        appToast.success("Actividad eliminada correctamente.");
+        navigate("/my-activities", { replace: true });
+      } else {
+        appToast.error(
+          "Error al eliminar la actividad",
+          res.errors?.[0] ?? "No se pudo eliminar la actividad."
+        );
+        setIsDeleteDialogOpen(false);
+      }
+    });
+  };
+
+  return (
+    <>
+      <header
+        className="sticky top-0 z-40 flex items-center justify-between px-0 pt-3 sm:pt-4 pb-3 mb-4 bg-white transition-colors"
+        data-purpose="top-navigation-bar"
+      >
+        {/* Botón Volver Atrás: en móvil solo ícono, en desktop (>= lg) ícono + texto "Volver" */}
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="Volver atrás"
+          className="h-11 px-3.5 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+        >
+          <ChevronLeft className="w-5 h-5 -ml-1 shrink-0" />
+          <span className="hidden lg:inline ml-1 text-sm font-semibold tracking-tight">
+            Volver
+          </span>
+        </button>
+
+        {/* Acciones de la derecha: en móvil íconos circulares, en escritorio (>= lg) píldoras con ícono + texto */}
+        <div className="flex items-center space-x-2.5">
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label="Compartir evento"
+            title="Compartir evento"
+            className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center gap-1.5 text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+          >
+            <Share2 className="w-4.5 h-4.5 shrink-0" />
+            <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+              Compartir
+            </span>
+          </button>
+
+          {puedeCancelar && (
+            <button
+              type="button"
+              onClick={() => setIsCancelDialogOpen(true)}
+              aria-label="Cancelar actividad"
+              title="Cancelar actividad"
+              className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-amber-100 transition-all cursor-pointer"
+            >
+              <Ban className="w-4.5 h-4.5 shrink-0" />
+              <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                Cancelar
+              </span>
+            </button>
+          )}
+
+          {/* Una actividad cancelada ya no se edita ni se elimina: se conserva para el historial */}
+          {isOwner && !cancelada && (
+            <>
+              <button
+                type="button"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                aria-label="Eliminar actividad"
+                title="Eliminar actividad"
+                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-rose-100 transition-all cursor-pointer"
+              >
+                <Trash2 className="w-4.5 h-4.5 shrink-0" />
+                <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                  Eliminar
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleEditMode}
+                aria-label={isEditMode ? "Volver a modo lectura" : "Activar modo edición"}
+                title={isEditMode ? "Volver a modo lectura" : "Editar actividad"}
+                className={`h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer ${
+                  isEditMode
+                    ? "bg-[#6355de] text-white shadow-md shadow-[#6355de]/30 ring-2 ring-[#6355de] ring-offset-2"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                {isEditMode ? (
+                  <>
+                    <Eye className="w-4.5 h-4.5 shrink-0" />
+                    <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                      Modo lectura
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Pencil className="w-4.5 h-4.5 shrink-0" />
+                    <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
+                      Editar
+                    </span>
+                  </>
+                )}
+              </button>
+            </>
+          )}
+        </div>
+      </header>
+
+      {isOwner && (
+        <AppAlertDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+          title="¿Eliminar esta actividad?"
+          description="Esta acción eliminará la actividad de forma permanente. No podrás deshacer esta acción."
+          actionText={isDeleting ? "Eliminando..." : "Eliminar"}
+          cancelText="Cancelar"
+          actionDisabled={isDeleting}
+          onAction={handleConfirmDelete}
+        />
+      )}
+
+      {puedeCancelar && (
+        <CancelarActividadDialog
+          activityId={activityId}
+          activityName={activityName}
+          isOpen={isCancelDialogOpen}
+          onOpenChange={setIsCancelDialogOpen}
+        />
+      )}
+    </>
+  );
+}

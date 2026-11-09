@@ -70,7 +70,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Roles tipográficos cargados con next/font en styles/fonts.ts */
+  /* Roles tipográficos: las fuentes se cargan desde Google Fonts en index.html */
   --font-headline: var(--app-font-sans);
   --font-sans: var(--app-font-sans);
   --font-label: var(--app-font-sans);

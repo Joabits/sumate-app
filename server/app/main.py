@@ -1,42 +1,40 @@
-# app/main.py
+"""
+Punto de entrada de la API (arquitectura MVC).
+
+    app/models/       M  tablas, reglas de negocio y consultas
+    app/views/        V  esquemas de entrada/salida y funciones render_*
+    app/controllers/  C  endpoints: reciben la petición y devuelven la vista
+    app/core/            configuración, base de datos, seguridad, errores e integraciones
+"""
+
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
 
+from app.controllers import (
+    activity_controller,
+    cause_controller,
+    health_controller,
+    participation_controller,
+)
 from app.core.config import settings
-from app.core.database import engine, init_db
-from app.core.dependencies import get_event_bus
-from app.core.errors.handlers import setup_exception_handlers
-from app.core.events.subscriptions import configure_event_subscriptions
+from app.core.database import init_db
+from app.core.errors import setup_exception_handlers
 
-# Configuración de logging estándar
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 logger = logging.getLogger(__name__)
 
-# ==============================================================================
-# IMPORTACIONES DE ROUTERS (descomenta cuando crees los módulos)
-# ==============================================================================
-# from app.modules.module_a.infrastructure.api.routers.module_a_router import router as module_a_router
-# from app.modules.module_b.infrastructure.api.routers.module_b_router import router as module_b_router
 
-
-# ==============================================================================
-# LIFESPAN
-# ==============================================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Ciclo de vida de la aplicación.
-
-    - DEV  + SQLite   → crea tablas automáticamente (rápido para prototipar).
+    - DEV  + SQLite   → crea las tablas automáticamente (rápido para prototipar).
     - DEV  + Postgres → se asume que Alembic ya corrió (`alembic upgrade head`).
     - PROD            → Alembic siempre. init_db() nunca se llama.
     """
@@ -49,29 +47,18 @@ async def lifespan(app: FastAPI):
             settings.ENVIRONMENT,
             "SQLite" if settings.is_sqlite else "PostgreSQL",
         )
-
-    # ── Event Bus — registrar suscripciones de handlers ────────────────────
-    configure_event_subscriptions(get_event_bus())
-    logger.info("Event Bus configurado con suscripciones del sistema.")
-
     yield
 
 
-# ==============================================================================
-# APP FASTAPI
-# ==============================================================================
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="1.0.0",
     lifespan=lifespan,
-    swagger_ui_parameters={
-        "persistAuthorization": True,  # Mantiene el token JWT al recargar Swagger
-    },
+    swagger_ui_parameters={"persistAuthorization": True},
 )
 
 setup_exception_handlers(app)
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -80,54 +67,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Imágenes subidas ──────────────────────────────────────────────────────────
 # Las imágenes de las actividades se guardan en una carpeta y se sirven en /uploads
 settings.uploads_path.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=settings.uploads_path), name="uploads")
 
-
-# ==============================================================================
-# RUTAS GENÉRICAS / HEALTHCHECK
-# ==============================================================================
-@app.get("/health", tags=["System"], summary="Verificar estado del sistema y BD")
-def health_check():
-    """
-    Comprueba el estado de la API y la conectividad real con la base de datos.
-    Devuelve 200 si todo está saludable, o 503 si la BD no responde.
-    """
-    db_status = "connected"
-    try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-    except Exception as exc:
-        logger.error("Healthcheck: fallo al conectar con la base de datos: %s", exc)
-        db_status = "unreachable"
-
-    payload = {
-        "status": "ok" if db_status == "connected" else "degraded",
-        "database": {
-            "engine": "SQLite" if settings.is_sqlite else "PostgreSQL",
-            "status": db_status,
-        },
-        "environment": settings.ENVIRONMENT,
-    }
-
-    if db_status != "connected":
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content=payload,
-        )
-
-    return payload
-
-
-# ==============================================================================
-# REGISTRO DE ROUTERS
-# ==============================================================================
-from app.modules.activities.infrastructure.api.routers.activity_router import router as activity_router
-from app.modules.participations.infrastructure.api.routers.participation_router import (
-    router as participation_router,
-)
-
-app.include_router(activity_router, prefix="/api")
-app.include_router(participation_router, prefix="/api")
+# ── Controladores ─────────────────────────────────────────────────────────────
+app.include_router(health_controller.router)
+# cause_controller va antes: /activities/causes no debe tomarse como /activities/{activity_id}
+app.include_router(cause_controller.router, prefix="/api")
+app.include_router(activity_controller.router, prefix="/api")
+app.include_router(participation_controller.router, prefix="/api")

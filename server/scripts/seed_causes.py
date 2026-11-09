@@ -3,12 +3,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.core.database import engine
-from app.modules.activities.domain.entities.cause import Cause
-from app.modules.activities.infrastructure.persistence.repositories.sqlmodel_cause_repository import (
-    SQLModelCauseRepository,
-)
 from sqlmodel import Session
+
+from app.core.database import engine
+from app.models import Cause
 
 PREDEFINED_CAUSES = [
     {"name": "Salud", "slug": "salud"},
@@ -26,13 +24,10 @@ PREDEFINED_CAUSES = [
 
 def seed_causes() -> None:
     with Session(engine) as session:
-        repository = SQLModelCauseRepository(session)
         created_count = 0
         for item in PREDEFINED_CAUSES:
-            existing = repository.get_by_slug(item["slug"])
-            if existing is None:
-                cause = Cause.create(name=item["name"], slug=item["slug"])
-                repository.save(cause)
+            if Cause.get_by_slug(session, item["slug"]) is None:
+                session.add(Cause.create(name=item["name"], slug=item["slug"]))
                 created_count += 1
         session.commit()
         print(f"Seeding completed. Inserted {created_count} causes.")

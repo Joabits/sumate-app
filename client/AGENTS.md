@@ -1,29 +1,26 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
-
-This version has breaking changes. Read the relevant guide in `node_modules/next/dist/docs/` before writing any Next.js code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
-
 ## Workflow
 
 - Use pnpm: `pnpm-lock.yaml` is the committed lockfile.
-- Available scripts: `pnpm dev`, `pnpm lint`, `pnpm build`, `pnpm start`, and `pnpm email:dev` (React Email preview).
-- There is no test or typecheck script. Use `pnpm exec tsc --noEmit` for a focused type check and `pnpm build` for full Next.js validation.
+- Scripts: `pnpm dev` (server + Vite with hot reload on :3000), `pnpm build` (Vite build to `dist/`), `pnpm start` (serves `dist/` + Better Auth), `pnpm typecheck`, `pnpm lint`, `pnpm email:dev`.
+- E2E: `pnpm exec playwright test` with the app running on :3000 (see root README).
 
 ## Structure
 
-- `src/app/` contains App Router pages and route handlers. `src/app/api/auth/[...all]/route.ts` is the single Better Auth handler.
-- Reusable UI primitives are shadcn/Radix components in `src/components/ui/`; `components.json` configures them for RSC and `src/styles/globals.css`.
-- Feature modules and shared code live in `src/features/{feature-name,shared}/{domain,infrastructure,presentation}`. The `@/*` TypeScript alias resolves from `src/`.
-- Email templates live in `src/lib/emails/` and are previewed with `pnpm email:dev`.
-- For React or Next.js work, use the repository's `vercel-react-best-practices` skill.
+- React + Vite + React Router. Entry: `index.html` → `src/main.tsx` (AuthProvider + BrowserRouter).
+- `src/routers/`: `AppRoutes.tsx` (all routes), `PrivateRoute.tsx` (needs session → else `/auth/login`), `PublicRoute.tsx` (guests only → else `/explore`).
+- Feature-based architecture. Each feature (`src/activities`, `src/participations`, `src/auth`) has `components/`, `context/` (`XContext.tsx`, `XProvider.tsx`, `xTypes.ts`), `hooks/` (`useX.ts`) and `pages/`.
+- State is shared with React Context: `AuthProvider` wraps everything; `shared/components/AppProviders.tsx` wraps `ActivitiesProvider` + `ParticipationsProvider` for the signed-in routes; `ActivityDetailProvider` wraps the detail page. Components read with `useAuth`, `useActivities`, `useActivityDetail`, `useParticipations` and never import `src/api/*Actions` or `authClient` directly.
+- Pages load their data in the browser with `shared/hooks/usePageData.ts`. Every successful action bumps `dataVersion` (ActivitiesProvider) and open pages reload.
+- `src/api/`: all backend communication — `http.ts`, `*Api.ts` (HTTP calls), `*Actions.ts` (mutations used by the Providers), `*Queries.ts` (reads used by pages), `schemas/` (zod + mappers), `authApi.ts`/`authClient.ts` (Better Auth).
+- `src/shared/`: UI used by several features (layout, header, buttons, dialogs, `Image`, `Link`). `src/components/ui/`: shadcn primitives. The `@/*` alias resolves from `src/`.
+- `server/`: Node server. `/api/auth/*` → Better Auth (`server/auth.ts`, emails in `server/emails/`); everything else → the React app. It exists because Better Auth needs a server and Vite does not have one.
 
 ## Auth And Backend Integration
 
-- Keep Better Auth configuration in `src/lib/auth.ts` and browser client setup in `src/lib/auth-client.ts`.
-- `src/proxy.ts` currently runs only for `/home/:path*`; expand its matcher deliberately when protecting new routes.
-- `src/features/shared/infrastructure/http/api-client.ts` sends a Better Auth JWT by default and retries one 401 after refresh. Set `withAuth: false` for public backend endpoints.
-- Select external-backend error parsing with `NEXT_PUBLIC_BACKEND_ADAPTER` (`fastapi` or `laravel`); the default is `fastapi` and changing it requires a restart.
+- Better Auth server config: `server/auth.ts`. Browser client: `src/api/authClient.ts`. FastAPI validates JWTs with `{FRONTEND_URL}/api/auth/jwks`.
+- The browser calls FastAPI directly (`NEXT_PUBLIC_BACKEND_URL`), so the backend `CORS_ORIGINS` must include the frontend origin.
+- `src/api/http.ts` sends a Better Auth JWT by default and retries one 401 after refresh. Set `withAuth: false` for public backend endpoints.
+- Env vars keep the `NEXT_PUBLIC_` prefix (Vite exposes them via `envPrefix` in `vite.config.ts`); read them with `import.meta.env`.
 
 ## Environment
 

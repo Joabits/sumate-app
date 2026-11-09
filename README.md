@@ -25,8 +25,8 @@ El objetivo principal es reducir las barreras de participación juvenil en causa
 
 ## 💻 Tecnologías y Stack
 
-* **Frontend:** Next.js (TypeScript, Tailwind CSS)
-* **Backend:** FastAPI (Python, SQLAlchemy, PostgreSQL)
+* **Frontend:** React + Vite + React Router (TypeScript, Tailwind CSS); Better Auth en un servidor Node
+* **Backend:** FastAPI con arquitectura MVC (Python, SQLModel, PostgreSQL)
 
 ---
 

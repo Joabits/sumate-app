@@ -1,10 +1,6 @@
 FROM node:22-slim
 
-# socat reenvía localhost:8001 dentro del contenedor hacia el backend,
-# así el render en servidor de Next usa la misma URL que el navegador.
-RUN apt-get update && apt-get install -y --no-install-recommends socat \
-    && rm -rf /var/lib/apt/lists/* \
-    && corepack enable
+RUN corepack enable
 
 WORKDIR /app
 
@@ -15,4 +11,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "socat TCP-LISTEN:8001,fork,reuseaddr TCP:server:8000 & pnpm dev --hostname 0.0.0.0"]
+# server/index.ts: Better Auth en /api/auth y la app de React con Vite (desarrollo).
+# Para producción: `pnpm build` y luego `pnpm start`.
+CMD ["pnpm", "dev"]

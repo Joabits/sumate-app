@@ -1,4 +1,8 @@
 :root {
+  /* Fuentes de la app (cargadas desde Google Fonts en index.html) */
+  --app-font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: "JetBrains Mono", ui-monospace, monospace;
+
   /*
    * ==============================================================================
    * 🎨 TEMA DE LA APLICACIÓN — PALETA DE TOKENS VISUALES
