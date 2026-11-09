@@ -11,6 +11,7 @@ import { SolicitudesPendientes } from "./SolicitudesPendientes";
 import { ListaDeEspera } from "./ListaDeEspera";
 import { AvisoCancelacion } from "./AvisoCancelacion";
 import { PostulantesCancelados } from "./PostulantesCancelados";
+import { HorasActividadSection } from "@/horas/components/HorasActividadSection";
 
 /** Pantalla de detalle. Cada parte lee la actividad con useActivityDetail(), sin props. */
 export function ActivityDetailView() {
@@ -93,6 +94,8 @@ export function ActivityDetailView() {
           </div>
         </div>
 
+        {/* Horas por jornada: solo cuando la actividad terminó (organizador y aceptados) */}
+        <HorasActividadSection />
       </main>
 
       {/* Botón flotante de acción (Asistiré / Publicar / Cerrar convocatoria) anclado a la derecha */}

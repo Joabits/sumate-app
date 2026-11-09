@@ -9,6 +9,7 @@ import ResetPasswordPage from "@/auth/pages/ResetPasswordPage";
 import SignupPage from "@/auth/pages/SignupPage";
 import VerifyEmailPage from "@/auth/pages/VerifyEmailPage";
 import WelcomePage from "@/auth/pages/WelcomePage";
+import ConstanciaPage from "@/horas/pages/ConstanciaPage";
 import RecentlyPage from "@/participations/pages/RecentlyPage";
 import { AppProviders } from "@/shared/components/AppProviders";
 import { MainLayout } from "@/shared/components/MainLayout";
@@ -48,6 +49,8 @@ export function AppRoutes() {
             <Route path="/search" element={<SearchPage />} />
           </Route>
           <Route path="/activities/:id" element={<ActivityDetailRoute />} />
+          {/* Constancia imprimible: sin menú ni cabecera */}
+          <Route path="/constancia" element={<ConstanciaPage />} />
         </Route>
       </Route>
 

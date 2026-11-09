@@ -159,3 +159,48 @@ class NoEstaEnListaDeEsperaException(ConflictException):
     code = "NO_ESTA_EN_LISTA_DE_ESPERA"
     message = "La solicitud no está en la lista de espera."
 
+
+# ── Horas de voluntariado ─────────────────────────────────────────────────────
+class ActividadNoTerminadaException(ValidationException):
+    code = "ACTIVIDAD_NO_TERMINADA"
+    message = "Las horas se registran cuando la actividad ya terminó."
+
+
+class FechaJornadaInvalidaException(ValidationException):
+    code = "FECHA_JORNADA_INVALIDA"
+    message = "La jornada debe ser desde el día de la actividad y no puede ser una fecha futura."
+
+
+class HorasInvalidasException(ValidationException):
+    code = "HORAS_INVALIDAS"
+    message = "Las horas deben ser mayores a 0 y no superar 24 por jornada."
+
+
+class NoEsParticipanteAceptadoException(ValidationException):
+    code = "NO_ES_PARTICIPANTE_ACEPTADO"
+    message = "Solo se registran horas de participantes aceptados en la actividad."
+
+
+class JornadaYaRegistradaException(ConflictException):
+    code = "JORNADA_YA_REGISTRADA"
+    message = "Ya hay horas registradas para ese participante en esa jornada."
+
+
+class RegistroHorasNotFoundException(NotFoundException):
+    code = "REGISTRO_HORAS_NOT_FOUND"
+    message = "No se encontró el registro de horas."
+
+
+class RegistroHorasNoPendienteException(ConflictException):
+    code = "REGISTRO_HORAS_NO_PENDIENTE"
+    message = "Solo se pueden aceptar o reclamar horas pendientes de respuesta."
+
+
+class HorasYaConfirmadasException(ConflictException):
+    code = "HORAS_YA_CONFIRMADAS"
+    message = "Las horas confirmadas por el voluntario ya no se pueden corregir."
+
+
+class MotivoReclamoObligatorioException(ValidationException):
+    code = "MOTIVO_RECLAMO_OBLIGATORIO"
+    message = "Escribe el motivo del reclamo."

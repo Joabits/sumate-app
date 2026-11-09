@@ -38,6 +38,20 @@ USUARIOS = USERS + [
 
 ACTIVIDADES_PRUEBAS = [
     {
+        # Horas y constancia: ya terminó (hace 3 días), con Luis y Sofía aceptados
+        "name": "Jornada de reforestación en el Tunari",
+        "owner": "demo-ana",
+        "image": IMG.format("1542601906990-b4d3fb778b09"),
+        "days": -3,
+        "capacity": 10,
+        "causes": ["medio-ambiente"],
+        "place": "Parque Nacional Tunari",
+        "lat": -17.3550,
+        "lng": -66.1700,
+        "description": "Plantamos árboles nativos durante dos jornadas en la ladera del Tunari.",
+        "participants": ["demo-luis", "demo-sofia"],
+    },
+    {
         # Solicitar participar: María es aceptada y Carlos rechazado
         "name": "Recolección de libros para la biblioteca",
         "owner": "demo-ana",
@@ -177,7 +191,7 @@ def borrar_actividades_de_prueba(session: Session) -> None:
     if not actividad_ids:
         return
 
-    for tabla in ("participations", "activity_causes", "activity_detail"):
+    for tabla in ("registros_horas", "participations", "activity_causes", "activity_detail"):
         session.execute(
             text(f"DELETE FROM {tabla} WHERE activity_id IN :ids").bindparams(
                 bindparam("ids", expanding=True)

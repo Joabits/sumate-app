@@ -18,6 +18,7 @@ from app.controllers import (
     activity_controller,
     cause_controller,
     health_controller,
+    horas_controller,
     participation_controller,
 )
 from app.core.config import settings
@@ -77,3 +78,4 @@ app.include_router(health_controller.router)
 app.include_router(cause_controller.router, prefix="/api")
 app.include_router(activity_controller.router, prefix="/api")
 app.include_router(participation_controller.router, prefix="/api")
+app.include_router(horas_controller.router, prefix="/api")
