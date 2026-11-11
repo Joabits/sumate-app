@@ -4,9 +4,9 @@ from uuid import UUID
 from pydantic import Field
 from sqlmodel import SQLModel
 
-from app.models.activity import Activity
-from app.models.participation import Participation
-from app.models.registro_horas import RegistroHoras
+from app.entities.activity import Activity
+from app.entities.participation import Participation
+from app.entities.registro_horas import RegistroHoras
 
 
 # ── Entrada ───────────────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ class ConstanciaRead(SQLModel):
     total_horas: float
 
 
-def render_registro(registro: RegistroHoras) -> RegistroHorasRead:
+def to_registro(registro: RegistroHoras) -> RegistroHorasRead:
     return RegistroHorasRead(
         id=registro.id,
         user_id=registro.user_id,
@@ -97,13 +97,14 @@ def render_registro(registro: RegistroHoras) -> RegistroHorasRead:
     )
 
 
-def render_horas_actividad(
+def to_horas_actividad(
     activity: Activity,
     *,
     es_organizador: bool,
     puede_registrar: bool,
     aceptados: list[Participation],
     registros: list[RegistroHoras],
+    total_confirmado: float,
 ) -> HorasActividadRead:
     return HorasActividadRead(
         activity_id=activity.id,
@@ -113,37 +114,32 @@ def render_horas_actividad(
             ParticipanteAceptadoRead(id=p.user_id, name=p.user_name, image=p.user_image)
             for p in aceptados
         ],
-        registros=[render_registro(r) for r in registros],
-        total_confirmado=RegistroHoras.total_confirmado(registros),
+        registros=[to_registro(r) for r in registros],
+        total_confirmado=total_confirmado,
     )
 
 
-def render_constancia(
-    voluntario: str, correo: str, confirmadas: list[RegistroHoras]
+def to_constancia(
+    voluntario: str,
+    correo: str,
+    actividades: list[tuple[Activity, list[RegistroHoras], float]],
+    total_horas: float,
 ) -> ConstanciaRead:
-    """Agrupa las horas confirmadas por actividad. Viene solo con confirmadas."""
-    por_actividad: dict[UUID, list[RegistroHoras]] = {}
-    for registro in confirmadas:
-        por_actividad.setdefault(registro.activity_id, []).append(registro)
-
-    actividades = []
-    for registros in por_actividad.values():
-        activity = registros[0].activity
-        actividades.append(
+    """Cada actividad llega con sus jornadas confirmadas y su subtotal."""
+    return ConstanciaRead(
+        voluntario=voluntario,
+        correo=correo,
+        emitida=datetime.now(timezone.utc),
+        actividades=[
             ActividadConstanciaRead(
                 activity_id=activity.id,
                 nombre=activity.name,
                 organizador=activity.creator_name,
                 fecha=activity.date,
                 jornadas=[JornadaConstanciaRead(jornada=r.jornada, horas=r.horas) for r in registros],
-                total_horas=RegistroHoras.total_confirmado(registros),
+                total_horas=subtotal,
             )
-        )
-
-    return ConstanciaRead(
-        voluntario=voluntario,
-        correo=correo,
-        emitida=datetime.now(timezone.utc),
-        actividades=actividades,
-        total_horas=RegistroHoras.total_confirmado(confirmadas),
+            for activity, registros, subtotal in actividades
+        ],
+        total_horas=total_horas,
     )

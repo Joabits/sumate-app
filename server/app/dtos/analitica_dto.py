@@ -3,7 +3,7 @@ from typing import Any
 
 from sqlmodel import SQLModel
 
-from app.models.evento import Evento, NombreEvento
+from app.entities.evento import Evento, NombreEvento
 
 
 # ── Entrada ───────────────────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ class AnaliticaRead(SQLModel):
     ultimos: list[EventoRead]
 
 
-def render_conteo(
+def to_conteo(
     conteos: dict[tuple[str, bool], int], lista_de_espera: bool | None = None
 ) -> ConteoRead:
     """Suma los conteos de un tipo de postulación (None = los dos)."""
@@ -54,12 +54,12 @@ def render_conteo(
     )
 
 
-def render_analitica(conteos: dict[tuple[str, bool], int], ultimos: list[Evento]) -> AnaliticaRead:
+def to_analitica(conteos: dict[tuple[str, bool], int], ultimos: list[Evento]) -> AnaliticaRead:
     return AnaliticaRead(
         postulacion=EmbudoPostulacionRead(
-            total=render_conteo(conteos),
-            con_cupos=render_conteo(conteos, lista_de_espera=False),
-            lista_de_espera=render_conteo(conteos, lista_de_espera=True),
+            total=to_conteo(conteos),
+            con_cupos=to_conteo(conteos, lista_de_espera=False),
+            lista_de_espera=to_conteo(conteos, lista_de_espera=True),
         ),
         ultimos=[EventoRead(evento=e.evento, props=e.props, fecha=e.fecha) for e in ultimos],
     )

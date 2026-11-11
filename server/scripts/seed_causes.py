@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from sqlmodel import Session
 
 from app.core.database import engine
-from app.models import Cause
+from app.services.cause_service import CauseService
 
 PREDEFINED_CAUSES = [
     {"name": "Salud", "slug": "salud"},
@@ -24,12 +24,11 @@ PREDEFINED_CAUSES = [
 
 def seed_causes() -> None:
     with Session(engine) as session:
-        created_count = 0
-        for item in PREDEFINED_CAUSES:
-            if Cause.get_by_slug(session, item["slug"]) is None:
-                session.add(Cause.create(name=item["name"], slug=item["slug"]))
-                created_count += 1
-        session.commit()
+        service = CauseService(session)
+        created_count = sum(
+            service.crear_si_no_existe(item["name"], item["slug"]) is not None
+            for item in PREDEFINED_CAUSES
+        )
         print(f"Seeding completed. Inserted {created_count} causes.")
 
 

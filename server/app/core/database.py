@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlmodel import Session, SQLModel, create_engine
 
-import app.models  # noqa: F401  registra todas las tablas en SQLModel.metadata
+import app.entities  # noqa: F401  registra todas las tablas en SQLModel.metadata
 from app.core.config import settings
 
 # ── Argumentos condicionales según el motor ───────────────────────────────────

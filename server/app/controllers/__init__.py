@@ -1,6 +1,7 @@
 """
-app/controllers — la C de MVC.
+app/controllers — las rutas HTTP (como los @RestController de Java).
 
-Cada controlador es un APIRouter. Un endpoint recibe la petición, carga los
-modelos, les pide que apliquen sus reglas, hace el commit y devuelve la vista.
+Cada controlador es un APIRouter. Un endpoint recibe la petición, le pasa los
+datos al service inyectado y devuelve su respuesta. No consulta la base ni
+decide reglas.
 """

@@ -3,10 +3,12 @@
 import pytest
 from sqlmodel import select
 
+from app.services.activity_service import ActivityService
+from app.services.participation_service import ParticipationService
 from app.controllers import activity_controller, participation_controller
-from app.models import Activity, Participation
-from app.models.exceptions import ForbiddenException, MotivoCancelacionObligatorioException
-from app.views.activity_view import CancelarActividadRequest, UpdateActivityCapacityRequest
+from app.entities import Activity, Participation
+from app.exceptions import ForbiddenException, MotivoCancelacionObligatorioException
+from app.dtos.activity_dto import CancelarActividadRequest, UpdateActivityCapacityRequest
 from tests.helpers import ORGANIZADOR, crear_actividad, crear_solicitud, crear_usuario, estados, usuario
 
 MOTIVO = "Se suspendió por lluvia"
@@ -15,7 +17,7 @@ ORG = usuario(ORGANIZADOR)
 
 def cancelar(session, activity, user=ORG, motivo=MOTIVO):
     return activity_controller.cancelar_actividad(
-        activity.id, CancelarActividadRequest(motivo=motivo), user, session
+        activity.id, CancelarActividadRequest(motivo=motivo), user, ActivityService(session)
     )
 
 
@@ -65,7 +67,7 @@ def test_la_organizadora_ve_a_quien_afecto(db_session, actividad_con_postulantes
     activity = actividad_con_postulantes
     cancelar(db_session, activity)
 
-    detalle = activity_controller.get_activity_detail(activity.id, ORG, db_session)
+    detalle = activity_controller.get_activity_detail(activity.id, ORG, ActivityService(db_session))
     assert (detalle.status, detalle.motivo_cancelacion) == ("cancelled", MOTIVO)
     assert {(p.name, p.estado_anterior) for p in detalle.postulantes_cancelados} == {
         ("Luis Mamani", "aceptada"),
@@ -74,7 +76,7 @@ def test_la_organizadora_ve_a_quien_afecto(db_session, actividad_con_postulantes
     }
 
     # Un voluntario ve el motivo, pero no la lista de afectados
-    de_maria = activity_controller.get_activity_detail(activity.id, usuario("maria"), db_session)
+    de_maria = activity_controller.get_activity_detail(activity.id, usuario("maria"), ActivityService(db_session))
     assert de_maria.motivo_cancelacion == MOTIVO
     assert de_maria.estado_solicitud == "cancelada"
     assert de_maria.postulantes_cancelados == []
@@ -82,7 +84,7 @@ def test_la_organizadora_ve_a_quien_afecto(db_session, actividad_con_postulantes
 
 def test_cada_voluntario_ve_el_motivo_en_su_trayectoria(db_session, actividad_con_postulantes):
     cancelar(db_session, actividad_con_postulantes)
-    items = participation_controller.list_my_participations(usuario("maria"), db_session).items
+    items = participation_controller.list_my_participations(usuario("maria"), ParticipationService(db_session)).items
     assert [(i.estado_solicitud, i.estado_anterior, i.motivo_cancelacion) for i in items] == [
         ("cancelada", "pendiente", MOTIVO)
     ]
@@ -117,6 +119,6 @@ def test_despues_de_cancelar_nadie_entra_desde_la_lista_de_espera(db_session):
 
     # Aunque se agreguen cupos, nadie de la lista de espera entra
     activity_controller.update_activity_capacity(
-        activity.id, UpdateActivityCapacityRequest(capacity=5), ORG, db_session
+        activity.id, UpdateActivityCapacityRequest(capacity=5), ORG, ActivityService(db_session)
     )
     assert estados(db_session, activity) == {"luis": "cancelada", "sofia": "cancelada"}

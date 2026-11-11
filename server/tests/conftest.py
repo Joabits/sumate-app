@@ -7,7 +7,7 @@ import pytest
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
 
-import app.models  # noqa: F401  registra las tablas
+import app.entities  # noqa: F401  registra las tablas
 from app.core.config import settings
 
 

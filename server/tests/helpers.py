@@ -2,7 +2,7 @@
 Ayudantes de las pruebas.
 
 Los controladores se llaman como funciones normales (sin levantar el
-servidor), con la sesión de la base en memoria y un usuario autenticado.
+servidor), con un service armado sobre la base en memoria y un usuario autenticado.
 """
 
 import asyncio
@@ -12,7 +12,7 @@ from uuid import uuid4
 from sqlmodel import Session, select
 
 from app.core.security import AuthUser
-from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation, User
+from app.entities import Activity, ActivityCause, ActivityDetail, Cause, Participation, User
 
 IMAGEN = "http://localhost:8000/uploads/activities/test.webp"
 ORGANIZADOR = "organizador_1"
@@ -63,21 +63,6 @@ def crear_actividad(
     return activity
 
 
-def nueva_actividad(**kwargs) -> Activity:
-    """Actividad en memoria, sin guardar (para probar las reglas del modelo)."""
-    datos = {
-        "id": uuid4(),
-        "name": "Taller de primeros auxilios",
-        "owner_id": ORGANIZADOR,
-        "image_url": IMAGEN,
-        "date": en_dias(3),
-        "capacity": 10,
-        "status": "active",
-    }
-    datos.update(kwargs)
-    return Activity(**datos)
-
-
 def crear_solicitud(
     session: Session, activity: Activity, user_id: str, estado: str = "pendiente"
 ) -> Participation:
@@ -88,7 +73,7 @@ def crear_solicitud(
 
 
 def crear_causa(session: Session, name: str, slug: str | None = None) -> Cause:
-    cause = Cause.create(name=name, slug=slug or name.lower().replace(" ", "-"))
+    cause = Cause(name=name, slug=slug or name.lower().replace(" ", "-"))
     session.add(cause)
     session.commit()
     return cause
@@ -98,7 +83,7 @@ def completar_para_publicar(session: Session, activity: Activity) -> Cause:
     """Agrega ubicación, descripción y una causa: lo que pide publicar."""
     cause = crear_causa(session, "Salud")
     session.add(
-        ActivityDetail.create(
+        ActivityDetail(
             activity_id=activity.id,
             latitude=-17.39,
             longitude=-66.15,

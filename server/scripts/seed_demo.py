@@ -20,7 +20,7 @@ from sqlalchemy import text
 from sqlmodel import Session, select
 
 from app.core.database import engine
-from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation
+from app.entities import Activity, ActivityCause, ActivityDetail, Cause, Participation
 
 DEMO_PASSWORD = "Demo12345"
 

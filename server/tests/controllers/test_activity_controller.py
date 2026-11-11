@@ -7,10 +7,15 @@ import pytest
 from fastapi import UploadFile
 from sqlmodel import select
 
+from app.repositories.activity_detail_repository import ActivityDetailRepository
+from app.repositories.cause_repository import CauseRepository
+from app.services import activity_service
+from app.services.activity_service import ActivityService
+from app.services.cause_service import CauseService
 from app.controllers import activity_controller as ctrl
 from app.controllers.cause_controller import list_causes
-from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation
-from app.models.exceptions import (
+from app.entities import Activity, ActivityCause, ActivityDetail, Cause, Participation
+from app.exceptions import (
     ActividadCanceladaException,
     ActivityNotFoundException,
     CapacityLessThanRegisteredException,
@@ -19,7 +24,7 @@ from app.models.exceptions import (
     InvalidActivityImageException,
     ValidationException,
 )
-from app.views.activity_view import (
+from app.dtos.activity_dto import (
     CapacityRangeFilter,
     CreateActivityRequest,
     DatePresetFilter,
@@ -29,7 +34,7 @@ from app.views.activity_view import (
     UpdateDescriptionRequest,
     UpdateLocationRequest,
 )
-from app.views.cause_view import ReplaceActivityCausesRequest
+from app.dtos.cause_dto import ReplaceActivityCausesRequest
 from tests.helpers import (
     ORGANIZADOR,
     completar_para_publicar,
@@ -64,13 +69,13 @@ def buscar(session, **filtros):
         "max_distance_km": None,
     }
     datos.update(filtros)
-    return ctrl.search_activities(session, **datos)
+    return ctrl.search_activities(ActivityService(session), **datos)
 
 
 # ── Crear ─────────────────────────────────────────────────────────────────────
 def test_crear_actividad_guarda_un_borrador_con_su_imagen(db_session, uploads_dir):
     payload = CreateActivityRequest(name="Feria", date=en_dias(5), capacity=20)
-    response = run(ctrl.create_activity(payload, ORG, db_session, imagen()))
+    response = run(ctrl.create_activity(payload, ORG, ActivityService(db_session), imagen()))
 
     assert response.status_code == 201
     activity = db_session.exec(select(Activity)).one()
@@ -83,7 +88,7 @@ def test_crear_actividad_guarda_un_borrador_con_su_imagen(db_session, uploads_di
 def test_crear_con_fecha_pasada_falla_y_borra_la_imagen(db_session, uploads_dir):
     payload = CreateActivityRequest(name="Feria", date=en_dias(-1), capacity=20)
     with pytest.raises(InvalidActivityDateException):
-        run(ctrl.create_activity(payload, ORG, db_session, imagen()))
+        run(ctrl.create_activity(payload, ORG, ActivityService(db_session), imagen()))
     assert list(uploads_dir.iterdir()) == []
     assert db_session.exec(select(Activity)).all() == []
 
@@ -99,7 +104,7 @@ def test_crear_con_fecha_pasada_falla_y_borra_la_imagen(db_session, uploads_dir)
 def test_crear_rechaza_imagenes_invalidas(db_session, uploads_dir, archivo, mensaje):
     payload = CreateActivityRequest(name="Feria", date=en_dias(5), capacity=2)
     with pytest.raises(InvalidActivityImageException, match=mensaje):
-        run(ctrl.create_activity(payload, ORG, db_session, archivo))
+        run(ctrl.create_activity(payload, ORG, ActivityService(db_session), archivo))
 
 
 def test_el_formulario_de_creacion_lee_la_fecha_iso():
@@ -122,7 +127,7 @@ def test_explorar_muestra_las_activas_futuras_de_otros(db_session):
     crear_solicitud(db_session, visible, "luis", "aceptada")
     crear_solicitud(db_session, visible, "maria", "pendiente")
 
-    result = ctrl.list_explore_activities(OTRO, db_session)
+    result = ctrl.list_explore_activities(OTRO, ActivityService(db_session))
 
     assert [i.name for i in result.items] == ["Visible"]
     item = result.items[0]
@@ -137,7 +142,7 @@ def test_mis_actividades_incluye_borradores_con_inscritos(db_session):
     crear_actividad(db_session, name="De otro", owner_id="otro")
     crear_solicitud(db_session, activa, "luis", "aceptada")
 
-    result = ctrl.list_my_activities(ORG, db_session)
+    result = ctrl.list_my_activities(ORG, ActivityService(db_session))
 
     # La más reciente primero
     assert [i.id for i in result.items] == [activa.id, borrador.id]
@@ -160,17 +165,17 @@ def test_buscar_devuelve_inscritos_y_organizador(db_session):
 def test_catalogo_de_causas_ordenado(db_session):
     crear_causa(db_session, "Salud")
     crear_causa(db_session, "Animales")
-    assert [c.name for c in list_causes(db_session).items] == ["Animales", "Salud"]
+    assert [c.name for c in list_causes(CauseService(db_session)).items] == ["Animales", "Salud"]
 
 
 # ── Detalle ───────────────────────────────────────────────────────────────────
 def test_un_borrador_solo_lo_ve_su_organizador(db_session):
     borrador = crear_actividad(db_session, status="draft")
-    assert ctrl.get_activity_detail(borrador.id, ORG, db_session).is_owner
+    assert ctrl.get_activity_detail(borrador.id, ORG, ActivityService(db_session)).is_owner
     with pytest.raises(ActivityNotFoundException):
-        ctrl.get_activity_detail(borrador.id, OTRO, db_session)
+        ctrl.get_activity_detail(borrador.id, OTRO, ActivityService(db_session))
     with pytest.raises(ActivityNotFoundException):
-        ctrl.get_activity_detail(uuid4(), ORG, db_session)
+        ctrl.get_activity_detail(uuid4(), ORG, ActivityService(db_session))
 
 
 def test_detalle_con_participantes_ubicacion_y_causas(db_session):
@@ -179,7 +184,7 @@ def test_detalle_con_participantes_ubicacion_y_causas(db_session):
     completar_para_publicar(db_session, activity)
     crear_solicitud(db_session, activity, "luis", "aceptada")
 
-    detalle = ctrl.get_activity_detail(activity.id, usuario("luis"), db_session)
+    detalle = ctrl.get_activity_detail(activity.id, usuario("luis"), ActivityService(db_session))
 
     assert detalle.is_participating
     assert detalle.estado_solicitud == "aceptada"
@@ -200,12 +205,12 @@ def test_el_voluntario_ve_su_puesto_y_el_organizador_la_lista_completa(db_sessio
     for user_id in ("sofia", "carlos"):
         crear_solicitud(db_session, activity, user_id, "en_espera")
 
-    del_organizador = ctrl.get_activity_detail(activity.id, ORG, db_session)
+    del_organizador = ctrl.get_activity_detail(activity.id, ORG, ActivityService(db_session))
     assert [p.id for p in del_organizador.solicitudes_pendientes] == ["maria"]
     assert [p.id for p in del_organizador.lista_de_espera] == ["sofia", "carlos"]
     assert del_organizador.posicion_en_espera is None
 
-    de_carlos = ctrl.get_activity_detail(activity.id, usuario("carlos"), db_session)
+    de_carlos = ctrl.get_activity_detail(activity.id, usuario("carlos"), ActivityService(db_session))
     assert de_carlos.estado_solicitud == "en_espera"
     assert de_carlos.posicion_en_espera == 2
     assert de_carlos.lista_de_espera == []
@@ -217,22 +222,22 @@ def test_el_voluntario_ve_su_puesto_y_el_organizador_la_lista_completa(db_sessio
 def test_solo_el_organizador_edita(db_session):
     activity = crear_actividad(db_session)
     with pytest.raises(ForbiddenException):
-        ctrl.update_activity_info(activity.id, UpdateActivityInfoRequest(name="X"), OTRO, db_session)
+        ctrl.update_activity_info(activity.id, UpdateActivityInfoRequest(name="X"), OTRO, ActivityService(db_session))
     with pytest.raises(ForbiddenException):
-        ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=3), OTRO, db_session)
+        ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=3), OTRO, ActivityService(db_session))
     with pytest.raises(ForbiddenException):
-        ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description="X"), OTRO, db_session)
+        ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description="X"), OTRO, ActivityService(db_session))
     with pytest.raises(ForbiddenException):
-        ctrl.close_activity(activity.id, OTRO, db_session)
+        ctrl.close_activity(activity.id, OTRO, ActivityService(db_session))
     with pytest.raises(ActivityNotFoundException):
-        ctrl.close_activity(uuid4(), ORG, db_session)
+        ctrl.close_activity(uuid4(), ORG, ActivityService(db_session))
 
 
 def test_editar_titulo_y_fecha(db_session):
     activity = crear_actividad(db_session)
     nueva_fecha = en_dias(10)
     ctrl.update_activity_info(
-        activity.id, UpdateActivityInfoRequest(name="Nuevo", date=nueva_fecha), ORG, db_session
+        activity.id, UpdateActivityInfoRequest(name="Nuevo", date=nueva_fecha), ORG, ActivityService(db_session)
     )
     guardada = recargar(db_session, activity)
     assert guardada.name == "Nuevo"
@@ -240,7 +245,7 @@ def test_editar_titulo_y_fecha(db_session):
 
     with pytest.raises(InvalidActivityDateException):
         ctrl.update_activity_info(
-            activity.id, UpdateActivityInfoRequest(date=en_dias(-1)), ORG, db_session
+            activity.id, UpdateActivityInfoRequest(date=en_dias(-1)), ORG, ActivityService(db_session)
         )
 
 
@@ -250,9 +255,9 @@ def test_editar_cupos(db_session):
         crear_solicitud(db_session, activity, user_id, "aceptada")
 
     with pytest.raises(CapacityLessThanRegisteredException):
-        ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=1), ORG, db_session)
+        ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=1), ORG, ActivityService(db_session))
 
-    ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=2), ORG, db_session)
+    ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=2), ORG, ActivityService(db_session))
     assert recargar(db_session, activity).capacity == 2
 
 
@@ -262,7 +267,7 @@ def test_al_agregar_cupos_entran_los_primeros_en_espera(db_session):
     for user_id in ("sofia", "carlos", "pedro"):
         crear_solicitud(db_session, activity, user_id, "en_espera")
 
-    ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=3), ORG, db_session)
+    ctrl.update_activity_capacity(activity.id, UpdateActivityCapacityRequest(capacity=3), ORG, ActivityService(db_session))
 
     assert estados(db_session, activity) == {
         "luis": "aceptada",
@@ -274,32 +279,32 @@ def test_al_agregar_cupos_entran_los_primeros_en_espera(db_session):
 
 def test_editar_descripcion_crea_el_detalle(db_session):
     activity = crear_actividad(db_session)
-    ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description=" Hola "), ORG, db_session)
-    ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description="Chau"), ORG, db_session)
+    ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description=" Hola "), ORG, ActivityService(db_session))
+    ctrl.update_activity_description(activity.id, UpdateDescriptionRequest(description="Chau"), ORG, ActivityService(db_session))
     db_session.expire_all()
-    assert ActivityDetail.of_activity(db_session, activity.id).description == "Chau"
+    assert ActivityDetailRepository(db_session).find_by_activity(activity.id).description == "Chau"
 
 
 def test_editar_ubicacion_usa_la_direccion_del_mapa(db_session, monkeypatch):
     async def geocode_falso(lat, lon):
         return "Lugar", "Av. Ballivián, Cochabamba"
 
-    monkeypatch.setattr(ctrl, "reverse_geocode", geocode_falso)
+    monkeypatch.setattr(activity_service, "reverse_geocode", geocode_falso)
     activity = crear_actividad(db_session)
 
     run(ctrl.update_activity_location(
-        activity.id, UpdateLocationRequest(latitude=-17.39, longitude=-66.15), ORG, db_session
+        activity.id, UpdateLocationRequest(latitude=-17.39, longitude=-66.15), ORG, ActivityService(db_session)
     ))
-    detail = ActivityDetail.of_activity(db_session, activity.id)
+    detail = ActivityDetailRepository(db_session).find_by_activity(activity.id)
     assert (detail.latitude, detail.place, detail.address) == (
         -17.39, "Ubicación por definir", "Av. Ballivián, Cochabamba"
     )
 
     run(ctrl.update_activity_location(
-        activity.id, UpdateLocationRequest(latitude=-17.4, longitude=-66.2, place="Plaza"), ORG, db_session
+        activity.id, UpdateLocationRequest(latitude=-17.4, longitude=-66.2, place="Plaza"), ORG, ActivityService(db_session)
     ))
     db_session.expire_all()
-    assert ActivityDetail.of_activity(db_session, activity.id).place == "Plaza"
+    assert ActivityDetailRepository(db_session).find_by_activity(activity.id).place == "Plaza"
 
 
 def test_cambiar_imagen_borra_la_anterior(db_session, uploads_dir):
@@ -308,7 +313,7 @@ def test_cambiar_imagen_borra_la_anterior(db_session, uploads_dir):
     vieja = save_activity_image(b"vieja", filename="vieja.png")
     activity = crear_actividad(db_session, image_url=vieja)
 
-    run(ctrl.update_activity_image(activity.id, ORG, db_session, imagen()))
+    run(ctrl.update_activity_image(activity.id, ORG, ActivityService(db_session), imagen()))
 
     nueva = recargar(db_session, activity).image_url
     assert nueva != vieja
@@ -318,7 +323,7 @@ def test_cambiar_imagen_borra_la_anterior(db_session, uploads_dir):
 def test_si_no_es_el_organizador_la_imagen_nueva_se_borra(db_session, uploads_dir):
     activity = crear_actividad(db_session)
     with pytest.raises(ForbiddenException):
-        run(ctrl.update_activity_image(activity.id, OTRO, db_session, imagen()))
+        run(ctrl.update_activity_image(activity.id, OTRO, ActivityService(db_session), imagen()))
     assert list(uploads_dir.iterdir()) == []
 
 
@@ -328,52 +333,52 @@ def test_reemplazar_causas(db_session):
     salud, animales = crear_causa(db_session, "Salud"), crear_causa(db_session, "Animales")
 
     ctrl.replace_activity_causes(
-        activity.id, ReplaceActivityCausesRequest(cause_ids=[salud.id, salud.id]), ORG, db_session
+        activity.id, ReplaceActivityCausesRequest(cause_ids=[salud.id, salud.id]), ORG, ActivityService(db_session)
     )
     # Volver a guardar una causa que ya tenía no choca con la restricción única
     ctrl.replace_activity_causes(
-        activity.id, ReplaceActivityCausesRequest(cause_ids=[salud.id, animales.id]), ORG, db_session
+        activity.id, ReplaceActivityCausesRequest(cause_ids=[salud.id, animales.id]), ORG, ActivityService(db_session)
     )
-    assert [c.name for c in Cause.of_activity(db_session, activity.id)] == ["Animales", "Salud"]
+    assert [c.name for c in CauseRepository(db_session).find_by_activity(activity.id)] == ["Animales", "Salud"]
 
     # Un borrador puede quedar sin causas
-    ctrl.replace_activity_causes(activity.id, ReplaceActivityCausesRequest(cause_ids=[]), ORG, db_session)
-    assert Cause.of_activity(db_session, activity.id) == []
+    ctrl.replace_activity_causes(activity.id, ReplaceActivityCausesRequest(cause_ids=[]), ORG, ActivityService(db_session))
+    assert CauseRepository(db_session).find_by_activity(activity.id) == []
 
 
 def test_causas_inexistentes_o_actividad_publicada_sin_causas(db_session):
     activity = crear_actividad(db_session, status="active")
     with pytest.raises(ValidationException, match="no existen"):
         ctrl.replace_activity_causes(
-            activity.id, ReplaceActivityCausesRequest(cause_ids=[uuid4()]), ORG, db_session
+            activity.id, ReplaceActivityCausesRequest(cause_ids=[uuid4()]), ORG, ActivityService(db_session)
         )
     with pytest.raises(ValidationException, match="al menos una causa"):
-        ctrl.replace_activity_causes(activity.id, ReplaceActivityCausesRequest(cause_ids=[]), ORG, db_session)
+        ctrl.replace_activity_causes(activity.id, ReplaceActivityCausesRequest(cause_ids=[]), ORG, ActivityService(db_session))
 
 
 # ── Publicar, cerrar, reabrir ─────────────────────────────────────────────────
 def test_publicar_cerrar_y_reabrir(db_session):
     activity = crear_actividad(db_session, status="draft")
     with pytest.raises(ValidationException, match="ubicación en el mapa"):
-        ctrl.publish_activity(activity.id, ORG, db_session)
+        ctrl.publish_activity(activity.id, ORG, ActivityService(db_session))
     db_session.rollback()
 
     completar_para_publicar(db_session, activity)
     with pytest.raises(ForbiddenException):
-        ctrl.publish_activity(activity.id, OTRO, db_session)
+        ctrl.publish_activity(activity.id, OTRO, ActivityService(db_session))
 
-    ctrl.publish_activity(activity.id, ORG, db_session)
+    ctrl.publish_activity(activity.id, ORG, ActivityService(db_session))
     assert recargar(db_session, activity).status == "active"
-    ctrl.close_activity(activity.id, ORG, db_session)
+    ctrl.close_activity(activity.id, ORG, ActivityService(db_session))
     assert recargar(db_session, activity).status == "closed"
-    ctrl.reopen_activity(activity.id, ORG, db_session)
+    ctrl.reopen_activity(activity.id, ORG, ActivityService(db_session))
     assert recargar(db_session, activity).status == "active"
 
 
 def test_no_se_reabre_una_actividad_pasada(db_session):
     activity = crear_actividad(db_session, status="closed", date=en_dias(-1))
     with pytest.raises(ValidationException, match="ya ha transcurrido"):
-        ctrl.reopen_activity(activity.id, ORG, db_session)
+        ctrl.reopen_activity(activity.id, ORG, ActivityService(db_session))
 
 
 # ── Eliminar ──────────────────────────────────────────────────────────────────
@@ -385,7 +390,7 @@ def test_eliminar_borra_la_actividad_su_detalle_causas_solicitudes_e_imagen(db_s
     crear_solicitud(db_session, activity, "maria", "pendiente")
     crear_solicitud(db_session, activity, "carlos", "rechazada")
 
-    response = ctrl.delete_activity(activity.id, ORG, db_session)
+    response = ctrl.delete_activity(activity.id, ORG, ActivityService(db_session))
 
     assert response.status_code == 204
     db_session.expire_all()
@@ -399,10 +404,10 @@ def test_no_se_elimina_con_inscritos_ni_cancelada(db_session):
     con_inscritos = crear_actividad(db_session)
     crear_solicitud(db_session, con_inscritos, "luis", "aceptada")
     with pytest.raises(ValidationException, match="participantes inscritos"):
-        ctrl.delete_activity(con_inscritos.id, ORG, db_session)
+        ctrl.delete_activity(con_inscritos.id, ORG, ActivityService(db_session))
 
     cancelada = crear_actividad(db_session, status="cancelled")
     with pytest.raises(ActividadCanceladaException):
-        ctrl.delete_activity(cancelada.id, ORG, db_session)
+        ctrl.delete_activity(cancelada.id, ORG, ActivityService(db_session))
     with pytest.raises(ForbiddenException):
-        ctrl.delete_activity(con_inscritos.id, OTRO, db_session)
+        ctrl.delete_activity(con_inscritos.id, OTRO, ActivityService(db_session))

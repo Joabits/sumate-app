@@ -4,10 +4,10 @@ from zoneinfo import ZoneInfo
 
 from sqlmodel import SQLModel
 
-from app.models.base import as_utc
-from app.models.cause import Cause
-from app.models.participation import Participation
-from app.views.cause_view import CauseRead, render_causes
+from app.core.fechas import as_utc
+from app.entities.cause import Cause
+from app.entities.participation import Participation
+from app.dtos.cause_dto import CauseRead, to_causes
 
 BOLIVIA_TZ = ZoneInfo("America/La_Paz")
 
@@ -35,7 +35,7 @@ class ParticipatedActivityListRead(SQLModel):
     items: list[ParticipatedActivityItemRead]
 
 
-def render_trayectoria(
+def to_trayectoria(
     participations: list[Participation],
     causes_by_activity: dict[UUID, list[Cause]],
     now: datetime | None = None,
@@ -61,7 +61,7 @@ def render_trayectoria(
                 estado_solicitud=participation.status,
                 creator_name=activity.creator_name,
                 creator_image=activity.creator_image,
-                causes=render_causes(causes_by_activity.get(activity.id, [])),
+                causes=to_causes(causes_by_activity.get(activity.id, [])),
                 motivo_cancelacion=activity.motivo_cancelacion,
                 estado_anterior=participation.estado_anterior,
             )

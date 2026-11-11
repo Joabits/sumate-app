@@ -1,10 +1,13 @@
 """
-Punto de entrada de la API (arquitectura MVC).
+Punto de entrada de la API (capas al estilo Java).
 
-    app/models/       M  tablas, reglas de negocio y consultas
-    app/views/        V  esquemas de entrada/salida y funciones render_*
-    app/controllers/  C  endpoints: reciben la petición y devuelven la vista
-    app/core/            configuración, base de datos, seguridad, errores e integraciones
+    app/controllers/   rutas HTTP: reciben la petición y llaman al service
+    app/services/      reglas de negocio; cada caso de uso termina con commit
+    app/repositories/  consultas y guardado (sin reglas ni commit)
+    app/entities/      tablas: columnas, relaciones y getters simples
+    app/dtos/          lo que entra y sale de la API, con sus mappers to_*
+    app/exceptions.py  errores de negocio con su código
+    app/core/          configuración, base de datos, seguridad, inyección e integraciones
 """
 
 import logging

@@ -27,7 +27,7 @@ from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.core.database import engine
-from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation
+from app.entities import Activity, ActivityCause, ActivityDetail, Cause, Participation
 from seed_causes import seed_causes
 from seed_demo import ACTIVITIES, DEMO_PASSWORD, IMG, USERS, hash_password
 

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Annotated
@@ -6,12 +7,12 @@ from uuid import UUID
 from fastapi import Form
 from sqlmodel import Field, SQLModel
 
-from app.models.activity import Activity
-from app.models.activity_detail import ActivityDetail
-from app.models.cause import Cause
-from app.models.exceptions import InvalidActivityDateException
-from app.models.participation import Participation
-from app.views.cause_view import CauseRead, render_causes
+from app.entities.activity import Activity
+from app.entities.activity_detail import ActivityDetail
+from app.entities.cause import Cause
+from app.exceptions import InvalidActivityDateException
+from app.entities.participation import Participation
+from app.dtos.cause_dto import CauseRead, to_causes
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -40,6 +41,19 @@ class CapacityRangeFilter(str, Enum):
     one_to_nine = "1-9"
     ten_to_twenty = "10-20"
     gt_twenty = "gt-20"
+
+
+# Criterio de búsqueda que el controlador arma con los parámetros de la URL
+@dataclass(frozen=True, slots=True)
+class SearchFilters:
+    query: str | None = None
+    time_of_day: str | None = None
+    date_preset: str | None = None
+    capacity_range: str | None = None
+    cause_ids: tuple[UUID, ...] = ()
+    user_latitude: float | None = None
+    user_longitude: float | None = None
+    max_distance_km: float | None = None
 
 
 class CreateActivityRequest(SQLModel):
@@ -178,7 +192,7 @@ class ActivityDetailRead(SQLModel):
 
 
 # ── Funciones que arman cada respuesta ────────────────────────────────────────
-def render_activity_list(
+def to_activity_list(
     activities: list[Activity],
     causes_by_activity: dict[UUID, list[Cause]],
     registered_by_activity: dict[UUID, int],
@@ -195,7 +209,7 @@ def render_activity_list(
                 status=activity.status,
                 creator_name=activity.creator_name,
                 creator_image=activity.creator_image,
-                causes=render_causes(causes_by_activity.get(activity.id, [])),
+                causes=to_causes(causes_by_activity.get(activity.id, [])),
                 registered_count=registered_by_activity.get(activity.id, 0),
             )
             for activity in activities
@@ -203,7 +217,7 @@ def render_activity_list(
     )
 
 
-def render_my_activities(
+def to_my_activities(
     activities: list[Activity],
     causes_by_activity: dict[UUID, list[Cause]],
     registered_by_activity: dict[UUID, int],
@@ -221,14 +235,14 @@ def render_my_activities(
                 registered_count=registered_by_activity.get(activity.id, 0),
                 creator_name=activity.creator_name,
                 creator_image=activity.creator_image,
-                causes=render_causes(causes_by_activity.get(activity.id, [])),
+                causes=to_causes(causes_by_activity.get(activity.id, [])),
             )
             for activity in activities
         ]
     )
 
 
-def render_participant(participation: Participation) -> ActivityParticipantRead:
+def to_participant(participation: Participation) -> ActivityParticipantRead:
     return ActivityParticipantRead(
         id=participation.user_id,
         name=participation.user_name,
@@ -237,11 +251,11 @@ def render_participant(participation: Participation) -> ActivityParticipantRead:
     )
 
 
-def render_participants(participations: list[Participation]) -> list[ActivityParticipantRead]:
-    return [render_participant(p) for p in participations]
+def to_participants(participations: list[Participation]) -> list[ActivityParticipantRead]:
+    return [to_participant(p) for p in participations]
 
 
-def render_detail_data(detail: ActivityDetail | None) -> ActivityDetailDataRead | None:
+def to_detail_data(detail: ActivityDetail | None) -> ActivityDetailDataRead | None:
     if detail is None:
         return None
     return ActivityDetailDataRead(
@@ -255,7 +269,7 @@ def render_detail_data(detail: ActivityDetail | None) -> ActivityDetailDataRead 
     )
 
 
-def render_activity_detail(
+def to_activity_detail(
     activity: Activity,
     *,
     detail: ActivityDetail | None,
@@ -282,12 +296,12 @@ def render_activity_detail(
         is_owner=is_owner,
         is_participating=is_participating,
         estado_solicitud=estado_solicitud,
-        participants=render_participants(participants),
-        solicitudes_pendientes=render_participants(solicitudes_pendientes),
+        participants=to_participants(participants),
+        solicitudes_pendientes=to_participants(solicitudes_pendientes),
         posicion_en_espera=posicion_en_espera,
-        lista_de_espera=render_participants(lista_de_espera),
+        lista_de_espera=to_participants(lista_de_espera),
         motivo_cancelacion=activity.motivo_cancelacion,
-        postulantes_cancelados=render_participants(postulantes_cancelados),
-        detail=render_detail_data(detail),
-        causes=render_causes(causes),
+        postulantes_cancelados=to_participants(postulantes_cancelados),
+        detail=to_detail_data(detail),
+        causes=to_causes(causes),
     )

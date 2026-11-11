@@ -5,8 +5,9 @@ from uuid import uuid4
 
 import pytest
 
+from app.services.horas_service import HorasService
 from app.controllers import horas_controller as ctrl
-from app.models.exceptions import (
+from app.exceptions import (
     ActividadNoTerminadaException,
     FechaJornadaInvalidaException,
     ForbiddenException,
@@ -19,8 +20,8 @@ from app.models.exceptions import (
     RegistroHorasNotFoundException,
     ValidationException,
 )
-from app.models.registro_horas import dia_en_bolivia, hoy_en_bolivia
-from app.views.horas_view import (
+from app.core.fechas import dia_en_bolivia, hoy_en_bolivia
+from app.dtos.horas_dto import (
     CorregirHorasRequest,
     HorasParticipanteRequest,
     ReclamarHorasRequest,
@@ -55,12 +56,12 @@ def registrar(session, activity, jornada: date, user=ORG, **horas):
         jornada=jornada,
         registros=[HorasParticipanteRequest(user_id=u, horas=h) for u, h in horas.items()],
     )
-    return ctrl.registrar_jornada(activity.id, payload, user, session)
+    return ctrl.registrar_jornada(activity.id, payload, user, HorasService(session))
 
 
 def horas(session, activity, user):
     session.expire_all()
-    return ctrl.horas_de_actividad(activity.id, user, session)
+    return ctrl.horas_de_actividad(activity.id, user, HorasService(session))
 
 
 def registro_de(session, activity, user, numero_jornada: int):
@@ -81,8 +82,8 @@ def test_dos_jornadas_reclamo_correccion_y_confirmacion(db_session, terminada):
 
     # Acepta la primera y reclama la segunda
     primera, segunda = vista.registros
-    ctrl.aceptar_horas(primera.id, LUIS, db_session)
-    ctrl.reclamar_horas(segunda.id, ReclamarHorasRequest(motivo="Me quedé hasta las 18:00, fueron 5 h"), LUIS, db_session)
+    ctrl.aceptar_horas(primera.id, LUIS, HorasService(db_session))
+    ctrl.reclamar_horas(segunda.id, ReclamarHorasRequest(motivo="Me quedé hasta las 18:00, fueron 5 h"), LUIS, HorasService(db_session))
 
     vista = horas(db_session, terminada, LUIS)
     assert [r.estado for r in vista.registros] == ["confirmada", "reclamada"]
@@ -91,18 +92,18 @@ def test_dos_jornadas_reclamo_correccion_y_confirmacion(db_session, terminada):
     # La organizadora ve el reclamo y corrige: vuelve a pendiente, con las horas anteriores
     reclamado = next(r for r in horas(db_session, terminada, ORG).registros if r.estado == "reclamada")
     assert reclamado.motivo_reclamo == "Me quedé hasta las 18:00, fueron 5 h"
-    ctrl.corregir_horas(reclamado.id, CorregirHorasRequest(horas=5), ORG, db_session)
+    ctrl.corregir_horas(reclamado.id, CorregirHorasRequest(horas=5), ORG, HorasService(db_session))
 
     corregido = registro_de(db_session, terminada, LUIS, 1)
     assert (corregido.horas, corregido.horas_anteriores, corregido.estado) == (5, 3, "pendiente")
     # La corrección no suma hasta que Luis la acepte
     assert horas(db_session, terminada, LUIS).total_confirmado == 4
-    assert ctrl.constancia(LUIS, db_session).total_horas == 4
+    assert ctrl.constancia(LUIS, HorasService(db_session)).total_horas == 4
 
-    ctrl.aceptar_horas(corregido.id, LUIS, db_session)
+    ctrl.aceptar_horas(corregido.id, LUIS, HorasService(db_session))
     assert horas(db_session, terminada, LUIS).total_confirmado == 9
 
-    constancia = ctrl.constancia(LUIS, db_session)
+    constancia = ctrl.constancia(LUIS, HorasService(db_session))
     assert constancia.voluntario == "Luis Mamani"
     assert constancia.total_horas == 9
     assert [(a.nombre, a.organizador, a.total_horas) for a in constancia.actividades] == [
@@ -111,8 +112,8 @@ def test_dos_jornadas_reclamo_correccion_y_confirmacion(db_session, terminada):
     assert [j.horas for j in constancia.actividades[0].jornadas] == [4, 5]
 
     # Sofía no respondió: su constancia está vacía aunque tenga horas pendientes
-    assert ctrl.constancia(SOFIA, db_session).total_horas == 0
-    assert ctrl.constancia(SOFIA, db_session).actividades == []
+    assert ctrl.constancia(SOFIA, HorasService(db_session)).total_horas == 0
+    assert ctrl.constancia(SOFIA, HorasService(db_session)).actividades == []
 
 
 def test_cada_uno_ve_lo_suyo(db_session, terminada):
@@ -167,21 +168,21 @@ def test_reglas_al_responder_y_corregir(db_session, terminada):
 
     # Solo el voluntario responde sus horas, y el reclamo necesita motivo
     with pytest.raises(ForbiddenException):
-        ctrl.aceptar_horas(registro.id, SOFIA, db_session)
+        ctrl.aceptar_horas(registro.id, SOFIA, HorasService(db_session))
     with pytest.raises(MotivoReclamoObligatorioException):
-        ctrl.reclamar_horas(registro.id, ReclamarHorasRequest(motivo="   "), LUIS, db_session)
+        ctrl.reclamar_horas(registro.id, ReclamarHorasRequest(motivo="   "), LUIS, HorasService(db_session))
     # Solo el organizador corrige
     with pytest.raises(ForbiddenException):
-        ctrl.corregir_horas(registro.id, CorregirHorasRequest(horas=5), LUIS, db_session)
+        ctrl.corregir_horas(registro.id, CorregirHorasRequest(horas=5), LUIS, HorasService(db_session))
 
-    ctrl.aceptar_horas(registro.id, LUIS, db_session)
+    ctrl.aceptar_horas(registro.id, LUIS, HorasService(db_session))
     # Lo confirmado ya no se responde ni se corrige
     with pytest.raises(RegistroHorasNoPendienteException):
-        ctrl.aceptar_horas(registro.id, LUIS, db_session)
+        ctrl.aceptar_horas(registro.id, LUIS, HorasService(db_session))
     with pytest.raises(RegistroHorasNoPendienteException):
-        ctrl.reclamar_horas(registro.id, ReclamarHorasRequest(motivo="x"), LUIS, db_session)
+        ctrl.reclamar_horas(registro.id, ReclamarHorasRequest(motivo="x"), LUIS, HorasService(db_session))
     with pytest.raises(HorasYaConfirmadasException):
-        ctrl.corregir_horas(registro.id, CorregirHorasRequest(horas=5), ORG, db_session)
+        ctrl.corregir_horas(registro.id, CorregirHorasRequest(horas=5), ORG, HorasService(db_session))
 
     with pytest.raises(RegistroHorasNotFoundException):
-        ctrl.aceptar_horas(uuid4(), LUIS, db_session)
+        ctrl.aceptar_horas(uuid4(), LUIS, HorasService(db_session))

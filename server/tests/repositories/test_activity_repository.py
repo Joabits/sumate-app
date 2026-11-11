@@ -1,15 +1,17 @@
-"""Búsqueda con filtros contra una base SQLite en memoria."""
+"""Consultas del ActivityRepository (búsqueda con filtros) contra una base SQLite en memoria."""
 
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
-from app.models import Activity, ActivityCause, ActivityDetail, Cause, Participation, User
-from app.models.activity_search import SearchFilters, search_activities
+from app.dtos.activity_dto import SearchFilters
+from app.entities import Activity, ActivityCause, ActivityDetail, Cause, Participation, User
+from app.repositories.activity_repository import ActivityRepository
+from app.repositories.participation_repository import ParticipationRepository
 
 
 def buscar(session, *, min_date, **filtros):
-    return search_activities(session, SearchFilters(**filtros), min_date=min_date)
+    return ActivityRepository(session).search(SearchFilters(**filtros), min_date=min_date)
 
 
 def test_search_by_text_matching_and_empty(db_session):
@@ -507,7 +509,7 @@ def test_registered_counts_for_activities(db_session):
     ])
     db_session.commit()
 
-    counts = Participation.count_accepted_by_activity(db_session, [act_with_people, act_empty])
+    counts = ParticipationRepository(db_session).count_accepted_by_activity([act_with_people, act_empty])
 
     assert counts == {act_with_people: 2, act_empty: 0}
-    assert Participation.count_accepted_by_activity(db_session, []) == {}
+    assert ParticipationRepository(db_session).count_accepted_by_activity([]) == {}

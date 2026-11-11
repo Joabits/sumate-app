@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Response, status
 
-from app.core.database import DBSession
+from app.core.dependencies import AnaliticaServiceDep
 from app.core.security import CurrentUser
-from app.models.evento import Evento
-from app.views.analitica_view import AnaliticaRead, EventoRequest, render_analitica
+from app.dtos.analitica_dto import AnaliticaRead, EventoRequest
 
 router = APIRouter(tags=["Analítica"])
 
@@ -14,11 +13,10 @@ router = APIRouter(tags=["Analítica"])
     summary="Registrar un evento de analítica (sin datos de la persona)",
 )
 def registrar_evento(
-    payload: EventoRequest, current_user: CurrentUser, session: DBSession
+    payload: EventoRequest, current_user: CurrentUser, service: AnaliticaServiceDep
 ) -> Response:
     # Pide sesión para que nadie de afuera llene la tabla, pero no guarda quién fue
-    Evento.registrar(session, payload.evento, payload.props)
-    session.commit()
+    service.registrar(payload.evento, payload.props)
     return Response(status_code=status.HTTP_201_CREATED)
 
 
@@ -27,5 +25,5 @@ def registrar_evento(
     response_model=AnaliticaRead,
     summary="Embudo de la postulación: cuántos empiezan y cuántos terminan",
 )
-def analitica(current_user: CurrentUser, session: DBSession) -> AnaliticaRead:
-    return render_analitica(Evento.contar_postulaciones(session), Evento.ultimos(session))
+def analitica(current_user: CurrentUser, service: AnaliticaServiceDep) -> AnaliticaRead:
+    return service.resumen()

@@ -1,42 +1,26 @@
 """
 Búsqueda de actividades con filtros (pantalla Buscar).
 
-Es parte del modelo Activity: arma la consulta SQL a partir de los filtros
-que elige el voluntario.
+Arma la consulta SQL a partir de los filtros que elige el voluntario.
+La usa ActivityRepository.search().
 """
 
 import math
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
-from zoneinfo import ZoneInfo
 
 from sqlalchemy import Integer, func, or_
-from sqlmodel import Session, select
+from sqlmodel import select
 from sqlmodel.sql.expression import SelectOfScalar
 
-from app.models.activity import Activity, ActivityStatus
-from app.models.activity_detail import ActivityDetail
-from app.models.cause import ActivityCause, Cause
-
-LOCAL_TZ = ZoneInfo("America/La_Paz")
-
-
-@dataclass(frozen=True, slots=True)
-class SearchFilters:
-    query: str | None = None
-    time_of_day: str | None = None
-    date_preset: str | None = None
-    capacity_range: str | None = None
-    cause_ids: tuple[UUID, ...] = ()
-    user_latitude: float | None = None
-    user_longitude: float | None = None
-    max_distance_km: float | None = None
+from app.core.fechas import ZONA_BOLIVIA as LOCAL_TZ
+from app.dtos.activity_dto import SearchFilters
+from app.entities.activity import Activity, ActivityStatus
+from app.entities.activity_detail import ActivityDetail
+from app.entities.cause import ActivityCause, Cause
 
 
-def search_activities(
-    session: Session, filters: SearchFilters, *, min_date: datetime
-) -> list[Activity]:
+def build_search_statement(filters: SearchFilters, *, min_date: datetime) -> SelectOfScalar:
     # Las actividades llenas también aparecen: se puede entrar a su lista de espera
     statement = select(Activity).where(
         Activity.deleted_date.is_(None),
@@ -50,8 +34,7 @@ def search_activities(
     statement = apply_distance_filter(
         statement, filters.user_latitude, filters.user_longitude, filters.max_distance_km
     )
-    statement = statement.order_by(Activity.date.asc())
-    return list(session.exec(statement).all())
+    return statement.order_by(Activity.date.asc())
 
 
 def _to_local_datetime(dt: datetime) -> datetime:
