@@ -1,5 +1,6 @@
 import { Outlet } from "react-router";
 import { ActivitiesProvider } from "@/activities/context/ActivitiesProvider";
+import { AnaliticaProvider } from "@/analitica/context/AnaliticaProvider";
 import { HorasProvider } from "@/horas/context/HorasProvider";
 import { ParticipationsProvider } from "@/participations/context/ParticipationsProvider";
 
@@ -13,7 +14,9 @@ export function AppProviders() {
     <ActivitiesProvider>
       <ParticipationsProvider>
         <HorasProvider>
-          <Outlet />
+          <AnaliticaProvider>
+            <Outlet />
+          </AnaliticaProvider>
         </HorasProvider>
       </ParticipationsProvider>
     </ActivitiesProvider>

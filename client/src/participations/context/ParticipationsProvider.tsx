@@ -1,37 +1,56 @@
 import { useMemo, type ReactNode } from "react";
 import { useActivities } from "@/activities/hooks/useActivities";
 import type { ApiActionResult } from "@/api/apiResults";
-import {
-  aceptarSolicitudAction,
-  joinActivityAction,
-  leaveActivityAction,
-  rechazarSolicitudAction,
-} from "@/api/participationsActions";
+import { invalidResult } from "@/api/errors/apiError";
+import { participationsApi } from "@/api/participationsApi";
 import { ParticipationsContext } from "./ParticipationsContext";
-import type { ParticipationsContextValue } from "./participationsTypes";
+import type { ParticipatedActivityListItem, ParticipationsContextValue } from "./participationsTypes";
 
 /**
- * Reparte las acciones de participación: el voluntario solicita o sale, y el
- * organizador acepta o rechaza. Va dentro de ActivitiesProvider y usa su
- * refresh(): después de cada acción las páginas abiertas recargan sus datos.
+ * Lógica de participación: el voluntario solicita o sale, y el organizador
+ * acepta o rechaza. Va dentro de ActivitiesProvider y usa su refresh():
+ * después de cada acción las páginas abiertas recargan sus datos.
  */
 export function ParticipationsProvider({ children }: { children: ReactNode }) {
   const { refresh } = useActivities();
 
   const value = useMemo<ParticipationsContextValue>(() => {
-    const thenRefresh =
-      <A extends unknown[]>(action: (...args: A) => Promise<ApiActionResult>) =>
-      async (...args: A) => {
-        const result = await action(...args);
-        if (result.ok) refresh();
-        return result;
-      };
+    const conRecarga = async (llamada: Promise<ApiActionResult>) => {
+      const result = await llamada;
+      if (result.ok) refresh();
+      return result;
+    };
 
     return {
-      join: thenRefresh(joinActivityAction),
-      leave: thenRefresh(leaveActivityAction),
-      aceptarSolicitud: thenRefresh(aceptarSolicitudAction),
-      rechazarSolicitud: thenRefresh(rechazarSolicitudAction),
+      getMyParticipations: async (): Promise<ParticipatedActivityListItem[]> => {
+        const response = await participationsApi.listMyParticipations();
+        if (!response.ok) {
+          throw new Error(
+            response.errors?.[0] ?? "Error al cargar el historial de participaciones.",
+          );
+        }
+        return response.data;
+      },
+
+      join: async (activityId: string) => {
+        if (!activityId.trim()) return invalidResult("ID de actividad inválido.");
+        return conRecarga(participationsApi.joinActivity(activityId));
+      },
+
+      leave: async (activityId: string) => {
+        if (!activityId.trim()) return invalidResult("ID de actividad inválido.");
+        return conRecarga(participationsApi.leaveActivity(activityId));
+      },
+
+      aceptarSolicitud: async (activityId: string, participanteId: string) => {
+        if (!activityId.trim() || !participanteId.trim()) return invalidResult("Solicitud inválida.");
+        return conRecarga(participationsApi.aceptarSolicitud(activityId, participanteId));
+      },
+
+      rechazarSolicitud: async (activityId: string, participanteId: string) => {
+        if (!activityId.trim() || !participanteId.trim()) return invalidResult("Solicitud inválida.");
+        return conRecarga(participationsApi.rechazarSolicitud(activityId, participanteId));
+      },
     };
   }, [refresh]);
 

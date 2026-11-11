@@ -4,8 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/shared/components/SubmitButton";
 import { appToast } from "@/shared/components/Toast";
-import { useSubmitWithSchema } from "@/shared/hooks/useSubmitWithSchema";
-import { EditDateSchema } from "@/api/schemas/activitiesSchemas";
+import { useSubmitAction } from "@/shared/hooks/useSubmitAction";
 import { useActivities } from "@/activities/hooks/useActivities";
 
 type EditActivityDateFormProps = {
@@ -21,18 +20,13 @@ export function EditActivityDateForm({
   onCancel,
   onSuccess,
 }: EditActivityDateFormProps) {
-  const { updateInfo } = useActivities();
+  const { updateDate } = useActivities();
   const [dateValue, setDateValue] = useState(initialDate);
-  const submitWithSchema = useSubmitWithSchema();
+  const submitAction = useSubmitAction();
 
   const handleSubmit = async () => {
-    await submitWithSchema({
-      schema: EditDateSchema,
-      payload: { date: dateValue },
-      action: (data) =>
-        updateInfo(activityId, {
-          date: new Date(data.date).toISOString(),
-        }),
+    await submitAction({
+      action: () => updateDate(activityId, dateValue),
       onSuccess: () => {
         appToast.success("Fecha actualizada.");
         onSuccess();

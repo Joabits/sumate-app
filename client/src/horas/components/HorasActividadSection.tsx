@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Timer } from "lucide-react";
 import { useActivities } from "@/activities/hooks/useActivities";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
-import { getHorasDeActividadQuery } from "@/api/horasQueries";
+import { useHoras } from "@/horas/hooks/useHoras";
 import { formatoHoras } from "@/horas/utils/formato";
 import { usePageData } from "@/shared/hooks/usePageData";
 import { HorasOrganizador } from "./HorasOrganizador";
@@ -15,6 +15,7 @@ import { MisHoras } from "./MisHoras";
 export function HorasActividadSection() {
   const { activity } = useActivityDetail();
   const { dataVersion } = useActivities();
+  const { getHorasDeActividad } = useHoras();
   // Hora en que se abrió la pantalla, para saber si la actividad ya terminó
   const [now] = useState(() => Date.now());
   const terminada = new Date(activity.date).getTime() <= now;
@@ -24,7 +25,7 @@ export function HorasActividadSection() {
     (activity.isOwner || activity.estadoSolicitud === "aceptada");
 
   const { data: horas, error } = usePageData(
-    () => (visible ? getHorasDeActividadQuery(activity.id) : Promise.resolve(null)),
+    () => (visible ? getHorasDeActividad(activity.id) : Promise.resolve(null)),
     [activity.id, visible, dataVersion],
   );
 

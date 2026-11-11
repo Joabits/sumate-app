@@ -1,6 +1,6 @@
 import { ArrowLeft, Printer } from "lucide-react";
 import { useNavigate } from "react-router";
-import { getConstanciaQuery } from "@/api/horasQueries";
+import { useHoras } from "@/horas/hooks/useHoras";
 import { formatoHoras, formatoJornada } from "@/horas/utils/formato";
 import { ErrorView } from "@/shared/components/ErrorView";
 import Image from "@/shared/components/Image";
@@ -18,7 +18,8 @@ const fechaLarga = (iso: string) =>
 /** Constancia del voluntario. Solo incluye horas que él mismo confirmó. */
 export default function ConstanciaPage() {
   const navigate = useNavigate();
-  const { data: constancia, error } = usePageData(getConstanciaQuery, []);
+  const { getConstancia } = useHoras();
+  const { data: constancia, error } = usePageData(getConstancia, []);
   useDocumentTitle("Constancia de voluntariado - Súmate");
 
   if (error) return <ErrorView error={error} />;

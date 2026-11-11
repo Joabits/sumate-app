@@ -4,8 +4,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/shared/components/SubmitButton";
 import { appToast } from "@/shared/components/Toast";
-import { useSubmitWithSchema } from "@/shared/hooks/useSubmitWithSchema";
-import { EditCapacitySchema } from "@/api/schemas/activitiesSchemas";
+import { useSubmitAction } from "@/shared/hooks/useSubmitAction";
 import { useActivities } from "@/activities/hooks/useActivities";
 
 type EditActivityCapacityFormProps = {
@@ -23,14 +22,11 @@ export function EditActivityCapacityForm({
 }: EditActivityCapacityFormProps) {
   const { updateCapacity } = useActivities();
   const [capacityValue, setCapacityValue] = useState<number | string>(initialCapacity);
-  const submitWithSchema = useSubmitWithSchema();
+  const submitAction = useSubmitAction();
 
   const handleSubmit = async () => {
-    await submitWithSchema({
-      schema: EditCapacitySchema,
-      payload: { capacity: Number(capacityValue) },
-      action: (data) =>
-        updateCapacity(activityId, Number(data.capacity)),
+    await submitAction({
+      action: () => updateCapacity(activityId, Number(capacityValue)),
       onSuccess: () => {
         appToast.success("Cupos actualizados.");
         onSuccess();

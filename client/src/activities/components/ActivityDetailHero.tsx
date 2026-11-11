@@ -16,25 +16,12 @@ export function ActivityDetailHero() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      appToast.error("Formato inválido", "El archivo debe ser una imagen válida.");
-      return;
-    }
-
-    if (file.size > 2 * 1024 * 1024) {
-      appToast.error("Archivo muy grande", "La imagen no debe superar los 2MB.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("image", file);
-
     startTransition(async () => {
-      const res = await updateImage(activityId, formData);
+      const res = await updateImage(activityId, file);
       if (!res.ok) {
         appToast.error(
-          "Error",
-          res.errors?.[0] ?? "No se pudo actualizar la imagen."
+          "No se pudo actualizar la imagen",
+          res.errors?.[0] ?? "Inténtalo nuevamente."
         );
         return;
       }

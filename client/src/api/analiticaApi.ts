@@ -2,8 +2,8 @@
 
 import type { ApiActionResult, ApiResult } from "./apiResults";
 import { apiRequestData, apiRequestStatus } from "./http";
-import type { Analitica } from "@/analitica/analiticaTypes";
-import { AnaliticaResponseSchema, analiticaMapper } from "./schemas/analiticaSchemas";
+import type { Analitica } from "@/analitica/context/analiticaTypes";
+import { analiticaMapper } from "./mappers/analiticaMapper";
 
 const BASE_URL = import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api";
 
@@ -21,7 +21,6 @@ export const analiticaApi = {
     return apiRequestData({
       url: `${BASE_URL}/analitica`,
       method: "GET",
-      responseSchema: AnaliticaResponseSchema,
       mapData: analiticaMapper.toAnalitica,
       fallbackMessage: "Error al cargar la analítica.",
     });

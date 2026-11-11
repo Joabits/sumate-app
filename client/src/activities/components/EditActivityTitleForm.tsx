@@ -3,8 +3,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/shared/components/SubmitButton";
 import { appToast } from "@/shared/components/Toast";
-import { useSubmitWithSchema } from "@/shared/hooks/useSubmitWithSchema";
-import { EditTitleSchema } from "@/api/schemas/activitiesSchemas";
+import { useSubmitAction } from "@/shared/hooks/useSubmitAction";
 import { useActivities } from "@/activities/hooks/useActivities";
 
 type EditActivityTitleFormProps = {
@@ -20,15 +19,13 @@ export function EditActivityTitleForm({
   onCancel,
   onSuccess,
 }: EditActivityTitleFormProps) {
-  const { updateInfo } = useActivities();
+  const { updateTitle } = useActivities();
   const [title, setTitle] = useState(initialTitle);
-  const submitWithSchema = useSubmitWithSchema();
+  const submitAction = useSubmitAction();
 
   const handleSubmit = async () => {
-    await submitWithSchema({
-      schema: EditTitleSchema,
-      payload: { name: title },
-      action: (data) => updateInfo(activityId, { name: data.name }),
+    await submitAction({
+      action: () => updateTitle(activityId, title),
       onSuccess: () => {
         appToast.success("Título actualizado.");
         onSuccess();

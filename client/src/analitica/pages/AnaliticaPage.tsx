@@ -1,5 +1,5 @@
-import type { Conteo } from "@/analitica/analiticaTypes";
-import { getAnaliticaQuery } from "@/api/analiticaQueries";
+import type { Conteo } from "@/analitica/context/analiticaTypes";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import { ErrorView } from "@/shared/components/ErrorView";
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 import { usePageData } from "@/shared/hooks/usePageData";
@@ -53,7 +53,8 @@ function FilaTipo({ tipo, conteo, total = false }: { tipo: string; conteo: Conte
 /** Panel de analítica: cuántas personas empiezan y cuántas terminan la postulación. */
 export default function AnaliticaPage() {
   useDocumentTitle("Analítica - Súmate");
-  const { data, error } = usePageData(getAnaliticaQuery, []);
+  const { getAnalitica } = useAnalitica();
+  const { data, error } = usePageData(getAnalitica, []);
 
   if (error) return <ErrorView error={error} />;
   if (!data) {

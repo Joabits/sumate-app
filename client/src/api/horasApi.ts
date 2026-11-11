@@ -1,13 +1,12 @@
-/** Llamadas HTTP al backend para las horas de voluntariado. */
+/**
+ * Llamadas HTTP al backend para las horas de voluntariado. Solo hace la
+ * petición y convierte la respuesta: las reglas están en HorasProvider.
+ */
 
 import type { ApiActionResult, ApiResult } from "./apiResults";
 import { apiRequestData, apiRequestStatus } from "./http";
 import type { Constancia, HorasActividad } from "@/horas/context/horasTypes";
-import {
-  ConstanciaResponseSchema,
-  HorasActividadResponseSchema,
-  horasMapper,
-} from "./schemas/horasSchemas";
+import { horasMapper } from "./mappers/horasMapper";
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/horas`;
 
@@ -16,7 +15,6 @@ export const horasApi = {
     return apiRequestData({
       url: `${BASE_URL}/actividades/${activityId}`,
       method: "GET",
-      responseSchema: HorasActividadResponseSchema,
       mapData: horasMapper.toHorasActividad,
       fallbackMessage: "Error al cargar las horas de la actividad.",
     });
@@ -26,7 +24,6 @@ export const horasApi = {
     return apiRequestData({
       url: `${BASE_URL}/constancia`,
       method: "GET",
-      responseSchema: ConstanciaResponseSchema,
       mapData: horasMapper.toConstancia,
       fallbackMessage: "Error al cargar la constancia.",
     });

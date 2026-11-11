@@ -149,7 +149,19 @@ export interface ActivitySearchParams {
 /** Respuesta de cualquier acción: { ok: true } o el error con sus mensajes. */
 export type ActionResult = ApiActionResult;
 
-/** Lo que entrega useActivities(): el catálogo de causas y las acciones sobre actividades. */
+/** Datos del formulario para crear una actividad. */
+export type NuevaActividad = {
+  name: string;
+  /** Valor del <input type="datetime-local"> (hora local) */
+  date: string;
+  capacity: number;
+  image: File | null;
+};
+
+/**
+ * Lo que entrega useActivities(): el catálogo de causas, las lecturas y las
+ * acciones sobre actividades. Las acciones validan antes de llamar al backend.
+ */
 export type ActivitiesContextValue = {
   causes: Cause[];
   isLoadingCauses: boolean;
@@ -157,11 +169,22 @@ export type ActivitiesContextValue = {
   dataVersion: number;
   /** Pide a las páginas abiertas que vuelvan a cargar sus datos */
   refresh: () => void;
-  createActivity: (formData: FormData) => Promise<ActionResult>;
-  updateInfo: (id: string, data: { name?: string; date?: string }) => Promise<ActionResult>;
-  updateCapacity: (id: string, capacity: number) => Promise<ActionResult>;
-  updateDescription: (id: string, description: string) => Promise<ActionResult>;
-  updateImage: (id: string, formData: FormData) => Promise<ActionResult>;
+
+  // Lecturas: si el backend falla lanzan un Error con el mensaje para mostrar
+  getExploreActivities: () => Promise<ActivityListItem[]>;
+  getMyActivities: () => Promise<MyActivityListItem[]>;
+  /** null si la actividad no existe (o es un borrador de otra persona) */
+  getActivityDetail: (id: string) => Promise<ActivityDetailData | null>;
+  searchActivities: (params: ActivitySearchParams) => Promise<ActivityListItem[]>;
+
+  // Acciones
+  createActivity: (datos: NuevaActividad) => Promise<ActionResult>;
+  updateTitle: (id: string, nombre: string) => Promise<ActionResult>;
+  /** `fecha` es el valor del <input type="datetime-local"> */
+  updateDate: (id: string, fecha: string) => Promise<ActionResult>;
+  updateCapacity: (id: string, cupos: number) => Promise<ActionResult>;
+  updateDescription: (id: string, descripcion: string) => Promise<ActionResult>;
+  updateImage: (id: string, imagen: File) => Promise<ActionResult>;
   updateLocation: (id: string, latitude: number, longitude: number, place?: string) => Promise<ActionResult>;
   replaceCauses: (id: string, causeIds: string[]) => Promise<ActionResult>;
   publish: (id: string) => Promise<ActionResult>;

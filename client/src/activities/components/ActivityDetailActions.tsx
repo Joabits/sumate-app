@@ -12,7 +12,7 @@ import {
   UserMinus,
   XCircle,
 } from "lucide-react";
-import { track } from "@/analitica/track";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import { appToast } from "@/shared/components/Toast";
 import { ConfirmJoinDialog } from "@/participations/components/ConfirmJoinDialog";
 import { ConfirmLeaveDialog } from "@/participations/components/ConfirmLeaveDialog";
@@ -24,6 +24,7 @@ export function ActivityDetailActions() {
   const { activity } = useActivityDetail();
   const { close, publish, reopen } = useActivities();
   const { join, leave } = useParticipations();
+  const { track } = useAnalitica();
   const {
     id: activityId,
     name: activityName,

@@ -1,7 +1,6 @@
 /**
- * src/features/activities/infrastructure/repositories/activity.repository.ts
- *
- * Implementación HTTP de ActivityRepository utilizando api-client.
+ * Llamadas HTTP al backend para actividades. Solo hace la petición y convierte
+ * la respuesta: las validaciones y reglas están en ActivitiesProvider.
  */
 
 import type {
@@ -20,13 +19,7 @@ import type {
   Cause,
   MyActivityListItem,
 } from "@/activities/context/activitiesTypes";
-import { activityMapper } from "@/api/schemas/activitiesMapper";
-import {
-  ActivityDetailDataResponseSchema,
-  ActivityListResponseSchema,
-  CauseListResponseSchema,
-  MyActivityListResponseSchema,
-} from "@/api/schemas/activitiesSchemas";
+import { activityMapper } from "@/api/mappers/activitiesMapper";
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/activities`;
 
@@ -35,7 +28,6 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/explore`,
       method: "GET",
-      responseSchema: ActivityListResponseSchema,
       mapData: activityMapper.toActivityList,
       fallbackMessage: "Error al cargar las actividades para explorar.",
     });
@@ -76,7 +68,6 @@ export const activitiesApi = {
     return apiRequestData({
       url,
       method: "GET",
-      responseSchema: ActivityListResponseSchema,
       mapData: activityMapper.toActivityList,
       fallbackMessage: "Error al realizar la búsqueda de actividades.",
     });
@@ -86,7 +77,6 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/my-activities`,
       method: "GET",
-      responseSchema: MyActivityListResponseSchema,
       mapData: activityMapper.toMyActivityList,
       fallbackMessage: "Error al cargar mis actividades.",
     });
@@ -96,7 +86,6 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/${id}`,
       method: "GET",
-      responseSchema: ActivityDetailDataResponseSchema,
       mapData: activityMapper.toActivityDetailData,
       fallbackMessage: "Error al cargar el detalle de la actividad.",
     });
@@ -106,7 +95,6 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/causes`,
       method: "GET",
-      responseSchema: CauseListResponseSchema,
       mapData: activityMapper.toCauseList,
       fallbackMessage: "Error al cargar el catálogo de causas.",
     });
@@ -124,7 +112,18 @@ export const activitiesApi = {
     });
   },
 
-  async createActivity(formData: FormData): Promise<ApiActionResult> {
+  async createActivity(data: {
+    name: string;
+    /** Fecha en ISO 8601 (UTC) */
+    date: string;
+    capacity: number;
+    image: File;
+  }): Promise<ApiActionResult> {
+    const formData = new FormData();
+    formData.set("name", data.name);
+    formData.set("date", data.date);
+    formData.set("capacity", String(data.capacity));
+    formData.set("image", data.image);
     return apiRequestFormStatus({
       url: BASE_URL,
       method: "POST",
@@ -157,7 +156,9 @@ export const activitiesApi = {
     });
   },
 
-  async updateImage(id: string, formData: FormData): Promise<ApiActionResult> {
+  async updateImage(id: string, image: File): Promise<ApiActionResult> {
+    const formData = new FormData();
+    formData.set("image", image);
     return apiRequestFormStatus({
       url: `${BASE_URL}/${id}/image`,
       method: "PATCH",

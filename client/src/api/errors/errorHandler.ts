@@ -1,4 +1,3 @@
-import type { ZodIssue } from "zod";
 import { showErrorList } from "@/shared/components/Toast";
 
 
@@ -12,18 +11,6 @@ type ApiErrorLike = {
 type ErrorHandlerOptions = {
   title?: string;
 };
-
-export function handleZodErrors(
-  result: { success: boolean; error?: { issues: ZodIssue[] } },
-  options?: ErrorHandlerOptions,
-) {
-  if (result.success) {
-    return;
-  }
-
-  const firstMessage = (result.error?.issues ?? []).map((issue) => issue.message)[0];
-  showErrorList(firstMessage ? [firstMessage] : undefined, options);
-}
 
 export function handleValidationErrors(
   validationErrors: ValidationErrors,

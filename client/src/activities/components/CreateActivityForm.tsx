@@ -4,7 +4,6 @@ import { UploadCloud, X } from "lucide-react";
 import TextFormField from "@/shared/components/TextFormField";
 import { appToast } from "@/shared/components/Toast";
 import { SubmitButton } from "@/shared/components/SubmitButton";
-import { CreateActivityFormSchema } from "@/api/schemas/activitiesSchemas";
 import { useActivities } from "@/activities/hooks/useActivities";
 
 type CreateActivityFormProps = {
@@ -39,34 +38,17 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    if (selectedFile) {
-      formData.set("image", selectedFile);
-    }
-
-    const payload = {
-      name: formData.get("name"),
-      date: formData.get("date"),
+    // ActivitiesProvider valida los datos y convierte la fecha a UTC
+    const result = await createActivity({
+      name: String(formData.get("name") ?? ""),
+      date: String(formData.get("date") ?? ""),
       capacity: Number(formData.get("capacity")),
       image: selectedFile,
-    };
-
-    const parsed = CreateActivityFormSchema.safeParse(payload);
-    if (!parsed.success) {
-      appToast.error(
-        "Datos inválidos",
-        parsed.error.issues[0]?.message || "Por favor verifica los campos de la actividad."
-      );
-      return;
-    }
-
-    // El input da la hora local sin zona; se envía en UTC igual que al editar la fecha
-    formData.set("date", new Date(parsed.data.date).toISOString());
-
-    const result = await createActivity(formData);
+    });
 
     if (!result.ok) {
       appToast.error(
-        "Error al crear actividad",
+        result.code === "VALIDACION" ? "Datos inválidos" : "Error al crear actividad",
         result.errors?.[0] || "No se pudo registrar la actividad."
       );
       return;

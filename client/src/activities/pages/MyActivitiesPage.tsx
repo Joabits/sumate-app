@@ -2,13 +2,12 @@ import { ActivitiesFeed } from "@/activities/components/ActivitiesFeed";
 import { ActivitiesListSkeleton } from "@/activities/components/ActivitiesListSkeleton";
 import { CreateActivitySheet } from "@/activities/components/CreateActivitySheet";
 import { useActivities } from "@/activities/hooks/useActivities";
-import { getMyActivitiesQuery } from "@/api/activitiesQueries";
 import { ErrorView } from "@/shared/components/ErrorView";
 import { usePageData } from "@/shared/hooks/usePageData";
 
 export default function MyActivitiesPage() {
-  const { dataVersion } = useActivities();
-  const { data: activities, error } = usePageData(getMyActivitiesQuery, [dataVersion]);
+  const { dataVersion, getMyActivities } = useActivities();
+  const { data: activities, error } = usePageData(getMyActivities, [dataVersion]);
 
   if (error) return <ErrorView error={error} />;
   if (!activities) return <ActivitiesListSkeleton />;

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { HorasContext } from "@/horas/context/HorasContext";
 
-/** Registrar, corregir, aceptar y reclamar horas. Úsalo dentro de HorasProvider. */
+/** Leer, registrar, corregir, aceptar y reclamar horas. Úsalo dentro de HorasProvider. */
 export function useHoras() {
   const context = useContext(HorasContext);
   if (!context) {

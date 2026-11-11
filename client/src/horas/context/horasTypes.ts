@@ -67,8 +67,10 @@ export type Constancia = {
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
-/** Lo que entrega useHoras(). */
+/** Lo que entrega useHoras(). Las lecturas lanzan un Error si el backend falla. */
 export type HorasContextValue = {
+  getHorasDeActividad: (activityId: string) => Promise<HorasActividad>;
+  getConstancia: () => Promise<Constancia>;
   registrarJornada: (
     activityId: string,
     jornada: string,

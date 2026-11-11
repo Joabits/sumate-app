@@ -21,7 +21,6 @@
  *   await apiRequestData({ url: "/api/public", method: "GET", withAuth: false, ... });
  */
 
-import type { ZodType } from "zod";
 import {
   ApiActionResult,
   ApiFileResult,
@@ -49,16 +48,15 @@ type RequestConfig = {
   body?: unknown;
 };
 
-type DataRequestConfig<TParsed, TResult> = RequestConfig & {
+type DataRequestConfig<TJson, TResult> = RequestConfig & {
   fallbackMessage: string;
-  responseSchema: ZodType<TParsed>;
-  mapData: (data: TParsed) => TResult;
+  /** Convierte el JSON del backend (snake_case) a los tipos de la app */
+  mapData: (json: TJson) => TResult;
 };
 
-type MaybeDataRequestConfig<TParsed, TResult> = RequestConfig & {
+type MaybeDataRequestConfig<TJson, TResult> = RequestConfig & {
   fallbackMessage: string;
-  responseSchema: ZodType<TParsed>;
-  mapData?: (data: TParsed) => TResult;
+  mapData?: (json: TJson) => TResult;
   /** HTTP status que representa "no encontrado" en este endpoint. Por defecto: 404. */
   notFoundStatus?: number;
   /**
@@ -180,11 +178,11 @@ async function executeWithAuthRetry(
 
 /**
  * Para endpoints que devuelven datos.
- * Parsea y mapea la respuesta con el schema y mapper indicados.
+ * Convierte la respuesta con el mapper indicado.
  * Reintenta autom\u00e1ticamente con JWT renovado en caso de 401.
  */
-export async function apiRequestData<TParsed, TResult>(
-  config: DataRequestConfig<TParsed, TResult>,
+export async function apiRequestData<TJson, TResult>(
+  config: DataRequestConfig<TJson, TResult>,
 ): Promise<ApiResult<TResult>> {
   const withAuth = config.withAuth !== false;
 
@@ -198,13 +196,8 @@ export async function apiRequestData<TParsed, TResult>(
       return serverErrorResult(res, config.fallbackMessage);
     }
 
-    const responseData = await res.json();
-    const parsed = config.responseSchema.safeParse(responseData);
-    if (!parsed.success) {
-      return errorResult("Error en la respuesta del servidor");
-    }
-
-    return { ok: true, data: config.mapData(parsed.data) };
+    const json = (await res.json()) as TJson;
+    return { ok: true, data: config.mapData(json) };
   } catch {
     return errorResult("Error de conexi\u00f3n. Intenta m\u00e1s tarde.");
   }
@@ -215,8 +208,8 @@ export async function apiRequestData<TParsed, TResult>(
  * Trata el status notFoundStatus (default 404) como ok con data: null.
  * Reintenta autom\u00e1ticamente con JWT renovado en caso de 401.
  */
-export async function apiRequestMaybeData<TParsed, TResult = TParsed>(
-  config: MaybeDataRequestConfig<TParsed, TResult>,
+export async function apiRequestMaybeData<TJson, TResult = TJson>(
+  config: MaybeDataRequestConfig<TJson, TResult>,
 ): Promise<ApiMaybeResult<TResult>> {
   const withAuth = config.withAuth !== false;
 
@@ -243,17 +236,10 @@ export async function apiRequestMaybeData<TParsed, TResult = TParsed>(
       return serverErrorResult(res, config.fallbackMessage);
     }
 
-    const responseData = await res.json();
-    const parsedResult = config.responseSchema.safeParse(responseData);
-    if (!parsedResult.success) {
-      return errorResult("Error en la respuesta del servidor");
-    }
-
+    const json = (await res.json()) as TJson;
     return {
       ok: true,
-      data: config.mapData
-        ? config.mapData(parsedResult.data)
-        : (parsedResult.data as unknown as TResult),
+      data: config.mapData ? config.mapData(json) : (json as unknown as TResult),
     };
   } catch {
     return errorResult("Error de conexi\u00f3n. Intenta m\u00e1s tarde.");

@@ -2,14 +2,13 @@
  * Constructores de ApiError
  *
  * Este módulo construye objetos ApiError a partir de distintas fuentes
- * (errores de Zod, respuestas HTTP del servidor) usando el adaptador
- * de backend activo.
+ * (validación en el Provider, respuestas HTTP del servidor) usando el
+ * adaptador de backend activo.
  *
  * La lógica específica de cada framework backend vive en:
  *   errors/adapters/fastapi.error-adapter.ts
  *   errors/adapters/laravel.error-adapter.ts
  */
-import { type ZodError } from "zod";
 import { ApiError } from "@/api/apiResults";
 import { activeBackendAdapter } from "./adapters";
 
@@ -44,21 +43,15 @@ export function errorResult(message: string): ApiError {
 }
 
 /**
- * Error construido a partir de un ZodError (validación en cliente).
+ * Error de validación hecho en el Provider antes de llamar al backend.
+ * Usa 400 (y no 0) para que no se confunda con un error de conexión.
  */
-export function zodValidationErrorResult(error: ZodError): ApiError {
-  const validationErrors = error.flatten().fieldErrors as Record<
-    string,
-    string[] | undefined
-  >;
-
-  const errors = Object.values(validationErrors).flatMap((msgs) => msgs ?? []);
-
+export function invalidResult(message: string): ApiError {
   return {
     ok: false,
-    statusCode: 0, // Validación local, no hay respuesta HTTP
-    validationErrors,
-    errors,
+    statusCode: 400,
+    code: "VALIDACION",
+    errors: [message],
   };
 }
 

@@ -1,7 +1,6 @@
 /**
- * src/features/participations/infrastructure/repositories/participation.repository.ts
- *
- * Implementación HTTP de ParticipationRepository utilizando api-client.
+ * Llamadas HTTP al backend para participaciones. Solo hace la petición y
+ * convierte la respuesta: las reglas están en ParticipationsProvider.
  */
 
 import type {
@@ -13,8 +12,7 @@ import {
   apiRequestStatus,
 } from "./http";
 import type { ParticipatedActivityListItem } from "@/participations/context/participationsTypes";
-import { participationMapper } from "@/api/schemas/participationsMapper";
-import { ParticipatedActivityListResponseSchema } from "@/api/schemas/participationsSchemas";
+import { participationMapper } from "@/api/mappers/participationsMapper";
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/participaciones`;
 
@@ -55,7 +53,6 @@ export const participationsApi = {
     return apiRequestData({
       url: `${BASE_URL}/me`,
       method: "GET",
-      responseSchema: ParticipatedActivityListResponseSchema,
       mapData: participationMapper.toParticipatedActivityList,
       fallbackMessage: "Error al cargar el historial de participaciones.",
     });

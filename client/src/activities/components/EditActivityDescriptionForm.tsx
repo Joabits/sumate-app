@@ -3,8 +3,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/shared/components/SubmitButton";
 import { appToast } from "@/shared/components/Toast";
-import { useSubmitWithSchema } from "@/shared/hooks/useSubmitWithSchema";
-import { EditDescriptionSchema } from "@/api/schemas/activitiesSchemas";
+import { useSubmitAction } from "@/shared/hooks/useSubmitAction";
 import { useActivities } from "@/activities/hooks/useActivities";
 
 type EditActivityDescriptionFormProps = {
@@ -22,14 +21,11 @@ export function EditActivityDescriptionForm({
 }: EditActivityDescriptionFormProps) {
   const { updateDescription } = useActivities();
   const [descriptionText, setDescriptionText] = useState(initialDescription ?? "");
-  const submitWithSchema = useSubmitWithSchema();
+  const submitAction = useSubmitAction();
 
   const handleSubmit = async () => {
-    await submitWithSchema({
-      schema: EditDescriptionSchema,
-      payload: { description: descriptionText },
-      action: (data) =>
-        updateDescription(activityId, data.description),
+    await submitAction({
+      action: () => updateDescription(activityId, descriptionText),
       onSuccess: () => {
         appToast.success("Descripción actualizada.");
         onSuccess();

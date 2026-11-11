@@ -41,8 +41,10 @@ export type ParticipationFilter = "all" | "upcoming" | "past";
 
 // ── Context ───────────────────────────────────────────────────────────────────
 
-/** Lo que entrega useParticipations(): solicitar, salir y revisar solicitudes. */
+/** Lo que entrega useParticipations(): mis solicitudes, solicitar, salir y revisar. */
 export type ParticipationsContextValue = {
+  /** Lanza un Error con el mensaje para mostrar si el backend falla */
+  getMyParticipations: () => Promise<ParticipatedActivityListItem[]>;
   join: (activityId: string) => Promise<ApiActionResult>;
   leave: (activityId: string) => Promise<ApiActionResult>;
   aceptarSolicitud: (activityId: string, participanteId: string) => Promise<ApiActionResult>;

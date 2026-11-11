@@ -3,7 +3,7 @@ import type {
   ActivityListItem,
   SearchFilterState,
 } from "@/activities/context/activitiesTypes";
-import { activitiesApi } from "@/api/activitiesApi";
+import { useActivities } from "@/activities/hooks/useActivities";
 
 export const DEFAULT_SEARCH_FILTERS: SearchFilterState = {
   timeOfDay: "any",
@@ -39,6 +39,7 @@ function getDiscreetUserLocation(): Promise<{ latitude: number; longitude: numbe
 }
 
 export function useActivitySearch() {
+  const { searchActivities } = useActivities();
   const [query, setQuery] = useState<string>("");
   const [filters, setFilters] = useState<SearchFilterState>(DEFAULT_SEARCH_FILTERS);
   const [draftFilters, setDraftFilters] = useState<SearchFilterState>(DEFAULT_SEARCH_FILTERS);
@@ -84,7 +85,7 @@ export function useActivitySearch() {
         // Pedir la ubicación actual de forma discreta
         const location = await getDiscreetUserLocation();
 
-        const res = await activitiesApi.searchActivities({
+        const encontradas = await searchActivities({
           q: trimmedQuery || undefined,
           timeOfDay: filtersToSearch.timeOfDay,
           datePreset: filtersToSearch.datePreset,
@@ -96,18 +97,14 @@ export function useActivitySearch() {
             filtersToSearch.distanceKm < 50 ? filtersToSearch.distanceKm : undefined,
         });
 
-        if (res.ok) {
-          setItems(res.data);
-        } else {
-          setItems([]);
-        }
+        setItems(encontradas);
       } catch {
         setItems([]);
       } finally {
         setIsLoading(false);
       }
     },
-    []
+    [searchActivities]
   );
 
   const submitSearch = () => {
