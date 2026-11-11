@@ -12,6 +12,7 @@ import {
   UserMinus,
   XCircle,
 } from "lucide-react";
+import { track } from "@/analitica/track";
 import { appToast } from "@/shared/components/Toast";
 import { ConfirmJoinDialog } from "@/participations/components/ConfirmJoinDialog";
 import { ConfirmLeaveDialog } from "@/participations/components/ConfirmLeaveDialog";
@@ -51,6 +52,12 @@ export function ActivityDetailActions() {
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false);
 
+  // Empieza la postulación: se abre la confirmación
+  const abrirPostulacion = () => {
+    track("postulacion_iniciada", { lista_de_espera: isFull });
+    setJoinDialogOpen(true);
+  };
+
   const handleConfirmJoin = () => {
     // Si los cupos están llenos, la solicitud entra a la lista de espera
     const aListaDeEspera = isFull;
@@ -63,6 +70,8 @@ export function ActivityDetailActions() {
         );
         return;
       }
+      // Solo llega aquí si la solicitud se guardó
+      track("postulacion_enviada", { lista_de_espera: aListaDeEspera });
       setJoinDialogOpen(false);
       appToast.success(
         aListaDeEspera
@@ -251,7 +260,7 @@ export function ActivityDetailActions() {
               ) : isFull ? (
                 <button
                   type="button"
-                  onClick={() => setJoinDialogOpen(true)}
+                  onClick={abrirPostulacion}
                   disabled={isPending}
                   className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-sky-700/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700 cursor-pointer bg-sky-700 hover:bg-sky-800 text-white"
                 >
@@ -261,7 +270,7 @@ export function ActivityDetailActions() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => setJoinDialogOpen(true)}
+                  onClick={abrirPostulacion}
                   disabled={isPending}
                   aria-label="Solicitar participar en el evento"
                   className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] cursor-pointer bg-[#6355de] hover:bg-[#5244cc] text-white"

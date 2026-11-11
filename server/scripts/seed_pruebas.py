@@ -139,6 +139,34 @@ ACTIVIDADES_PRUEBAS = [
         "en_espera": ["demo-sofia"],
     },
     {
+        # Analítica: Carlos abre la confirmación, la cierra y después envía la solicitud
+        "name": "Clasificación de donaciones en el banco de alimentos",
+        "owner": "demo-ana",
+        "image": IMG.format("1488459716781-31db52582fe9"),
+        "days": 12,
+        "capacity": 8,
+        "causes": ["comunidad"],
+        "place": "Banco de Alimentos Cochabamba",
+        "lat": -17.4010,
+        "lng": -66.1600,
+        "description": "Separamos y empaquetamos las donaciones de alimentos que llegan cada semana.",
+        "participants": [],
+    },
+    {
+        # Analítica en lista de espera: un solo cupo, ya ocupado por María
+        "name": "Lectura de cuentos en el Hospital del Niño",
+        "owner": "demo-ana",
+        "image": IMG.format("1503676260728-1c00da094a0b"),
+        "days": 13,
+        "capacity": 1,
+        "causes": ["salud", "ninez-y-juventud"],
+        "place": "Hospital del Niño Manuel Ascencio Villarroel",
+        "lat": -17.3780,
+        "lng": -66.1550,
+        "description": "Leemos cuentos por las tardes a los niños internados.",
+        "participants": ["demo-maria"],
+    },
+    {
         # Borrador sin descripción, causas ni ubicación: no se puede publicar
         "name": "Colecta de ropa de invierno",
         "owner": "demo-ana",

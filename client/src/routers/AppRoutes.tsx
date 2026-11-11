@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useParams } from "react-router";
 import ActivityDetailPage from "@/activities/pages/ActivityDetailPage";
+import AnaliticaPage from "@/analitica/pages/AnaliticaPage";
 import ExplorePage from "@/activities/pages/ExplorePage";
 import MyActivitiesPage from "@/activities/pages/MyActivitiesPage";
 import SearchPage from "@/activities/pages/SearchPage";
@@ -47,6 +48,8 @@ export function AppRoutes() {
             <Route path="/my-activities" element={<MyActivitiesPage />} />
             <Route path="/recently" element={<RecentlyPage />} />
             <Route path="/search" element={<SearchPage />} />
+            {/* Panel del equipo: no aparece en el menú */}
+            <Route path="/analitica" element={<AnaliticaPage />} />
           </Route>
           <Route path="/activities/:id" element={<ActivityDetailRoute />} />
           {/* Constancia imprimible: sin menú ni cabecera */}

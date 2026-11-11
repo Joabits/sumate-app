@@ -10,6 +10,7 @@ from app.models.activity import Activity, ActivityStatus
 from app.models.activity_detail import ActivityDetail
 from app.models.base import BaseModel
 from app.models.cause import ActivityCause, Cause
+from app.models.evento import Evento, NombreEvento
 from app.models.registro_horas import EstadoHoras, RegistroHoras
 from app.models.participation import (
     ESTADOS_QUE_SE_CANCELAN,
@@ -27,6 +28,8 @@ __all__ = [
     "Cause",
     "ESTADOS_QUE_SE_CANCELAN",
     "EstadoParticipacion",
+    "Evento",
+    "NombreEvento",
     "Participation",
     "EstadoHoras",
     "RegistroHoras",

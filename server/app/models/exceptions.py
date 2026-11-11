@@ -204,3 +204,9 @@ class HorasYaConfirmadasException(ConflictException):
 class MotivoReclamoObligatorioException(ValidationException):
     code = "MOTIVO_RECLAMO_OBLIGATORIO"
     message = "Escribe el motivo del reclamo."
+
+
+# ── Analítica ─────────────────────────────────────────────────────────────────
+class EventoInvalidoException(ValidationException):
+    code = "EVENTO_INVALIDO"
+    message = "El evento no tiene las propiedades definidas."
