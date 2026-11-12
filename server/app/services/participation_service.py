@@ -5,12 +5,17 @@ Solicitudes para participar en una actividad.
         └────rechazar──▶ rechazada
     en_espera ──se libera un cupo──▶ aceptada
     pendiente/aceptada/en_espera ──la organización cancela──▶ cancelada
+    pendiente/en_espera ──se retira (sin motivo)──▶ retirada
+    aceptada ──se retira con motivo, hasta 24 h antes──▶ retirada (entra el primero en espera)
 """
 
+from dataclasses import dataclass
+from datetime import timedelta
 from uuid import UUID
 
 from sqlmodel import Session
 
+from app.core.fechas import as_utc, utc_now
 from app.dtos.participation_dto import ParticipatedActivityListRead, to_trayectoria
 from app.entities.activity import Activity
 from app.entities.participation import (
@@ -25,9 +30,11 @@ from app.exceptions import (
     CannotJoinOwnActivityException,
     CannotJoinPastActivityException,
     CannotLeavePastActivityException,
+    MotivoRetiroObligatorioException,
     NoEsOrganizadorException,
     NoEstaEnListaDeEsperaException,
     ParticipationNotFoundException,
+    RetiroFueraDePlazoException,
     SolicitudRechazadaException,
     SolicitudYaRevisadaException,
 )
@@ -35,6 +42,25 @@ from app.repositories.activity_repository import ActivityRepository
 from app.repositories.cause_repository import CauseRepository
 from app.repositories.participation_repository import ParticipationRepository
 from app.services.activity_guards import ensure_not_cancelled, get_activity_or_404
+
+# Un aceptado puede retirarse hasta este tiempo antes de la actividad
+PLAZO_RETIRO = timedelta(hours=24)
+MOTIVO_RETIRO_MAX = 500
+
+# Solicitudes que se pueden retirar
+ESTADOS_QUE_SE_RETIRAN = (
+    EstadoParticipacion.PENDIENTE,
+    EstadoParticipacion.ACEPTADA,
+    EstadoParticipacion.EN_ESPERA,
+)
+
+
+@dataclass(frozen=True)
+class Retiro:
+    """Cómo terminó un retiro: qué estado tenía la solicitud y si entró alguien en su lugar."""
+
+    estado_anterior: EstadoParticipacion
+    entro_de_lista_de_espera: bool
 
 
 class ParticipationService:
@@ -69,21 +95,35 @@ class ParticipationService:
             raise CannotJoinPastActivityException()
 
         existente = self.participations.find_of_user(activity.id, user_id)
-        if existente is not None:
+        if existente is not None and existente.estado != EstadoParticipacion.RETIRADA:
             if existente.estado == EstadoParticipacion.RECHAZADA:
                 raise SolicitudRechazadaException()
             raise AlreadyParticipatingException()
 
         lleno = self.participations.count_accepted(activity.id) >= activity.capacity
         estado = EstadoParticipacion.EN_ESPERA if lleno else EstadoParticipacion.PENDIENTE
-        solicitud = self.participations.save(
-            Participation(activity_id=activity.id, user_id=user_id, status=estado.value)
-        )
+        if existente is not None:
+            # Se había retirado y vuelve a postular: la misma fila, al final de la fila
+            solicitud = existente
+            solicitud.status = estado.value
+            solicitud.motivo_retiro = None
+            solicitud.created_date = utc_now()
+        else:
+            solicitud = self.participations.save(
+                Participation(activity_id=activity.id, user_id=user_id, status=estado.value)
+            )
         self.session.commit()
         return solicitud
 
-    def salir(self, activity_id: UUID, user_id: str) -> None:
-        """El voluntario retira su solicitud. Si ocupaba un cupo, entra el primero en espera."""
+    def retirarse(self, activity_id: UUID, user_id: str, motivo: str | None = None) -> Retiro:
+        """
+        El voluntario se retira de la actividad.
+
+        - Un aceptado se retira con motivo hasta 24 horas antes: libera su cupo
+          y entra el primero de la lista de espera.
+        - Un pendiente o en espera retira su solicitud sin motivo.
+        - Fuera de plazo no se permite.
+        """
         # FOR UPDATE: nadie más toma el cupo mientras entra el primero en espera
         activity = get_activity_or_404(self.activities, activity_id, for_update=True)
         # Las solicitudes de una actividad cancelada se conservan en el historial
@@ -92,15 +132,28 @@ class ParticipationService:
             raise CannotLeavePastActivityException()
 
         solicitud = self.participations.find_of_user(activity_id, user_id)
-        # Una solicitud rechazada no se puede borrar: así no se puede volver a solicitar
-        if solicitud is None or solicitud.estado == EstadoParticipacion.RECHAZADA:
+        # Una rechazada no se retira: así no se puede volver a solicitar
+        if solicitud is None or solicitud.estado not in ESTADOS_QUE_SE_RETIRAN:
             raise ParticipationNotFoundException()
 
-        ocupaba_cupo = solicitud.estado == EstadoParticipacion.ACEPTADA
-        self.participations.delete(solicitud)
-        if ocupaba_cupo:
-            self.llenar_cupos_desde_lista_de_espera(activity)
+        estado_anterior = solicitud.estado
+        motivo_limpio = (motivo or "").strip()
+        if estado_anterior == EstadoParticipacion.ACEPTADA:
+            if as_utc(activity.date) - utc_now() < PLAZO_RETIRO:
+                raise RetiroFueraDePlazoException()
+            if not motivo_limpio or len(motivo_limpio) > MOTIVO_RETIRO_MAX:
+                raise MotivoRetiroObligatorioException()
+
+        solicitud.status = EstadoParticipacion.RETIRADA.value
+        # Solo el aceptado deja motivo: libera un cupo que la organización contaba
+        solicitud.motivo_retiro = (
+            motivo_limpio if estado_anterior == EstadoParticipacion.ACEPTADA else None
+        )
+        entran: list[Participation] = []
+        if estado_anterior == EstadoParticipacion.ACEPTADA:
+            entran = self.llenar_cupos_desde_lista_de_espera(activity)
         self.session.commit()
+        return Retiro(estado_anterior=estado_anterior, entro_de_lista_de_espera=bool(entran))
 
     def aceptar_solicitud(self, activity_id: UUID, participante_id: str, organizador_id: str) -> None:
         """El organizador acepta la solicitud si la actividad no pasó y quedan cupos."""

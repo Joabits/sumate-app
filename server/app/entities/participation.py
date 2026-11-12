@@ -17,6 +17,8 @@ class EstadoParticipacion(StrEnum):
     EN_ESPERA = "en_espera"
     # La organización canceló la actividad
     CANCELADA = "cancelada"
+    # El voluntario se retiró (un aceptado con motivo, hasta 24 horas antes)
+    RETIRADA = "retirada"
 
 
 # Solicitudes que pasan a canceladas cuando la organización cancela la actividad
@@ -43,6 +45,8 @@ class Participation(BaseEntity, table=True):
     )
     # Estado antes de que la organización cancelara la actividad (historial)
     estado_anterior: str | None = Field(default=None, max_length=20, nullable=True)
+    # Por qué se retiró un aceptado; un pendiente o en espera se retira sin motivo
+    motivo_retiro: str | None = Field(default=None, max_length=500, nullable=True)
 
     user: Optional[User] = Relationship(
         sa_relationship_kwargs={

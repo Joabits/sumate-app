@@ -3,18 +3,22 @@
 from uuid import uuid4
 
 import pytest
+from sqlmodel import select
 
 from app.services.participation_service import ParticipationService
 from app.controllers import participation_controller as ctrl
-from app.entities import ActivityCause
+from app.dtos.participation_dto import RetiroRequest
+from app.entities import ActivityCause, Participation
 from app.exceptions import (
     ActividadCanceladaException,
     ActivityCapacityExceededException,
     ActivityNotFoundException,
     CannotJoinOwnActivityException,
     CannotLeavePastActivityException,
+    MotivoRetiroObligatorioException,
     NoEsOrganizadorException,
     ParticipationNotFoundException,
+    RetiroFueraDePlazoException,
     SolicitudRechazadaException,
     SolicitudYaRevisadaException,
 )
@@ -59,45 +63,69 @@ def test_errores_al_solicitar(db_session):
         ctrl.join_activity(activity.id, MARIA, ParticipationService(db_session))
 
 
-# ── Cancelar mi solicitud ─────────────────────────────────────────────────────
-def test_una_solicitud_pendiente_se_puede_cancelar(db_session):
+# ── Retirarme de una actividad ────────────────────────────────────────────────
+def retirarse(activity_id, user, motivo=None, *, session):
+    return ctrl.retirarse(
+        activity_id, RetiroRequest(motivo=motivo), user, ParticipationService(session)
+    )
+
+
+def test_un_pendiente_se_retira_sin_motivo(db_session):
     activity = crear_actividad(db_session)
     crear_solicitud(db_session, activity, "maria", "pendiente")
-    ctrl.leave_activity(activity.id, MARIA, ParticipationService(db_session))
-    assert estados(db_session, activity) == {}
+    retiro = retirarse(activity.id, MARIA, session=db_session)
+    assert retiro.estado_anterior == "pendiente"
+    assert retiro.entro_de_lista_de_espera is False
+    assert estados(db_session, activity) == {"maria": "retirada"}
 
 
-def test_un_rechazado_no_borra_su_solicitud_para_reintentar(db_session):
-    activity = crear_actividad(db_session)
-    crear_solicitud(db_session, activity, "maria", "rechazada")
-    with pytest.raises(ParticipationNotFoundException):
-        ctrl.leave_activity(activity.id, MARIA, ParticipationService(db_session))
-    db_session.rollback()
-    assert estados(db_session, activity) == {"maria": "rechazada"}
-
-
-def test_no_se_cancela_sin_solicitud_ni_en_una_actividad_pasada(db_session):
-    activity = crear_actividad(db_session)
-    with pytest.raises(ParticipationNotFoundException):
-        ctrl.leave_activity(activity.id, MARIA, ParticipationService(db_session))
-    with pytest.raises(ActivityNotFoundException):
-        ctrl.leave_activity(uuid4(), MARIA, ParticipationService(db_session))
-
-    pasada = crear_actividad(db_session, date=en_dias(-1))
-    crear_solicitud(db_session, pasada, "maria", "aceptada")
-    with pytest.raises(CannotLeavePastActivityException):
-        ctrl.leave_activity(pasada.id, MARIA, ParticipationService(db_session))
-
-
-def test_si_cancela_un_aceptado_entra_el_primero_en_espera(db_session):
-    activity = crear_actividad(db_session, capacity=1)
+def test_un_aceptado_a_tiempo_se_retira_con_motivo_y_entra_el_primero_en_espera(db_session):
+    activity = crear_actividad(db_session, capacity=1, date=en_dias(3))
     crear_solicitud(db_session, activity, "luis", "aceptada")
     crear_solicitud(db_session, activity, "sofia", "en_espera")
     crear_solicitud(db_session, activity, "carlos", "en_espera")
 
-    ctrl.leave_activity(activity.id, usuario("luis"), ParticipationService(db_session))
+    retiro = retirarse(activity.id, usuario("luis"), "  Me surgió un viaje  ", session=db_session)
 
-    assert estados(db_session, activity) == {"sofia": "aceptada", "carlos": "en_espera"}
+    assert retiro.estado_anterior == "aceptada"
+    assert retiro.entro_de_lista_de_espera is True
+    assert estados(db_session, activity) == {
+        "luis": "retirada",
+        "sofia": "aceptada",
+        "carlos": "en_espera",
+    }
+    luis = db_session.exec(
+        select(Participation).where(Participation.user_id == "luis")
+    ).one()
+    assert luis.motivo_retiro == "Me surgió un viaje"
+
+
+def test_un_aceptado_no_se_retira_sin_motivo(db_session):
+    activity = crear_actividad(db_session, date=en_dias(3))
+    crear_solicitud(db_session, activity, "maria", "aceptada")
+    for motivo in (None, "", "   ", "x" * 501):
+        with pytest.raises(MotivoRetiroObligatorioException):
+            retirarse(activity.id, MARIA, motivo, session=db_session)
+        db_session.rollback()
+    assert estados(db_session, activity) == {"maria": "aceptada"}
+
+
+def test_un_aceptado_fuera_de_plazo_no_se_retira(db_session):
+    # Faltan 23 horas: menos de las 24 del plazo
+    activity = crear_actividad(db_session, capacity=1, date=en_dias(23 / 24))
+    crear_solicitud(db_session, activity, "maria", "aceptada")
+    crear_solicitud(db_session, activity, "sofia", "en_espera")
+    with pytest.raises(RetiroFueraDePlazoException):
+        retirarse(activity.id, MARIA, "Me enfermé", session=db_session)
+    db_session.rollback()
+    assert estados(db_session, activity) == {"maria": "aceptada", "sofia": "en_espera"}
+
+
+def test_fuera_de_plazo_un_pendiente_todavia_retira_su_solicitud(db_session):
+    activity = crear_actividad(db_session, date=en_dias(0.5))
+    crear_solicitud(db_session, activity, "maria", "pendiente")
+    retirarse(activity.id, MARIA, session=db_session)
+    assert estados(db_session, activity) == {"maria": "retirada"}
 
 
 def test_si_sale_alguien_de_la_lista_de_espera_no_entra_nadie(db_session):
@@ -106,9 +134,46 @@ def test_si_sale_alguien_de_la_lista_de_espera_no_entra_nadie(db_session):
     crear_solicitud(db_session, activity, "sofia", "en_espera")
     crear_solicitud(db_session, activity, "carlos", "en_espera")
 
-    ctrl.leave_activity(activity.id, usuario("sofia"), ParticipationService(db_session))
+    retiro = retirarse(activity.id, usuario("sofia"), session=db_session)
 
-    assert estados(db_session, activity) == {"luis": "aceptada", "carlos": "en_espera"}
+    assert retiro.entro_de_lista_de_espera is False
+    assert estados(db_session, activity) == {
+        "luis": "aceptada",
+        "sofia": "retirada",
+        "carlos": "en_espera",
+    }
+
+
+def test_un_rechazado_no_se_retira_para_reintentar(db_session):
+    activity = crear_actividad(db_session)
+    crear_solicitud(db_session, activity, "maria", "rechazada")
+    with pytest.raises(ParticipationNotFoundException):
+        retirarse(activity.id, MARIA, session=db_session)
+    db_session.rollback()
+    assert estados(db_session, activity) == {"maria": "rechazada"}
+
+
+def test_no_se_retira_sin_solicitud_ni_en_una_actividad_pasada(db_session):
+    activity = crear_actividad(db_session)
+    with pytest.raises(ParticipationNotFoundException):
+        retirarse(activity.id, MARIA, session=db_session)
+    with pytest.raises(ActivityNotFoundException):
+        retirarse(uuid4(), MARIA, session=db_session)
+
+    pasada = crear_actividad(db_session, date=en_dias(-1))
+    crear_solicitud(db_session, pasada, "maria", "aceptada")
+    with pytest.raises(CannotLeavePastActivityException):
+        retirarse(pasada.id, MARIA, "Motivo", session=db_session)
+
+
+def test_quien_se_retiro_puede_volver_a_postular(db_session):
+    activity = crear_actividad(db_session, capacity=1)
+    crear_solicitud(db_session, activity, "maria", "pendiente")
+    retirarse(activity.id, MARIA, session=db_session)
+
+    ctrl.join_activity(activity.id, MARIA, ParticipationService(db_session))
+
+    assert estados(db_session, activity) == {"maria": "pendiente"}
 
 
 # ── Revisar solicitudes (organizador) ─────────────────────────────────────────
@@ -182,6 +247,6 @@ def test_despues_de_cancelar_no_se_solicita_ni_se_revisa_ni_se_sale(db_session):
         ctrl.rechazar_solicitud(activity.id, "luis", ORG, ParticipationService(db_session))
     # La solicitud no se borra: queda en el historial
     with pytest.raises(ActividadCanceladaException):
-        ctrl.leave_activity(activity.id, usuario("luis"), ParticipationService(db_session))
+        retirarse(activity.id, usuario("luis"), "Motivo", session=db_session)
     db_session.rollback()
     assert estados(db_session, activity) == {"luis": "cancelada"}

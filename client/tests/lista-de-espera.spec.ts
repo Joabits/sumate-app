@@ -12,7 +12,7 @@ async function unirmeALaListaDeEspera(page: Page, actividad: string) {
   await expect(page.getByText('Te uniste a la lista de espera.')).toBeVisible();
 }
 
-test('Con el cupo lleno la solicitud espera y, si alguien cancela, la primera en espera pasa a aceptada', async ({
+test('Con el cupo lleno la solicitud espera y, si alguien se retira, la primera en espera pasa a aceptada', async ({
   abrirSesion,
 }) => {
   const sofia = await abrirSesion(USUARIOS.sofia);
@@ -26,13 +26,16 @@ test('Con el cupo lleno la solicitud espera y, si alguien cancela, la primera en
   // Luis tenía el único cupo y lo libera
   const luis = await abrirSesion(USUARIOS.luis);
   await abrirActividad(luis, TALLER);
-  await luis.getByRole('button', { name: 'Cancelar participación en el evento' }).click();
-  await luis.getByRole('button', { name: 'Sí, cancelar participación' }).click();
-  await expect(luis.getByText('Has cancelado tu confirmación de asistencia.')).toBeVisible();
+  await luis.getByRole('button', { name: 'Retirarme de la actividad' }).click();
+  await luis.getByLabel('Motivo del retiro').fill('No consigo transporte ese día.');
+  await luis.getByRole('button', { name: 'Sí, retirarme' }).click();
+  await expect(
+    luis.getByText('Te retiraste. Tu cupo pasó a la primera persona de la lista de espera.'),
+  ).toBeVisible();
 
   // Sofía era la primera en espera: ahora está aceptada. Carlos sube al puesto 1
   await sofia.reload();
-  await expect(sofia.getByRole('button', { name: 'Cancelar participación en el evento' })).toBeVisible();
+  await expect(sofia.getByRole('button', { name: 'Retirarme de la actividad' })).toBeVisible();
   await carlos.reload();
   await expect(carlos.getByRole('button', { name: /En lista de espera, puesto 1/ })).toBeVisible();
 

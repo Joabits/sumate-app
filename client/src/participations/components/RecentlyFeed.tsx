@@ -42,6 +42,10 @@ const ETIQUETA_ESTADO: Record<EstadoSolicitud, { texto: string; clase: string }>
     texto: "Cancelada",
     clase: "bg-rose-50 text-rose-700 border-rose-200/70",
   },
+  retirada: {
+    texto: "Te retiraste",
+    clase: "bg-slate-100 text-slate-600 border-slate-200/70",
+  },
 };
 
 const REALIZADA = {
@@ -51,7 +55,9 @@ const REALIZADA = {
 
 // Próximas: lo que todavía puede pasar, agrupado por la respuesta del organizador
 function gruposProximas(items: ParticipatedActivityListItem[]): Grupo[] {
-  const proximas = items.filter((i) => !i.isPast && i.estadoSolicitud !== "cancelada");
+  const proximas = items.filter(
+    (i) => !i.isPast && i.estadoSolicitud !== "cancelada" && i.estadoSolicitud !== "retirada",
+  );
   const de = (estado: EstadoSolicitud) => proximas.filter((i) => i.estadoSolicitud === estado);
   return [
     { id: "aceptadas", titulo: "Aceptadas", items: de("aceptada") },
@@ -70,6 +76,11 @@ function gruposHistorial(items: ParticipatedActivityListItem[]): Grupo[] {
       items: items.filter((i) => i.estadoSolicitud === "cancelada"),
     },
     {
+      id: "retiradas",
+      titulo: "Te retiraste",
+      items: items.filter((i) => i.estadoSolicitud === "retirada"),
+    },
+    {
       id: "realizadas",
       titulo: "Realizadas",
       items: items.filter((i) => i.isPast && i.estadoSolicitud === "aceptada"),
@@ -78,7 +89,9 @@ function gruposHistorial(items: ParticipatedActivityListItem[]): Grupo[] {
       id: "sin-participar",
       titulo: "Pasaron sin que participaras",
       items: items.filter(
-        (i) => i.isPast && i.estadoSolicitud !== "aceptada" && i.estadoSolicitud !== "cancelada",
+        (i) =>
+          i.isPast &&
+          !(["aceptada", "cancelada", "retirada"] as EstadoSolicitud[]).includes(i.estadoSolicitud),
       ),
     },
   ];

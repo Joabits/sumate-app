@@ -4,7 +4,7 @@ from fastapi import APIRouter, Response, status
 
 from app.core.dependencies import ParticipationServiceDep
 from app.core.security import CurrentUser
-from app.dtos.participation_dto import ParticipatedActivityListRead
+from app.dtos.participation_dto import ParticipatedActivityListRead, RetiroRead, RetiroRequest
 
 router = APIRouter(prefix="/participaciones", tags=["Participaciones"])
 
@@ -28,12 +28,22 @@ def join_activity(
     return Response(status_code=status.HTTP_201_CREATED)
 
 
-@router.delete("/{activity_id}", status_code=status.HTTP_200_OK, summary="Cancelar participación en una actividad")
-def leave_activity(
-    activity_id: UUID, current_user: CurrentUser, service: ParticipationServiceDep
-) -> Response:
-    service.salir(activity_id, current_user.user_id)
-    return Response(status_code=status.HTTP_200_OK)
+@router.post(
+    "/{activity_id}/retiro",
+    response_model=RetiroRead,
+    summary="Retirarse de una actividad (un aceptado, con motivo y hasta 24 horas antes)",
+)
+def retirarse(
+    activity_id: UUID,
+    payload: RetiroRequest,
+    current_user: CurrentUser,
+    service: ParticipationServiceDep,
+) -> RetiroRead:
+    retiro = service.retirarse(activity_id, current_user.user_id, payload.motivo)
+    return RetiroRead(
+        estado_anterior=retiro.estado_anterior.value,
+        entro_de_lista_de_espera=retiro.entro_de_lista_de_espera,
+    )
 
 
 @router.post(

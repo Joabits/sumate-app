@@ -61,7 +61,8 @@ export type EstadoSolicitud =
   | "aceptada"
   | "rechazada"
   | "en_espera"
-  | "cancelada";
+  | "cancelada"
+  | "retirada";
 
 /** Cómo se muestra cada estado de una solicitud en pantalla. */
 export const NOMBRE_ESTADO_SOLICITUD: Record<EstadoSolicitud, string> = {
@@ -70,6 +71,7 @@ export const NOMBRE_ESTADO_SOLICITUD: Record<EstadoSolicitud, string> = {
   rechazada: "Rechazada",
   en_espera: "En lista de espera",
   cancelada: "Cancelada por la organización",
+  retirada: "Te retiraste",
 };
 
 export type ActivityParticipant = {

@@ -11,7 +11,7 @@ import {
   apiRequestData,
   apiRequestStatus,
 } from "./http";
-import type { ParticipatedActivityListItem } from "@/participations/context/participationsTypes";
+import type { ParticipatedActivityListItem, Retiro } from "@/participations/context/participationsTypes";
 import { participationMapper } from "@/api/mappers/participationsMapper";
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/participaciones`;
@@ -41,11 +41,13 @@ export const participationsApi = {
     });
   },
 
-  async leaveActivity(activityId: string): Promise<ApiActionResult> {
-    return apiRequestStatus({
-      url: `${BASE_URL}/${activityId}`,
-      method: "DELETE",
-      fallbackMessage: "Error al cancelar la participación en la actividad.",
+  async retirarse(activityId: string, motivo: string | null): Promise<ApiResult<Retiro>> {
+    return apiRequestData({
+      url: `${BASE_URL}/${activityId}/retiro`,
+      method: "POST",
+      body: { motivo },
+      mapData: participationMapper.toRetiro,
+      fallbackMessage: "No se pudo completar tu retiro de la actividad.",
     });
   },
 

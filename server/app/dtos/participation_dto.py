@@ -35,6 +35,19 @@ class ParticipatedActivityListRead(SQLModel):
     items: list[ParticipatedActivityItemRead]
 
 
+# ── Retirarse ─────────────────────────────────────────────────────────────────
+class RetiroRequest(SQLModel):
+    # Obligatorio solo si la solicitud estaba aceptada; lo valida el service
+    motivo: str | None = None
+
+
+class RetiroRead(SQLModel):
+    # pendiente | aceptada | en_espera: lo que era la solicitud antes de retirarse
+    estado_anterior: str
+    # Si al liberar el cupo entró la primera persona de la lista de espera
+    entro_de_lista_de_espera: bool
+
+
 def to_trayectoria(
     participations: list[Participation],
     causes_by_activity: dict[UUID, list[Cause]],

@@ -167,6 +167,37 @@ ACTIVIDADES_PRUEBAS = [
         "participants": ["demo-maria"],
     },
     {
+        # Retirarse a tiempo: María (aceptada) se retira y entra Carlos, el primero en espera.
+        # Sofía tiene una solicitud pendiente que retira sin motivo.
+        "name": "Apoyo en el comedor popular",
+        "owner": "demo-ana",
+        "image": IMG.format("1488459716781-31db52582fe9"),
+        "days": 5,
+        "capacity": 1,
+        "causes": ["comunidad"],
+        "place": "Comedor Popular Villa Pagador",
+        "lat": -17.4300,
+        "lng": -66.1200,
+        "description": "Servimos almuerzos y ayudamos a ordenar la cocina del comedor.",
+        "participants": ["demo-maria"],
+        "en_espera": ["demo-carlos"],
+        "pendientes": ["demo-sofia"],
+    },
+    {
+        # Retirarse fuera de plazo: empieza en menos de 24 horas y Sofía está aceptada
+        "name": "Limpieza del río Rocha",
+        "owner": "demo-ana",
+        "image": IMG.format("1618477461853-cf6ed80faba5"),
+        "days": 0,
+        "capacity": 10,
+        "causes": ["medio-ambiente"],
+        "place": "Puente Cobija",
+        "lat": -17.3990,
+        "lng": -66.1580,
+        "description": "Recogemos basura de las orillas del río con guantes y bolsas.",
+        "participants": ["demo-sofia"],
+    },
+    {
         # Borrador sin descripción, causas ni ubicación: no se puede publicar
         "name": "Colecta de ropa de invierno",
         "owner": "demo-ana",

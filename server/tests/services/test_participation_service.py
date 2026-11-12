@@ -171,9 +171,9 @@ def test_cuando_sale_un_aceptado_entra_el_primero_en_espera(db_session, service)
     crear_solicitud(db_session, activity, "luis", "aceptada")
     crear_solicitud(db_session, activity, "sofia", "en_espera")
 
-    service.salir(activity.id, "luis")
+    service.retirarse(activity.id, "luis", "Me surgió un viaje")
 
-    assert estados(db_session, activity) == {"sofia": "aceptada"}
+    assert estados(db_session, activity) == {"luis": "retirada", "sofia": "aceptada"}
 
 
 def test_sin_cupos_libres_no_entra_nadie(db_session, service):

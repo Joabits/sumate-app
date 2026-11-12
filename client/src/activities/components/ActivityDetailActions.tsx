@@ -15,7 +15,7 @@ import {
 import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import { appToast } from "@/shared/components/Toast";
 import { ConfirmJoinDialog } from "@/participations/components/ConfirmJoinDialog";
-import { ConfirmLeaveDialog } from "@/participations/components/ConfirmLeaveDialog";
+import { RetirarseDialog } from "@/participations/components/RetirarseDialog";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 import { useActivities } from "@/activities/hooks/useActivities";
 import { useParticipations } from "@/participations/hooks/useParticipations";
@@ -23,7 +23,7 @@ import { useParticipations } from "@/participations/hooks/useParticipations";
 export function ActivityDetailActions() {
   const { activity } = useActivityDetail();
   const { close, publish, reopen } = useActivities();
-  const { join, leave } = useParticipations();
+  const { join, retiroFueraDePlazo } = useParticipations();
   const { track } = useAnalitica();
   const {
     id: activityId,
@@ -51,7 +51,21 @@ export function ActivityDetailActions() {
   const isFull = (activity.participants?.length ?? 0) >= activity.capacity;
   const [isPending, startTransition] = useTransition();
   const [joinDialogOpen, setJoinDialogOpen] = useState(false);
-  const [leaveDialogOpen, setLeaveDialogOpen] = useState(false);
+  const [retiroDialogOpen, setRetiroDialogOpen] = useState(false);
+  const [retiroFueraDePlazoAlAbrir, setRetiroFueraDePlazoAlAbrir] = useState(false);
+  const estadoRetirable = isParticipating
+    ? "aceptada"
+    : enListaDeEspera
+      ? "en_espera"
+      : "pendiente";
+
+  // Empieza el retiro: se abre la confirmación
+  const abrirRetiro = () => {
+    // Fuera de plazo (un aceptado a menos de 24 h) la app no deja retirarse
+    const fueraDePlazo = estadoRetirable === "aceptada" && retiroFueraDePlazo(activity.date);
+    setRetiroFueraDePlazoAlAbrir(fueraDePlazo);
+    setRetiroDialogOpen(true);
+  };
 
   // Empieza la postulación: se abre la confirmación
   const abrirPostulacion = () => {
@@ -78,27 +92,6 @@ export function ActivityDetailActions() {
         aListaDeEspera
           ? "Te uniste a la lista de espera."
           : "¡Solicitud enviada! El organizador la revisará pronto.",
-      );
-    });
-  };
-
-  const handleConfirmLeave = () => {
-    startTransition(async () => {
-      const res = await leave(activityId);
-      if (!res.ok) {
-        appToast.error(
-          "Error al cancelar participación",
-          res.errors?.[0] ?? "No se pudo cancelar tu participación.",
-        );
-        return;
-      }
-      setLeaveDialogOpen(false);
-      appToast.success(
-        enListaDeEspera
-          ? "Saliste de la lista de espera."
-          : solicitudPendiente
-            ? "Has cancelado tu solicitud de participación."
-            : "Has cancelado tu confirmación de asistencia.",
       );
     });
   };
@@ -217,21 +210,21 @@ export function ActivityDetailActions() {
               isParticipating ? (
                 <button
                   type="button"
-                  onClick={() => setLeaveDialogOpen(true)}
+                  onClick={abrirRetiro}
                   disabled={isPending}
-                  aria-label="Cancelar participación en el evento"
+                  aria-label="Retirarme de la actividad"
                   className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-rose-600/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white"
                 >
                   <UserMinus className="w-5 h-5 stroke-current" />
-                  <span>Cancelar participación</span>
+                  <span>Retirarme</span>
                 </button>
               ) : solicitudPendiente ? (
                 <button
                   type="button"
-                  onClick={() => setLeaveDialogOpen(true)}
+                  onClick={abrirRetiro}
                   disabled={isPending}
-                  aria-label="Solicitud pendiente. Pulsa para cancelar la solicitud"
-                  title="Pulsa para cancelar tu solicitud"
+                  aria-label="Solicitud pendiente. Pulsa para retirar la solicitud"
+                  title="Pulsa para retirar tu solicitud"
                   className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 cursor-pointer bg-amber-500 hover:bg-amber-600 text-white"
                 >
                   <Clock className="w-5 h-5 stroke-current" />
@@ -240,7 +233,7 @@ export function ActivityDetailActions() {
               ) : enListaDeEspera ? (
                 <button
                   type="button"
-                  onClick={() => setLeaveDialogOpen(true)}
+                  onClick={abrirRetiro}
                   disabled={isPending}
                   aria-label={`En lista de espera, puesto ${posicionEnEspera ?? ""}. Pulsa para salir de la lista`}
                   title="Pulsa para salir de la lista de espera"
@@ -371,15 +364,17 @@ export function ActivityDetailActions() {
         activityName={activityName}
         listaDeEspera={isFull}
       />
-      <ConfirmLeaveDialog
-        isOpen={leaveDialogOpen}
-        onOpenChange={setLeaveDialogOpen}
-        onConfirm={handleConfirmLeave}
-        isPending={isPending}
-        activityName={activityName}
-        esSolicitud={solicitudPendiente}
-        enListaDeEspera={enListaDeEspera}
-      />
+      {(isParticipating || solicitudPendiente || enListaDeEspera) && (
+        <RetirarseDialog
+          activityId={activityId}
+          activityName={activityName}
+          fechaActividad={activity.date}
+          estado={estadoRetirable}
+          fueraDePlazo={retiroFueraDePlazoAlAbrir}
+          isOpen={retiroDialogOpen}
+          onOpenChange={setRetiroDialogOpen}
+        />
+      )}
     </>
   );
 }

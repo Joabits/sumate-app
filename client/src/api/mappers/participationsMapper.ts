@@ -4,7 +4,7 @@
  */
 
 import type { EstadoSolicitud } from "@/activities/context/activitiesTypes";
-import type { ParticipatedActivityListItem } from "@/participations/context/participationsTypes";
+import type { ParticipatedActivityListItem, Retiro } from "@/participations/context/participationsTypes";
 import { activityMapper, type CauseResponse } from "./activitiesMapper";
 
 export type ParticipatedActivityItemResponse = {
@@ -27,7 +27,20 @@ export type ParticipatedActivityItemResponse = {
 
 export type ParticipatedActivityListResponse = { items: ParticipatedActivityItemResponse[] };
 
+/** Respuesta de POST /participaciones/{id}/retiro */
+export type RetiroResponse = {
+  estado_anterior: Retiro["estadoAnterior"];
+  entro_de_lista_de_espera: boolean;
+};
+
 export const participationMapper = {
+  toRetiro(dto: RetiroResponse): Retiro {
+    return {
+      estadoAnterior: dto.estado_anterior,
+      entroDeListaDeEspera: dto.entro_de_lista_de_espera,
+    };
+  },
+
   toParticipatedActivityItem(dto: ParticipatedActivityItemResponse): ParticipatedActivityListItem {
     return {
       id: dto.id,

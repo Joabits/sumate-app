@@ -26,7 +26,7 @@ test('María solicita participar, Ana la acepta y María ya ocupa un cupo', asyn
 
   // Relación y persistencia: María lo ve al recargar
   await maria.reload();
-  await expect(maria.getByRole('button', { name: 'Cancelar participación en el evento' })).toBeVisible();
+  await expect(maria.getByRole('button', { name: 'Retirarme de la actividad' })).toBeVisible();
 });
 
 test('Carlos solicita participar y Ana rechaza su solicitud', async ({ abrirSesion }) => {

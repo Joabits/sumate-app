@@ -3,7 +3,7 @@
  * entrega useParticipations().
  */
 
-import type { ApiActionResult } from "@/api/apiResults";
+import type { ApiActionResult, ApiResult } from "@/api/apiResults";
 
 import type {
   Cause,
@@ -39,6 +39,21 @@ export type ParticipatedActivityListItem = {
 
 export type ParticipationFilter = "all" | "upcoming" | "past";
 
+/** Solicitudes que se pueden retirar. */
+export type EstadoRetirable = "pendiente" | "aceptada" | "en_espera";
+
+/** Cómo terminó un retiro. */
+export type Retiro = {
+  /** Lo que era la solicitud antes de retirarse */
+  estadoAnterior: EstadoRetirable;
+  /** Al liberar el cupo entró la primera persona de la lista de espera */
+  entroDeListaDeEspera: boolean;
+};
+
+/** Un aceptado puede retirarse hasta 24 horas antes de la actividad. */
+export const PLAZO_RETIRO_MS = 24 * 60 * 60 * 1000;
+export const MOTIVO_RETIRO_MAX = 500;
+
 // ── Context ───────────────────────────────────────────────────────────────────
 
 /** Lo que entrega useParticipations(): mis solicitudes, solicitar, salir y revisar. */
@@ -46,7 +61,13 @@ export type ParticipationsContextValue = {
   /** Lanza un Error con el mensaje para mostrar si el backend falla */
   getMyParticipations: () => Promise<ParticipatedActivityListItem[]>;
   join: (activityId: string) => Promise<ApiActionResult>;
-  leave: (activityId: string) => Promise<ApiActionResult>;
+  /** Sin datos: true si el aceptado ya no puede retirarse (faltan menos de 24 h) */
+  retiroFueraDePlazo: (fechaActividad: string, ahora?: number) => boolean;
+  /** Retirarse: un aceptado con motivo y a tiempo; un pendiente o en espera sin motivo */
+  retirarse: (
+    activityId: string,
+    datos: { estado: EstadoRetirable; fechaActividad: string; motivo?: string },
+  ) => Promise<ApiResult<Retiro>>;
   aceptarSolicitud: (activityId: string, participanteId: string) => Promise<ApiActionResult>;
   rechazarSolicitud: (activityId: string, participanteId: string) => Promise<ApiActionResult>;
 };

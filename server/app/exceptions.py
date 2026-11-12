@@ -140,6 +140,19 @@ class CannotLeavePastActivityException(ValidationException):
     )
 
 
+class RetiroFueraDePlazoException(ConflictException):
+    code = "RETIRO_FUERA_DE_PLAZO"
+    message = (
+        "Ya no puedes retirarte: faltan menos de 24 horas para la actividad. "
+        "Avisa directamente a la organización."
+    )
+
+
+class MotivoRetiroObligatorioException(ValidationException):
+    code = "MOTIVO_RETIRO_OBLIGATORIO"
+    message = "Escribe el motivo por el que te retiras (máximo 500 caracteres)."
+
+
 class SolicitudRechazadaException(ConflictException):
     code = "SOLICITUD_RECHAZADA"
     message = "Tu solicitud para esta actividad fue rechazada por el organizador."
