@@ -24,7 +24,7 @@ export function ActivityDetailActions() {
   const { activity } = useActivityDetail();
   const { close, publish, reopen } = useActivities();
   const { join, retiroFueraDePlazo } = useParticipations();
-  const { track } = useAnalitica();
+  const { track, trackRechazo } = useAnalitica();
   const {
     id: activityId,
     name: activityName,
@@ -63,6 +63,10 @@ export function ActivityDetailActions() {
   const abrirRetiro = () => {
     // Fuera de plazo (un aceptado a menos de 24 h) la app no deja retirarse
     const fueraDePlazo = estadoRetirable === "aceptada" && retiroFueraDePlazo(activity.date);
+    track("retiro_iniciado", { estado: estadoRetirable });
+    if (fueraDePlazo) {
+      track("accion_rechazada", { flujo: "retiro", motivo: "fuera_de_plazo" });
+    }
     setRetiroFueraDePlazoAlAbrir(fueraDePlazo);
     setRetiroDialogOpen(true);
   };
@@ -79,6 +83,7 @@ export function ActivityDetailActions() {
     startTransition(async () => {
       const res = await join(activityId);
       if (!res.ok) {
+        trackRechazo("postulacion", res);
         appToast.error(
           "Error al enviar la solicitud",
           res.errors?.[0] ?? "No se pudo registrar tu solicitud.",
@@ -102,6 +107,7 @@ export function ActivityDetailActions() {
       if (!hasLocation) missing.push("ubicación en el mapa");
       if (!hasDescription) missing.push("descripción");
       if (!hasCauses) missing.push("al menos una causa temática");
+      track("accion_rechazada", { flujo: "publicar_actividad", motivo: "validacion" });
       appToast.error(
         "Requisitos incompletos",
         `Para publicar la actividad debes registrar: ${missing.join(", ")}.`,
@@ -112,12 +118,15 @@ export function ActivityDetailActions() {
     startTransition(async () => {
       const res = await publish(activityId);
       if (!res.ok) {
+        trackRechazo("publicar_actividad", res);
         appToast.error(
           "Error al publicar",
           res.errors?.[0] ?? "No se pudo publicar la actividad.",
         );
         return;
       }
+      // Solo llega aquí si la actividad quedó publicada
+      track("actividad_publicada", {});
       appToast.success(
         "¡Actividad publicada con éxito!",
       );
@@ -373,6 +382,13 @@ export function ActivityDetailActions() {
           fueraDePlazo={retiroFueraDePlazoAlAbrir}
           isOpen={retiroDialogOpen}
           onOpenChange={setRetiroDialogOpen}
+          onRetirado={(retiro) =>
+            track("retiro_confirmado", {
+              estado: retiro.estadoAnterior,
+              entro_de_lista_de_espera: retiro.entroDeListaDeEspera,
+            })
+          }
+          onRechazado={(error) => trackRechazo("retiro", error)}
         />
       )}
     </>

@@ -4,6 +4,7 @@ import type {
   SearchFilterState,
 } from "@/activities/context/activitiesTypes";
 import { useActivities } from "@/activities/hooks/useActivities";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 
 export const DEFAULT_SEARCH_FILTERS: SearchFilterState = {
   timeOfDay: "any",
@@ -40,6 +41,7 @@ function getDiscreetUserLocation(): Promise<{ latitude: number; longitude: numbe
 
 export function useActivitySearch() {
   const { searchActivities } = useActivities();
+  const { track } = useAnalitica();
   const [query, setQuery] = useState<string>("");
   const [filters, setFilters] = useState<SearchFilterState>(DEFAULT_SEARCH_FILTERS);
   const [draftFilters, setDraftFilters] = useState<SearchFilterState>(DEFAULT_SEARCH_FILTERS);
@@ -98,13 +100,19 @@ export function useActivitySearch() {
         });
 
         setItems(encontradas);
+        // Sin el texto buscado ni los filtros elegidos: solo si hubo texto, filtros y resultados
+        track("busqueda_realizada", {
+          con_texto: Boolean(trimmedQuery),
+          con_filtros: !areFiltersDefault,
+          con_resultados: encontradas.length > 0,
+        });
       } catch {
         setItems([]);
       } finally {
         setIsLoading(false);
       }
     },
-    [searchActivities]
+    [searchActivities, track]
   );
 
   const submitSearch = () => {

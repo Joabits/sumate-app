@@ -5,6 +5,7 @@ import TextFormField from "@/shared/components/TextFormField";
 import { appToast } from "@/shared/components/Toast";
 import { SubmitButton } from "@/shared/components/SubmitButton";
 import { useActivities } from "@/activities/hooks/useActivities";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 
 type CreateActivityFormProps = {
   onSuccess?: () => void;
@@ -12,6 +13,7 @@ type CreateActivityFormProps = {
 
 export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
   const { createActivity } = useActivities();
+  const { track, trackRechazo } = useAnalitica();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +49,7 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
     });
 
     if (!result.ok) {
+      trackRechazo("crear_actividad", result);
       appToast.error(
         result.code === "VALIDACION" ? "Datos inválidos" : "Error al crear actividad",
         result.errors?.[0] || "No se pudo registrar la actividad."
@@ -54,6 +57,8 @@ export function CreateActivityForm({ onSuccess }: CreateActivityFormProps) {
       return;
     }
 
+    // Solo llega aquí si el borrador quedó guardado
+    track("actividad_creada", {});
     appToast.success("¡Actividad creada exitosamente!");
     handleRemoveImage();
     formRef.current?.reset();

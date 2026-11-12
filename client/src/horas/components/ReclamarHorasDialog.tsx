@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import { Spinner } from "@/components/ui/spinner";
 import { useHoras } from "@/horas/hooks/useHoras";
 import type { RegistroHoras } from "@/horas/context/horasTypes";
@@ -27,6 +28,7 @@ type ReclamarHorasDialogProps = {
 /** El voluntario no está de acuerdo con las horas y explica por qué. */
 export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: ReclamarHorasDialogProps) {
   const { reclamar } = useHoras();
+  const { track, trackRechazo } = useAnalitica();
   const [motivo, setMotivo] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -41,15 +43,19 @@ export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: Reclamar
 
   const enviar = () => {
     if (!motivo.trim()) {
+      track("accion_rechazada", { flujo: "horas", motivo: "validacion" });
       setError("Escribe el motivo del reclamo. La organización lo verá para corregir.");
       return;
     }
     startTransition(async () => {
       const res = await reclamar(registro.id, motivo);
       if (!res.ok) {
+        trackRechazo("horas", res);
         setError(res.errors?.[0] ?? "No se pudo enviar el reclamo.");
         return;
       }
+      // Sin el motivo: es texto escrito por la persona
+      track("horas_respondidas", { respuesta: "reclamadas" });
       appToast.success("Reclamo enviado. La organización revisará tus horas.");
       cambiarApertura(false);
     });

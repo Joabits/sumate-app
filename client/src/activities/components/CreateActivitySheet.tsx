@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Plus } from "lucide-react";
 import { AppSheet } from "@/shared/components/AppSheet";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import { CreateActivityForm } from "./CreateActivityForm";
 
 type CreateActivitySheetProps = {
@@ -17,6 +18,13 @@ export function CreateActivitySheet({
 }: CreateActivitySheetProps) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { track } = useAnalitica();
+
+  // Empieza la creación: se abre el formulario
+  const abrir = () => {
+    track("actividad_creacion_iniciada", {});
+    setOpen(true);
+  };
 
   const alCrear = () => {
     setOpen(false);
@@ -31,7 +39,7 @@ export function CreateActivitySheet({
       <div className="fixed bottom-6 right-5 lg:right-8 z-50 pointer-events-none">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={abrir}
           aria-label="Crear nueva actividad"
           className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#6355de] text-white shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] font-semibold text-sm cursor-pointer"
         >

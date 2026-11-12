@@ -18,10 +18,38 @@ from app.core.fechas import utc_now
 
 
 class NombreEvento(StrEnum):
-    # Abrió la confirmación para postular a una actividad
+    """Lista fija de eventos: objeto + acción en pasado. Plan en evidencias/tarea-9.md."""
+
+    # ── Postular a una actividad (voluntario → organizador) ──
+    # Abrió la confirmación para postular
     POSTULACION_INICIADA = "postulacion_iniciada"
     # La solicitud quedó guardada (pendiente o en la lista de espera)
     POSTULACION_ENVIADA = "postulacion_enviada"
+    # El organizador aceptó una solicitud pendiente
+    SOLICITUD_ACEPTADA = "solicitud_aceptada"
+
+    # ── Retirarse de una actividad (Tarea 9) ──
+    # Abrió la confirmación del retiro
+    RETIRO_INICIADO = "retiro_iniciado"
+    # El retiro quedó guardado
+    RETIRO_CONFIRMADO = "retiro_confirmado"
+
+    # ── Crear y publicar una actividad (organizador) ──
+    ACTIVIDAD_CREACION_INICIADA = "actividad_creacion_iniciada"
+    ACTIVIDAD_CREADA = "actividad_creada"
+    ACTIVIDAD_PUBLICADA = "actividad_publicada"
+
+    # ── Horas de voluntariado (Tarea 8) ──
+    # La organización registró una jornada para N participantes
+    HORAS_REGISTRADAS = "horas_registradas"
+    # El voluntario aceptó o reclamó sus horas
+    HORAS_RESPONDIDAS = "horas_respondidas"
+
+    # ── Buscar actividades ──
+    BUSQUEDA_REALIZADA = "busqueda_realizada"
+
+    # ── Errores que frenan la tarea (validación o permiso), con motivo de una lista fija ──
+    ACCION_RECHAZADA = "accion_rechazada"
 
 
 class Evento(SQLModel, table=True):

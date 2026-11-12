@@ -23,7 +23,7 @@ def registrar_evento(
 @router.get(
     "/analitica",
     response_model=AnaliticaRead,
-    summary="Embudo de la postulación: cuántos empiezan y cuántos terminan",
+    summary="Un embudo por flujo principal, la caída entre pasos y los rechazos por motivo",
 )
 def analitica(current_user: CurrentUser, service: AnaliticaServiceDep) -> AnaliticaRead:
     return service.resumen()

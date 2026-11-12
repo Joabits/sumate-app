@@ -3,6 +3,7 @@ import { CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useHoras } from "@/horas/hooks/useHoras";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import type { ParticipanteAceptado } from "@/horas/context/horasTypes";
 import { diaEnBolivia, hoyEnBolivia } from "@/horas/utils/formato";
 import { appToast } from "@/shared/components/Toast";
@@ -19,6 +20,7 @@ type RegistrarJornadaFormProps = {
  */
 export function RegistrarJornadaForm({ activityId, activityDate, participantes }: RegistrarJornadaFormProps) {
   const { registrarJornada } = useHoras();
+  const { track, trackRechazo } = useAnalitica();
   const primerDia = diaEnBolivia(activityDate);
   const hoy = hoyEnBolivia();
   const [jornada, setJornada] = useState(primerDia);
@@ -35,9 +37,12 @@ export function RegistrarJornadaForm({ activityId, activityDate, participantes }
     startTransition(async () => {
       const res = await registrarJornada(activityId, jornada, registros);
       if (!res.ok) {
+        trackRechazo("horas", res);
         setError(res.errors?.[0] ?? "No se pudo registrar la jornada.");
         return;
       }
+      // Cuántos participantes, no quiénes ni cuántas horas
+      track("horas_registradas", { participantes: registros.length });
       appToast.success("Jornada registrada. Cada voluntario debe aceptar sus horas.");
       setHoras({});
       setError(null);

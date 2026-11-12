@@ -198,6 +198,35 @@ ACTIVIDADES_PRUEBAS = [
         "participants": ["demo-sofia"],
     },
     {
+        # Analítica del retiro: Luis (aceptado) se retira y entra María, que estaba en espera
+        "name": "Pintado de murales en la escuela",
+        "owner": "demo-ana",
+        "image": IMG.format("1503676260728-1c00da094a0b"),
+        "days": 4,
+        "capacity": 1,
+        "causes": ["cultura-y-arte", "educacion"],
+        "place": "Escuela Simón Bolívar",
+        "lat": -17.3870,
+        "lng": -66.1610,
+        "description": "Pintamos murales con los estudiantes en las paredes del patio.",
+        "participants": ["demo-luis"],
+        "en_espera": ["demo-maria"],
+    },
+    {
+        # Analítica de horas: terminó hace 2 días, con Carlos aceptado
+        "name": "Campaña de vacunación de mascotas",
+        "owner": "demo-ana",
+        "image": IMG.format("1542601906990-b4d3fb778b09"),
+        "days": -2,
+        "capacity": 6,
+        "causes": ["salud"],
+        "place": "Plaza Colón",
+        "lat": -17.3895,
+        "lng": -66.1568,
+        "description": "Ayudamos a ordenar la fila y registrar a las mascotas vacunadas.",
+        "participants": ["demo-carlos"],
+    },
+    {
         # Borrador sin descripción, causas ni ubicación: no se puede publicar
         "name": "Colecta de ropa de invierno",
         "owner": "demo-ana",

@@ -14,15 +14,27 @@ class EventoRequest(SQLModel):
 
 
 # ── Salida ────────────────────────────────────────────────────────────────────
-class ConteoRead(SQLModel):
-    iniciadas: int = 0
-    enviadas: int = 0
+class PasoRead(SQLModel):
+    evento: str
+    etiqueta: str
+    # Cuántos llegaron a este paso
+    cantidad: int
 
 
-class EmbudoPostulacionRead(SQLModel):
-    total: ConteoRead
-    con_cupos: ConteoRead
-    lista_de_espera: ConteoRead
+class EmbudoRead(SQLModel):
+    clave: str
+    titulo: str
+    # La pregunta que responde el embudo
+    pregunta: str
+    pasos: list[PasoRead]
+    # Veces que el flujo se frenó por validación o permiso (accion_rechazada)
+    rechazos: int = 0
+
+
+class RechazoRead(SQLModel):
+    flujo: str
+    motivo: str
+    cantidad: int
 
 
 class EventoRead(SQLModel):
@@ -32,34 +44,10 @@ class EventoRead(SQLModel):
 
 
 class AnaliticaRead(SQLModel):
-    postulacion: EmbudoPostulacionRead
+    embudos: list[EmbudoRead]
+    rechazos: list[RechazoRead]
     ultimos: list[EventoRead]
 
 
-def to_conteo(
-    conteos: dict[tuple[str, bool], int], lista_de_espera: bool | None = None
-) -> ConteoRead:
-    """Suma los conteos de un tipo de postulación (None = los dos)."""
-
-    def total(evento: NombreEvento) -> int:
-        return sum(
-            cantidad
-            for (nombre, espera), cantidad in conteos.items()
-            if nombre == evento.value and (lista_de_espera is None or espera == lista_de_espera)
-        )
-
-    return ConteoRead(
-        iniciadas=total(NombreEvento.POSTULACION_INICIADA),
-        enviadas=total(NombreEvento.POSTULACION_ENVIADA),
-    )
-
-
-def to_analitica(conteos: dict[tuple[str, bool], int], ultimos: list[Evento]) -> AnaliticaRead:
-    return AnaliticaRead(
-        postulacion=EmbudoPostulacionRead(
-            total=to_conteo(conteos),
-            con_cupos=to_conteo(conteos, lista_de_espera=False),
-            lista_de_espera=to_conteo(conteos, lista_de_espera=True),
-        ),
-        ultimos=[EventoRead(evento=e.evento, props=e.props, fecha=e.fecha) for e in ultimos],
-    )
+def to_ultimos(eventos: list[Evento]) -> list[EventoRead]:
+    return [EventoRead(evento=e.evento, props=e.props, fecha=e.fecha) for e in eventos]

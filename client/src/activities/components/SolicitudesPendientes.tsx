@@ -4,6 +4,7 @@ import { Check, Clock, Loader2, X } from "lucide-react";
 import { appToast } from "@/shared/components/Toast";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 import { useParticipations } from "@/participations/hooks/useParticipations";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 
 type Decision = "aceptar" | "rechazar";
 
@@ -14,6 +15,7 @@ type Decision = "aceptar" | "rechazar";
 export function SolicitudesPendientes() {
   const { activity } = useActivityDetail();
   const { aceptarSolicitud, rechazarSolicitud } = useParticipations();
+  const { track, trackRechazo } = useAnalitica();
   const solicitudes = activity.solicitudesPendientes ?? [];
   const aceptados = activity.participants?.length ?? 0;
   const cuposLlenos = aceptados >= activity.capacity;
@@ -33,12 +35,15 @@ export function SolicitudesPendientes() {
           : await rechazarSolicitud(activity.id, participanteId);
       setOcupado(null);
       if (!res.ok) {
+        if (decision === "aceptar") trackRechazo("postulacion", res);
         appToast.error(
           decision === "aceptar" ? "No se pudo aceptar" : "No se pudo rechazar",
           res.errors?.[0] ?? "Inténtalo nuevamente.",
         );
         return;
       }
+      // Último paso del embudo de la postulación: el organizador la aceptó
+      if (decision === "aceptar") track("solicitud_aceptada", {});
       appToast.success(
         decision === "aceptar"
           ? `Aceptaste a ${nombre}. Ya ocupa un cupo.`

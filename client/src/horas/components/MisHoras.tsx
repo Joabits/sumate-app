@@ -2,6 +2,7 @@ import { useState, useTransition } from "react";
 import { FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHoras } from "@/horas/hooks/useHoras";
+import { useAnalitica } from "@/analitica/hooks/useAnalitica";
 import type { HorasActividad, RegistroHoras } from "@/horas/context/horasTypes";
 import { formatoJornada } from "@/horas/utils/formato";
 import Link from "@/shared/components/Link";
@@ -12,6 +13,7 @@ import { ReclamarHorasDialog } from "./ReclamarHorasDialog";
 /** El voluntario ve sus horas por jornada y las acepta o reclama. */
 export function MisHoras({ horas }: { horas: HorasActividad }) {
   const { aceptar } = useHoras();
+  const { track, trackRechazo } = useAnalitica();
   const [reclamando, setReclamando] = useState<RegistroHoras | null>(null);
   const [aceptando, setAceptando] = useState<string | null>(null);
   const [, startTransition] = useTransition();
@@ -22,9 +24,11 @@ export function MisHoras({ horas }: { horas: HorasActividad }) {
       const res = await aceptar(registro.id);
       setAceptando(null);
       if (!res.ok) {
+        trackRechazo("horas", res);
         appToast.error("No se pudieron aceptar", res.errors?.[0] ?? "Inténtalo nuevamente.");
         return;
       }
+      track("horas_respondidas", { respuesta: "aceptadas" });
       appToast.success("Horas confirmadas. Ya cuentan para tu constancia.");
     });
   };

@@ -1,4 +1,4 @@
-"""Analítica: los eventos de la postulación se guardan sin datos de la persona y se cuentan."""
+"""Analítica: los eventos de cada flujo se guardan sin datos de la persona y se cuentan en embudos."""
 
 from datetime import datetime, timedelta, timezone
 
@@ -64,26 +64,111 @@ def test_solo_acepta_las_propiedades_definidas(db_session, props):
     assert guardados(db_session) == []
 
 
-def test_el_panel_cuenta_cuantos_empiezan_y_cuantos_terminan(db_session):
-    # Con cupos: 3 abren la confirmación y 2 envían la solicitud
-    for _ in range(3):
-        registrar(db_session, "postulacion_iniciada", lista_de_espera=False)
-    for _ in range(2):
-        registrar(db_session, "postulacion_enviada", lista_de_espera=False)
-    # Lista de espera: 2 abren la confirmación y 1 envía
-    for _ in range(2):
-        registrar(db_session, "postulacion_iniciada", lista_de_espera=True)
-    registrar(db_session, "postulacion_enviada", lista_de_espera=True)
+@pytest.mark.parametrize(
+    ("evento", "props"),
+    [
+        ("retiro_iniciado", {"estado": "aceptada"}),
+        ("retiro_confirmado", {"estado": "pendiente", "entro_de_lista_de_espera": False}),
+        ("solicitud_aceptada", {}),
+        ("actividad_creacion_iniciada", {}),
+        ("actividad_creada", {}),
+        ("actividad_publicada", {}),
+        ("horas_registradas", {"participantes": 3}),
+        ("horas_respondidas", {"respuesta": "reclamadas"}),
+        ("busqueda_realizada", {"con_texto": True, "con_filtros": False, "con_resultados": False}),
+        ("accion_rechazada", {"flujo": "retiro", "motivo": "fuera_de_plazo"}),
+    ],
+)
+def test_cada_evento_del_plan_se_guarda_con_sus_propiedades(db_session, evento, props):
+    registrar(db_session, evento, **props)
+    (guardado,) = guardados(db_session)
+    assert (guardado.evento, guardado.props) == (evento, props)
 
-    postulacion = ctrl.analitica(LUIS, AnaliticaService(db_session)).postulacion
-    assert (postulacion.total.iniciadas, postulacion.total.enviadas) == (5, 3)
-    assert (postulacion.con_cupos.iniciadas, postulacion.con_cupos.enviadas) == (3, 2)
-    assert (postulacion.lista_de_espera.iniciadas, postulacion.lista_de_espera.enviadas) == (2, 1)
+
+@pytest.mark.parametrize(
+    ("evento", "props"),
+    [
+        # Valor fuera de la lista fija
+        ("retiro_iniciado", {"estado": "rechazada"}),
+        ("accion_rechazada", {"flujo": "retiro", "motivo": "Me enfermé y no puedo ir"}),
+        ("horas_respondidas", {"respuesta": "si"}),
+        # El texto que escribe la persona no se guarda
+        ("retiro_confirmado", {"estado": "aceptada", "entro_de_lista_de_espera": True, "motivo": "viaje"}),
+        ("busqueda_realizada", {"con_texto": "reciclaje", "con_filtros": False, "con_resultados": True}),
+        # Números: solo enteros en rango, nunca un booleano
+        ("horas_registradas", {"participantes": True}),
+        ("horas_registradas", {"participantes": 0}),
+        ("horas_registradas", {"participantes": 2.5}),
+        # Un evento sin propiedades no acepta ninguna
+        ("actividad_creada", {"nombre": "Taller de primeros auxilios"}),
+    ],
+)
+def test_rechaza_valores_fuera_de_la_lista_y_texto_libre(db_session, evento, props):
+    with pytest.raises(EventoInvalidoException):
+        registrar(db_session, evento, **props)
+    assert guardados(db_session) == []
+
+
+def embudo(resumen, clave):
+    return next(e for e in resumen.embudos if e.clave == clave)
+
+
+def cantidades(resumen, clave):
+    return [p.cantidad for p in embudo(resumen, clave).pasos]
+
+
+def test_el_panel_cuenta_un_embudo_por_flujo(db_session):
+    # Postular: 3 abren la confirmación, 2 envían y el organizador acepta 1
+    for espera in (False, False, True):
+        registrar(db_session, "postulacion_iniciada", lista_de_espera=espera)
+    for espera in (False, True):
+        registrar(db_session, "postulacion_enviada", lista_de_espera=espera)
+    registrar(db_session, "solicitud_aceptada")
+    # Retiro: 3 abren, 2 se retiran y en 1 entra alguien de la lista de espera
+    for estado in ("aceptada", "aceptada", "pendiente"):
+        registrar(db_session, "retiro_iniciado", estado=estado)
+    registrar(db_session, "retiro_confirmado", estado="aceptada", entro_de_lista_de_espera=True)
+    registrar(db_session, "retiro_confirmado", estado="pendiente", entro_de_lista_de_espera=False)
+    registrar(db_session, "accion_rechazada", flujo="retiro", motivo="fuera_de_plazo")
+    # Horas: dos jornadas de 3 y 2 participantes; 4 responden y 3 aceptan
+    registrar(db_session, "horas_registradas", participantes=3)
+    registrar(db_session, "horas_registradas", participantes=2)
+    for respuesta in ("aceptadas", "aceptadas", "aceptadas", "reclamadas"):
+        registrar(db_session, "horas_respondidas", respuesta=respuesta)
+    # Búsqueda: 4 búsquedas, 1 sin resultados
+    for con_resultados in (True, True, True, False):
+        registrar(
+            db_session,
+            "busqueda_realizada",
+            con_texto=True,
+            con_filtros=False,
+            con_resultados=con_resultados,
+        )
+
+    resumen = ctrl.analitica(LUIS, AnaliticaService(db_session))
+
+    assert cantidades(resumen, "postulacion") == [3, 2, 1]
+    assert cantidades(resumen, "retiro") == [3, 2, 1]
+    assert embudo(resumen, "retiro").rechazos == 1
+    assert cantidades(resumen, "crear_actividad") == [0, 0, 0]
+    assert cantidades(resumen, "horas") == [5, 4, 3]
+    assert cantidades(resumen, "busqueda") == [4, 3]
+    assert [(r.flujo, r.motivo, r.cantidad) for r in resumen.rechazos] == [
+        ("retiro", "fuera_de_plazo", 1)
+    ]
 
 
 def test_sin_eventos_el_panel_queda_en_cero(db_session):
     resumen = ctrl.analitica(LUIS, AnaliticaService(db_session))
-    assert (resumen.postulacion.total.iniciadas, resumen.postulacion.total.enviadas) == (0, 0)
+    assert [e.clave for e in resumen.embudos] == [
+        "postulacion",
+        "retiro",
+        "crear_actividad",
+        "horas",
+        "busqueda",
+    ]
+    assert all(p.cantidad == 0 for e in resumen.embudos for p in e.pasos)
+    assert resumen.rechazos == []
     assert resumen.ultimos == []
 
 

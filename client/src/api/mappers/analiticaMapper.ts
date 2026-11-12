@@ -1,25 +1,16 @@
 /** Lo que responde el backend en /analitica y su conversión a los tipos de la app. */
 
-import type { Analitica, Conteo } from "@/analitica/context/analiticaTypes";
+import type { Analitica, Embudo, Rechazo } from "@/analitica/context/analiticaTypes";
 
 export type AnaliticaResponse = {
-  postulacion: {
-    total: Conteo;
-    con_cupos: Conteo;
-    lista_de_espera: Conteo;
-  };
+  embudos: Embudo[];
+  rechazos: Rechazo[];
   ultimos: { evento: string; props: Record<string, unknown>; fecha: string }[];
 };
 
 export const analiticaMapper = {
   toAnalitica(dto: AnaliticaResponse): Analitica {
-    return {
-      postulacion: {
-        total: dto.postulacion.total,
-        conCupos: dto.postulacion.con_cupos,
-        listaDeEspera: dto.postulacion.lista_de_espera,
-      },
-      ultimos: dto.ultimos,
-    };
+    // El backend ya responde con los nombres de la app (sin snake_case que convertir)
+    return { embudos: dto.embudos, rechazos: dto.rechazos, ultimos: dto.ultimos };
   },
 };
