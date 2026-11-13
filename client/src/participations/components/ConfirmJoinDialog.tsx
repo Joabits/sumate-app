@@ -10,6 +10,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { CheckCircle2, ListOrdered } from "lucide-react";
+import { PLAZO_RETIRO_MS } from "@/participations/context/participationsTypes";
+
+/** Las horas salen de la misma regla que aplica el retiro, así el texto dice el plazo real */
+const HORAS_PLAZO_RETIRO = PLAZO_RETIRO_MS / (60 * 60 * 1000);
 
 type ConfirmJoinDialogProps = {
   isOpen: boolean;
@@ -41,6 +45,8 @@ export function ConfirmJoinDialog({
             <AlertDialogDescription>
               Los cupos{activityName ? <> de <span className="font-semibold text-slate-900">&ldquo;{activityName}&rdquo;</span></> : null} están
               llenos. Quedarás en la lista de espera y, si alguien cancela, entrarás en orden de llegada.
+              Puedes salir de la lista cuando quieras y, si te toca un cupo, retirarte hasta{" "}
+              {HORAS_PLAZO_RETIRO} horas antes de la actividad.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4">
@@ -88,7 +94,9 @@ export function ConfirmJoinDialog({
               </>
             ) : (
               "¿Deseas enviar tu solicitud para participar como voluntario en esta actividad? El organizador la revisará y tu plaza quedará reservada cuando la acepte."
-            )}
+            )}{" "}
+            Puedes retirar tu solicitud cuando quieras y, si ya te aceptaron, hasta{" "}
+            {HORAS_PLAZO_RETIRO} horas antes de la actividad.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">

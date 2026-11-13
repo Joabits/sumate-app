@@ -17,11 +17,11 @@ test('Con el cupo lleno la solicitud espera y, si alguien se retira, la primera 
 }) => {
   const sofia = await abrirSesion(USUARIOS.sofia);
   await unirmeALaListaDeEspera(sofia, TALLER);
-  await expect(sofia.getByRole('button', { name: /En lista de espera, puesto 1/ })).toBeVisible();
+  await expect(sofia.getByText('En lista de espera, puesto 1', { exact: true })).toBeVisible();
 
   const carlos = await abrirSesion(USUARIOS.carlos);
   await unirmeALaListaDeEspera(carlos, TALLER);
-  await expect(carlos.getByRole('button', { name: /En lista de espera, puesto 2/ })).toBeVisible();
+  await expect(carlos.getByText('En lista de espera, puesto 2', { exact: true })).toBeVisible();
 
   // Luis tenía el único cupo y lo libera
   const luis = await abrirSesion(USUARIOS.luis);
@@ -37,7 +37,7 @@ test('Con el cupo lleno la solicitud espera y, si alguien se retira, la primera 
   await sofia.reload();
   await expect(sofia.getByRole('button', { name: 'Retirarme de la actividad' })).toBeVisible();
   await carlos.reload();
-  await expect(carlos.getByRole('button', { name: /En lista de espera, puesto 1/ })).toBeVisible();
+  await expect(carlos.getByText('En lista de espera, puesto 1', { exact: true })).toBeVisible();
 
   // La organizadora ve a Sofía confirmada y a Carlos esperando
   const ana = await abrirSesion(USUARIOS.ana);
@@ -52,7 +52,8 @@ test('Quien está en la lista de espera puede salir de ella', async ({ abrirSesi
   const maria = await abrirSesion(USUARIOS.maria);
   await unirmeALaListaDeEspera(maria, CHARLA);
 
-  await maria.getByRole('button', { name: /En lista de espera, puesto 1/ }).click();
+  await expect(maria.getByText('En lista de espera, puesto 1', { exact: true })).toBeVisible();
+  await maria.getByRole('button', { name: 'Salir de la lista', exact: true }).click();
   await maria.getByRole('button', { name: 'Sí, salir de la lista' }).click();
   await expect(maria.getByText('Saliste de la lista de espera.')).toBeVisible();
   await expect(maria.getByRole('button', { name: 'Unirme a la lista de espera' })).toBeVisible();

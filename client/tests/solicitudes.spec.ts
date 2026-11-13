@@ -9,7 +9,7 @@ async function solicitarParticipar(page: Page) {
   await page.getByRole('button', { name: 'Solicitar participar' }).click();
   await page.getByRole('button', { name: 'Enviar solicitud' }).click();
   await expect(page.getByText('¡Solicitud enviada! El organizador la revisará pronto.')).toBeVisible();
-  await expect(page.getByRole('button', { name: /^Solicitud pendiente/ })).toBeVisible();
+  await expect(page.getByText('Solicitud pendiente', { exact: true })).toBeVisible();
 }
 
 test('María solicita participar, Ana la acepta y María ya ocupa un cupo', async ({ abrirSesion }) => {

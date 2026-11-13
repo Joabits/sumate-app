@@ -20,6 +20,13 @@ import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 import { useActivities } from "@/activities/hooks/useActivities";
 import { useParticipations } from "@/participations/hooks/useParticipations";
 
+/**
+ * Salir se ve tan claro como entrar: un botón del mismo tamaño que «Solicitar
+ * participar» y con el nombre de la acción, no la etiqueta del estado.
+ */
+const BOTON_SALIDA =
+  "flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white border border-slate-300 text-slate-800 font-semibold text-sm shadow-lg shadow-slate-900/10 transition-all hover:bg-slate-50 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 cursor-pointer disabled:opacity-50";
+
 export function ActivityDetailActions() {
   const { activity } = useActivityDetail();
   const { close, publish, reopen } = useActivities();
@@ -228,29 +235,27 @@ export function ActivityDetailActions() {
                   <span>Retirarme</span>
                 </button>
               ) : solicitudPendiente ? (
-                <button
-                  type="button"
-                  onClick={abrirRetiro}
-                  disabled={isPending}
-                  aria-label="Solicitud pendiente. Pulsa para retirar la solicitud"
-                  title="Pulsa para retirar tu solicitud"
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-amber-500/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 cursor-pointer bg-amber-500 hover:bg-amber-600 text-white"
-                >
-                  <Clock className="w-5 h-5 stroke-current" />
-                  <span>Solicitud pendiente</span>
-                </button>
+                <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
+                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-amber-50 border border-amber-200 text-amber-800 font-semibold text-sm shadow-sm">
+                    <Clock className="w-4 h-4 stroke-current" aria-hidden="true" />
+                    Solicitud pendiente
+                  </p>
+                  <button type="button" onClick={abrirRetiro} disabled={isPending} className={BOTON_SALIDA}>
+                    <UserMinus className="w-4 h-4 stroke-current" aria-hidden="true" />
+                    <span>Retirar solicitud</span>
+                  </button>
+                </div>
               ) : enListaDeEspera ? (
-                <button
-                  type="button"
-                  onClick={abrirRetiro}
-                  disabled={isPending}
-                  aria-label={`En lista de espera, puesto ${posicionEnEspera ?? ""}. Pulsa para salir de la lista`}
-                  title="Pulsa para salir de la lista de espera"
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-sky-700/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700 cursor-pointer bg-sky-700 hover:bg-sky-800 text-white"
-                >
-                  <ListOrdered className="w-5 h-5 stroke-current" />
-                  <span>En lista de espera, puesto {posicionEnEspera}</span>
-                </button>
+                <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
+                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-sky-50 border border-sky-200 text-sky-800 font-semibold text-sm shadow-sm">
+                    <ListOrdered className="w-4 h-4 stroke-current" aria-hidden="true" />
+                    En lista de espera, puesto {posicionEnEspera}
+                  </p>
+                  <button type="button" onClick={abrirRetiro} disabled={isPending} className={BOTON_SALIDA}>
+                    <UserMinus className="w-4 h-4 stroke-current" aria-hidden="true" />
+                    <span>Salir de la lista</span>
+                  </button>
+                </div>
               ) : solicitudRechazada ? (
                 <button
                   type="button"

@@ -48,7 +48,7 @@ test('Un aceptado se retira a tiempo con motivo: libera el cupo y entra el prime
 test('Un pendiente retira su solicitud sin escribir motivo', async ({ abrirSesion }) => {
   const sofia = await abrirSesion(USUARIOS.sofia);
   await abrirActividad(sofia, COMEDOR);
-  await sofia.getByRole('button', { name: /Solicitud pendiente/ }).click();
+  await sofia.getByRole('button', { name: 'Retirar solicitud', exact: true }).click();
 
   const dialogo = sofia.getByRole('alertdialog', { name: 'Retirar mi solicitud' });
   await expect(dialogo.getByLabel('Motivo del retiro')).toHaveCount(0);
@@ -56,7 +56,7 @@ test('Un pendiente retira su solicitud sin escribir motivo', async ({ abrirSesio
   await expect(sofia.getByText('Retiraste tu solicitud.')).toBeVisible();
 
   await sofia.reload();
-  await expect(sofia.getByRole('button', { name: /Solicitud pendiente/ })).toHaveCount(0);
+  await expect(sofia.getByText('Solicitud pendiente', { exact: true })).toHaveCount(0);
 });
 
 test('Fuera de plazo la app no permite retirarse y la persona sigue aceptada', async ({ abrirSesion }) => {
