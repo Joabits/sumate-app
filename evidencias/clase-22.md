@@ -1,7 +1,7 @@
 # Clase 22 · Patrones oscuros
 
 Integrantes: Daniel Joaquin Mamani Pena y Faryd Lucas Soliz Marquez  
-Modalidad: 
+Modalidad: Sin AI
 
 ## 1. Patrón encontrado
 
