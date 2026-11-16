@@ -16,7 +16,6 @@
     "better-auth": "^1.6.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cn": "^0.2.6",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.21.0",
     "pg": "^8.22.0",

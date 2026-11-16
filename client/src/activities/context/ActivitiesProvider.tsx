@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { activitiesApi } from "@/api/activitiesApi";
-import type { ApiActionResult, ApiResult } from "@/api/apiResults";
+import { datosOError, type ApiActionResult } from "@/api/apiResults";
 import { invalidResult } from "@/api/errors/apiError";
 import { ActivitiesContext } from "./ActivitiesContext";
 import type {
-  ActivitiesContextValue,
-  ActivityDetailData,
-  ActivityListItem,
+  ActivitiesContextValue as Ctx,
   ActivitySearchParams,
   Cause,
-  MyActivityListItem,
   NuevaActividad,
 } from "./activitiesTypes";
 
@@ -79,10 +76,22 @@ function validarPortada(imagen: File): string | null {
 /** El valor de un <input type="datetime-local"> es hora local; el backend recibe UTC. */
 const aIsoUtc = (fechaLocal: string) => new Date(fechaLocal).toISOString();
 
-/** Para las lecturas: si el backend falla, lanza el error que muestra la página. */
-function datosOError<T>(response: ApiResult<T>, mensaje: string): T {
-  if (!response.ok) throw new Error(response.errors?.[0] ?? mensaje);
-  return response.data;
+/**
+ * Deja solo los filtros que de verdad restringen la búsqueda: "cualquier
+ * horario", "próximas" y "todas las causas" son lo que el backend ya hace sin filtro.
+ */
+function filtrosActivos(p: ActivitySearchParams): ActivitySearchParams {
+  const conUbicacion = p.userLat !== undefined && p.userLon !== undefined;
+  return {
+    q: p.q?.trim() || undefined,
+    timeOfDay: p.timeOfDay !== "any" ? p.timeOfDay : undefined,
+    datePreset: p.datePreset !== "upcoming" ? p.datePreset : undefined,
+    capacityRange: p.capacityRange !== "any" ? p.capacityRange : undefined,
+    causeIds: p.causeIds?.filter((id) => id && id !== "all"),
+    userLat: conUbicacion ? p.userLat : undefined,
+    userLon: conUbicacion ? p.userLon : undefined,
+    maxDistanceKm: p.maxDistanceKm,
+  };
 }
 
 /**
@@ -114,7 +123,7 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo<ActivitiesContextValue>(() => {
+  const value = useMemo<Ctx>(() => {
     /** Espera la llamada y, si salió bien, pide a las páginas que recarguen. */
     const conRecarga = async (llamada: Promise<ApiActionResult>) => {
       const result = await llamada;
@@ -122,109 +131,116 @@ export function ActivitiesProvider({ children }: { children: ReactNode }) {
       return result;
     };
 
+    // ── Lecturas ────────────────────────────────────────────────────────────
+    const getExploreActivities: Ctx["getExploreActivities"] = async () =>
+      datosOError(await activitiesApi.listExplore());
+
+    const getMyActivities: Ctx["getMyActivities"] = async () =>
+      datosOError(await activitiesApi.listMyActivities());
+
+    const getActivityDetail: Ctx["getActivityDetail"] = async (id) => {
+      const response = await activitiesApi.getActivityDetail(id);
+      // No existe (o es un borrador de otra persona)
+      if (!response.ok && response.statusCode === 404) return null;
+      return datosOError(response);
+    };
+
+    const searchActivities: Ctx["searchActivities"] = async (params) =>
+      datosOError(await activitiesApi.searchActivities(filtrosActivos(params)));
+
+    // ── Acciones ────────────────────────────────────────────────────────────
+    const createActivity: Ctx["createActivity"] = async (datos) => {
+      const error = validarNuevaActividad(datos);
+      if (error) return invalidResult(error);
+      return conRecarga(
+        activitiesApi.createActivity({
+          name: datos.name.trim(),
+          date: aIsoUtc(datos.date),
+          capacity: datos.capacity,
+          image: datos.image as File,
+        }),
+      );
+    };
+
+    const updateTitle: Ctx["updateTitle"] = async (id, nombre) => {
+      const error = validarTitulo(nombre);
+      if (error) return invalidResult(error);
+      return conRecarga(activitiesApi.updateInfo(id, { name: nombre.trim() }));
+    };
+
+    const updateDate: Ctx["updateDate"] = async (id, fecha) => {
+      const error = validarFecha(fecha);
+      if (error) return invalidResult(error);
+      return conRecarga(activitiesApi.updateInfo(id, { date: aIsoUtc(fecha) }));
+    };
+
+    const updateCapacity: Ctx["updateCapacity"] = async (id, cupos) => {
+      const error = validarCupos(cupos);
+      if (error) return invalidResult(error);
+      return conRecarga(activitiesApi.updateCapacity(id, { capacity: cupos }));
+    };
+
+    const updateDescription: Ctx["updateDescription"] = async (id, descripcion) => {
+      const error = validarDescripcion(descripcion);
+      if (error) return invalidResult(error);
+      return conRecarga(activitiesApi.updateDescription(id, { description: descripcion.trim() }));
+    };
+
+    const updateImage: Ctx["updateImage"] = async (id, imagen) => {
+      const error = validarPortada(imagen);
+      if (error) return invalidResult(error);
+      return conRecarga(activitiesApi.updateImage(id, imagen));
+    };
+
+    const updateLocation: Ctx["updateLocation"] = async (id, latitude, longitude, place) => {
+      if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+        return invalidResult("Coordenadas geográficas inválidas.");
+      }
+      const lugar = place?.trim();
+      return conRecarga(
+        activitiesApi.updateLocation(id, { latitude, longitude, ...(lugar ? { place: lugar } : {}) }),
+      );
+    };
+
+    const replaceCauses: Ctx["replaceCauses"] = (id, causeIds) =>
+      conRecarga(activitiesApi.replaceActivityCauses(id, causeIds));
+
+    const publish: Ctx["publish"] = (id) => conRecarga(activitiesApi.publishActivity(id));
+
+    const close: Ctx["close"] = (id) => conRecarga(activitiesApi.closeActivity(id));
+
+    const reopen: Ctx["reopen"] = (id) => conRecarga(activitiesApi.reopenActivity(id));
+
+    const cancelar: Ctx["cancelar"] = async (id, motivo) => {
+      if (!motivo.trim()) return invalidResult("Escribe el motivo de la cancelación.");
+      return conRecarga(activitiesApi.cancelarActividad(id, motivo.trim()));
+    };
+
+    const deleteActivity: Ctx["deleteActivity"] = (id) =>
+      conRecarga(activitiesApi.deleteActivity(id));
+
     return {
       causes,
       isLoadingCauses,
       dataVersion,
       refresh,
-
-      // ── Lecturas ──────────────────────────────────────────────────────────
-      getExploreActivities: async (): Promise<ActivityListItem[]> =>
-        datosOError(
-          await activitiesApi.listExplore(),
-          "Error al cargar las actividades para explorar.",
-        ),
-
-      getMyActivities: async (): Promise<MyActivityListItem[]> =>
-        datosOError(await activitiesApi.listMyActivities(), "Error al cargar mis actividades."),
-
-      getActivityDetail: async (id: string): Promise<ActivityDetailData | null> => {
-        const response = await activitiesApi.getActivityDetail(id);
-        // No existe (o es un borrador de otra persona)
-        if (!response.ok && response.statusCode === 404) return null;
-        return datosOError(response, "Error al cargar los detalles de la actividad.");
-      },
-
-      searchActivities: async (params: ActivitySearchParams): Promise<ActivityListItem[]> =>
-        datosOError(
-          await activitiesApi.searchActivities(params),
-          "Error al realizar la búsqueda de actividades.",
-        ),
-
-      // ── Acciones ──────────────────────────────────────────────────────────
-      createActivity: async (datos: NuevaActividad) => {
-        const error = validarNuevaActividad(datos);
-        if (error) return invalidResult(error);
-        return conRecarga(
-          activitiesApi.createActivity({
-            name: datos.name.trim(),
-            date: aIsoUtc(datos.date),
-            capacity: datos.capacity,
-            image: datos.image as File,
-          }),
-        );
-      },
-
-      updateTitle: async (id: string, nombre: string) => {
-        const error = validarTitulo(nombre);
-        if (error) return invalidResult(error);
-        return conRecarga(activitiesApi.updateInfo(id, { name: nombre.trim() }));
-      },
-
-      updateDate: async (id: string, fecha: string) => {
-        const error = validarFecha(fecha);
-        if (error) return invalidResult(error);
-        return conRecarga(activitiesApi.updateInfo(id, { date: aIsoUtc(fecha) }));
-      },
-
-      updateCapacity: async (id: string, cupos: number) => {
-        const error = validarCupos(cupos);
-        if (error) return invalidResult(error);
-        return conRecarga(activitiesApi.updateCapacity(id, { capacity: cupos }));
-      },
-
-      updateDescription: async (id: string, descripcion: string) => {
-        const error = validarDescripcion(descripcion);
-        if (error) return invalidResult(error);
-        return conRecarga(
-          activitiesApi.updateDescription(id, { description: descripcion.trim() }),
-        );
-      },
-
-      updateImage: async (id: string, imagen: File) => {
-        const error = validarPortada(imagen);
-        if (error) return invalidResult(error);
-        return conRecarga(activitiesApi.updateImage(id, imagen));
-      },
-
-      updateLocation: async (id: string, latitude: number, longitude: number, place?: string) => {
-        if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
-          return invalidResult("Coordenadas geográficas inválidas.");
-        }
-        return conRecarga(
-          activitiesApi.updateLocation(id, {
-            latitude,
-            longitude,
-            ...(place?.trim() ? { place: place.trim() } : {}),
-          }),
-        );
-      },
-
-      replaceCauses: (id: string, causeIds: string[]) =>
-        conRecarga(activitiesApi.replaceActivityCauses(id, causeIds)),
-
-      publish: (id: string) => conRecarga(activitiesApi.publishActivity(id)),
-
-      close: (id: string) => conRecarga(activitiesApi.closeActivity(id)),
-
-      reopen: (id: string) => conRecarga(activitiesApi.reopenActivity(id)),
-
-      cancelar: async (id: string, motivo: string) => {
-        if (!motivo.trim()) return invalidResult("Escribe el motivo de la cancelación.");
-        return conRecarga(activitiesApi.cancelarActividad(id, motivo.trim()));
-      },
-
-      deleteActivity: (id: string) => conRecarga(activitiesApi.deleteActivity(id)),
+      getExploreActivities,
+      getMyActivities,
+      getActivityDetail,
+      searchActivities,
+      createActivity,
+      updateTitle,
+      updateDate,
+      updateCapacity,
+      updateDescription,
+      updateImage,
+      updateLocation,
+      replaceCauses,
+      publish,
+      close,
+      reopen,
+      cancelar,
+      deleteActivity,
     };
   }, [causes, isLoadingCauses, dataVersion, refresh]);
 

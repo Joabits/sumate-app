@@ -2,6 +2,7 @@ from datetime import date, datetime, timezone
 from uuid import UUID
 
 from pydantic import Field
+from app.dtos.base import ReadModel
 from sqlmodel import SQLModel
 
 from app.entities.activity import Activity
@@ -29,7 +30,7 @@ class ReclamarHorasRequest(SQLModel):
 
 
 # ── Salida ────────────────────────────────────────────────────────────────────
-class RegistroHorasRead(SQLModel):
+class RegistroHorasRead(ReadModel):
     id: UUID
     user_id: str
     user_name: str
@@ -42,13 +43,13 @@ class RegistroHorasRead(SQLModel):
     horas_anteriores: float | None = None
 
 
-class ParticipanteAceptadoRead(SQLModel):
+class ParticipanteAceptadoRead(ReadModel):
     id: str
     name: str
     image: str | None = None
 
 
-class HorasActividadRead(SQLModel):
+class HorasActividadRead(ReadModel):
     activity_id: UUID
     es_organizador: bool
     # true si la actividad ya terminó y quien pide es el organizador
@@ -61,12 +62,12 @@ class HorasActividadRead(SQLModel):
     total_confirmado: float = 0
 
 
-class JornadaConstanciaRead(SQLModel):
+class JornadaConstanciaRead(ReadModel):
     jornada: date
     horas: float
 
 
-class ActividadConstanciaRead(SQLModel):
+class ActividadConstanciaRead(ReadModel):
     activity_id: UUID
     nombre: str
     organizador: str | None = None
@@ -75,7 +76,7 @@ class ActividadConstanciaRead(SQLModel):
     total_horas: float
 
 
-class ConstanciaRead(SQLModel):
+class ConstanciaRead(ReadModel):
     voluntario: str
     correo: str
     emitida: datetime

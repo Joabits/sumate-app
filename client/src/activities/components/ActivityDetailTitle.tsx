@@ -1,5 +1,6 @@
 import { Pencil } from "lucide-react";
-import { EditActivityTitleForm } from "./EditActivityTitleForm";
+import { InlineEditForm } from "./InlineEditForm";
+import { useActivities } from "@/activities/hooks/useActivities";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 
 type ActivityDetailTitleProps = {
@@ -11,6 +12,7 @@ export function ActivityDetailTitle({
 }: ActivityDetailTitleProps) {
   const { activity, isEditMode, activeField, setActiveField } = useActivityDetail();
   const { id: activityId, name, isOwner } = activity;
+  const { updateTitle } = useActivities();
 
   const isOtherFieldActive = (field: string) =>
     activeField !== null && activeField !== field;
@@ -18,12 +20,24 @@ export function ActivityDetailTitle({
   return (
     <div className={`mb-4 sm:mb-6 ${className}`} data-purpose="event-title-section">
       {activeField === "title" ? (
-        <EditActivityTitleForm
-          activityId={activityId}
-          initialTitle={name}
-          onCancel={() => setActiveField(null)}
-          onSuccess={() => setActiveField(null)}
-        />
+        <InlineEditForm
+          initialValue={name}
+          save={(value) => updateTitle(activityId, value)}
+          successMessage="Título actualizado."
+          errorTitle="Error al actualizar título"
+          onClose={() => setActiveField(null)}
+        >
+          {(value, setValue) => (
+            <input
+              type="text"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              className="w-full text-xl font-bold text-slate-900 bg-white border border-slate-300 rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+              placeholder="Nombre de la actividad"
+              autoFocus
+            />
+          )}
+        </InlineEditForm>
       ) : (
         <div>
           <h1 className="text-2xl sm:text-[1.65rem] lg:text-3xl font-extrabold text-slate-900 leading-snug tracking-tight">

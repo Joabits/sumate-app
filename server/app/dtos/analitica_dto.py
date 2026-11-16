@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Any
 
+from app.dtos.base import ReadModel
 from sqlmodel import SQLModel
 
 from app.entities.evento import Evento, NombreEvento
@@ -14,14 +15,14 @@ class EventoRequest(SQLModel):
 
 
 # ── Salida ────────────────────────────────────────────────────────────────────
-class PasoRead(SQLModel):
+class PasoRead(ReadModel):
     evento: str
     etiqueta: str
     # Cuántos llegaron a este paso
     cantidad: int
 
 
-class EmbudoRead(SQLModel):
+class EmbudoRead(ReadModel):
     clave: str
     titulo: str
     # La pregunta que responde el embudo
@@ -31,19 +32,19 @@ class EmbudoRead(SQLModel):
     rechazos: int = 0
 
 
-class RechazoRead(SQLModel):
+class RechazoRead(ReadModel):
     flujo: str
     motivo: str
     cantidad: int
 
 
-class EventoRead(SQLModel):
+class EventoRead(ReadModel):
     evento: str
     props: dict[str, Any]
     fecha: datetime
 
 
-class AnaliticaRead(SQLModel):
+class AnaliticaRead(ReadModel):
     embudos: list[EmbudoRead]
     rechazos: list[RechazoRead]
     ultimos: list[EventoRead]

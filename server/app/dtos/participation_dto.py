@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
+from app.dtos.base import ReadModel
 from sqlmodel import SQLModel
 
 from app.core.fechas import as_utc
@@ -12,7 +13,7 @@ from app.dtos.cause_dto import CauseRead, to_causes
 BOLIVIA_TZ = ZoneInfo("America/La_Paz")
 
 
-class ParticipatedActivityItemRead(SQLModel):
+class ParticipatedActivityItemRead(ReadModel):
     id: UUID
     name: str
     image_url: str
@@ -31,7 +32,7 @@ class ParticipatedActivityItemRead(SQLModel):
     estado_anterior: str | None = None
 
 
-class ParticipatedActivityListRead(SQLModel):
+class ParticipatedActivityListRead(ReadModel):
     items: list[ParticipatedActivityItemRead]
 
 
@@ -41,7 +42,7 @@ class RetiroRequest(SQLModel):
     motivo: str | None = None
 
 
-class RetiroRead(SQLModel):
+class RetiroRead(ReadModel):
     # pendiente | aceptada | en_espera: lo que era la solicitud antes de retirarse
     estado_anterior: str
     # Si al liberar el cupo entró la primera persona de la lista de espera

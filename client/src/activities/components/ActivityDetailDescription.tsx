@@ -1,5 +1,6 @@
 import { Pencil } from "lucide-react";
-import { EditActivityDescriptionForm } from "./EditActivityDescriptionForm";
+import { InlineEditForm } from "./InlineEditForm";
+import { useActivities } from "@/activities/hooks/useActivities";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 
 type ActivityDetailDescriptionProps = {
@@ -11,6 +12,7 @@ export function ActivityDetailDescription({
 }: ActivityDetailDescriptionProps) {
   const { activity, isEditMode, activeField, setActiveField } = useActivityDetail();
   const { id: activityId, isOwner } = activity;
+  const { updateDescription } = useActivities();
   const description = activity.detail?.description ?? null;
 
   const isEditing = activeField === "description";
@@ -41,12 +43,24 @@ export function ActivityDetailDescription({
       </div>
 
       {isEditing ? (
-        <EditActivityDescriptionForm
-          activityId={activityId}
-          initialDescription={description}
-          onCancel={() => setActiveField(null)}
-          onSuccess={() => setActiveField(null)}
-        />
+        <InlineEditForm
+          initialValue={description ?? ""}
+          save={(value) => updateDescription(activityId, value)}
+          successMessage="Descripción actualizada."
+          errorTitle="Error al actualizar descripción"
+          onClose={() => setActiveField(null)}
+        >
+          {(value, setValue) => (
+            <textarea
+              rows={5}
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              className="w-full text-sm leading-relaxed text-slate-700 bg-white border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+              placeholder="Describe la actividad, requisitos para voluntarios y objetivo social..."
+              autoFocus
+            />
+          )}
+        </InlineEditForm>
       ) : (
         <p className="text-sm leading-relaxed text-slate-600 font-normal whitespace-pre-line">
           {description?.trim() ? (

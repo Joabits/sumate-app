@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { ActivityDetailContext } from "./ActivityDetailContext";
 import type {
-  ActivityDetailContextValue,
+  ActivityDetailContextValue as Ctx,
   ActivityDetailData,
   EditableField,
 } from "./activitiesTypes";
@@ -22,28 +22,35 @@ export function ActivityDetailProvider({ activity, children }: ActivityDetailPro
   const [activeField, setActiveField] = useState<EditableField | null>(null);
   const [isLocationSheetOpen, setIsLocationSheetOpen] = useState(false);
 
-  const value = useMemo<ActivityDetailContextValue>(() => {
-    const setEditMode = (enabled: boolean) => {
+  const value = useMemo<Ctx>(() => {
+    const setEditMode: Ctx["setEditMode"] = (enabled) => {
       setIsEditModeState(enabled);
       setActiveField(null);
       setIsLocationSheetOpen(false);
     };
+
+    const toggleEditMode = () => setEditMode(!isEditMode);
+
+    const openLocationSheet = () => {
+      setIsLocationSheetOpen(true);
+      setActiveField("location");
+    };
+
+    const closeLocationSheet = () => {
+      setIsLocationSheetOpen(false);
+      setActiveField(null);
+    };
+
     return {
       activity,
       isEditMode,
       activeField,
       isLocationSheetOpen,
       setEditMode,
-      toggleEditMode: () => setEditMode(!isEditMode),
+      toggleEditMode,
       setActiveField,
-      openLocationSheet: () => {
-        setIsLocationSheetOpen(true);
-        setActiveField("location");
-      },
-      closeLocationSheet: () => {
-        setIsLocationSheetOpen(false);
-        setActiveField(null);
-      },
+      openLocationSheet,
+      closeLocationSheet,
     };
   }, [activity, isEditMode, activeField, isLocationSheetOpen]);
 

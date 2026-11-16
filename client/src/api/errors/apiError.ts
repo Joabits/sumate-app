@@ -1,104 +1,37 @@
-/**
- * Constructores de ApiError
- *
- * Este módulo construye objetos ApiError a partir de distintas fuentes
- * (validación en el Provider, respuestas HTTP del servidor) usando el
- * adaptador de backend activo.
- *
- * La lógica específica de cada framework backend vive en:
- *   errors/adapters/fastapi.error-adapter.ts
- *   errors/adapters/laravel.error-adapter.ts
- */
-import { ApiError } from "@/api/apiResults";
-import { activeBackendAdapter } from "./adapters";
+import type { ApiError } from "@/api/apiResults";
 
-// ─── Helpers internos ────────────────────────────────────────────────────────
-
-async function parseResponseBody(res: Response): Promise<unknown> {
-  try {
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-
-function flattenValidationErrors(
-  validationErrors: Record<string, string[]>,
-): string[] {
-  return Object.values(validationErrors).flat();
-}
-
-// ─── Constructores públicos ───────────────────────────────────────────────────
-
-/**
- * Error simple con un único mensaje.
- * Úsalo para errores de red, timeouts o respuestas inesperadas.
- */
+/** Sin respuesta HTTP (red caída, timeout). */
 export function errorResult(message: string): ApiError {
-  return {
-    ok: false,
-    statusCode: 0, // Sin respuesta HTTP (error de red, timeout, parseo local)
-    errors: [message],
-  };
+  return { ok: false, statusCode: 0, errors: [message] };
 }
 
-/**
- * Error de validación hecho en el Provider antes de llamar al backend.
- * Usa 400 (y no 0) para que no se confunda con un error de conexión.
- */
+/** Validación hecha en el Provider antes de llamar al backend. */
 export function invalidResult(message: string): ApiError {
-  return {
-    ok: false,
-    statusCode: 400,
-    code: "VALIDACION",
-    errors: [message],
-  };
+  return { ok: false, statusCode: 400, code: "VALIDACION", errors: [message] };
 }
 
 /**
- * Error construido a partir de una respuesta HTTP fallida del servidor.
- *
- * Delega el parseo al adaptador activo (FastAPI, Laravel, etc.).
- * Si el adaptador no reconoce el formato, usa el fallbackMessage.
+ * Lee el error de FastAPI. Formatos posibles:
+ *   { error: { code, message } }        ← errores de dominio (app/core/errors.py)
+ *   { detail: "..." }                   ← HTTPException
+ *   { detail: [{ loc, msg }, ...] }     ← validación (422)
  */
-export async function serverErrorResult(
-  res: Response,
-  fallbackMessage: string,
-): Promise<ApiError> {
-  const body = await parseResponseBody(res);
-  const statusCode = res.status;
+export async function serverErrorResult(res: Response, fallbackMessage: string): Promise<ApiError> {
+  const body = await res.json().catch(() => null);
+  const error = body?.error;
+  const detail = body?.detail;
 
-  const validationErrors = activeBackendAdapter.parseValidationErrors(body);
-  if (validationErrors) {
-    return {
-      ok: false,
-      statusCode,
-      validationErrors,
-      errors: flattenValidationErrors(validationErrors),
-    };
+  let code: string | undefined;
+  let message: unknown;
+  if (typeof error?.message === "string") {
+    code = typeof error.code === "string" ? error.code : undefined;
+    message = error.message;
+  } else if (typeof detail === "string") {
+    message = detail;
+  } else if (Array.isArray(detail)) {
+    message = detail[0]?.msg;
   }
 
-  const parsedErrors = activeBackendAdapter.parseErrors(body);
-  if (parsedErrors && parsedErrors.errors.length > 0) {
-    return {
-      ok: false,
-      statusCode,
-      code: parsedErrors.code,
-      errors: parsedErrors.errors,
-    };
-  }
-
-  return { ...errorResult(fallbackMessage), statusCode };
-}
-
-// ─── Utilidad auxiliar ───────────────────────────────────────────────────────
-
-/**
- * Convierte un Record de errores de validación en un array de mensajes planos.
- * Útil para mostrar todos los errores en un toast o lista.
- */
-export function mapValidationErrorsToMessages(
-  validationErrors: Record<string, string[] | undefined>,
-): string[] {
-  return Object.values(validationErrors).flatMap((msgs) => msgs ?? []);
+  const text = typeof message === "string" && message.trim() ? message.trim() : fallbackMessage;
+  return { ok: false, statusCode: res.status, code, errors: [text] };
 }

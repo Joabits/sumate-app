@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from app.dtos.base import ReadModel
 from sqlmodel import Field, SQLModel
 
 from app.entities.cause import Cause
@@ -11,13 +12,13 @@ class ReplaceActivityCausesRequest(SQLModel):
 
 
 # ── Salida ────────────────────────────────────────────────────────────────────
-class CauseRead(SQLModel):
+class CauseRead(ReadModel):
     id: UUID
     name: str
     slug: str
 
 
-class CauseListRead(SQLModel):
+class CauseListRead(ReadModel):
     items: list[CauseRead]
 
 

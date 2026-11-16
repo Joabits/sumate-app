@@ -1,70 +1,37 @@
 /**
- * Llamadas de autenticación a Better Auth (desde el navegador).
- * Cada función devuelve { ok: true } o { ok: false, message } con el mensaje en español.
+ * Llamadas a Better Auth desde el navegador. Solo hacen la llamada y devuelven
+ * el código de error: a dónde redirigir y qué mensaje mostrar lo decide AuthProvider.
  */
-
-import type { AuthResult } from "@/auth/context/authTypes";
 import { authClient } from "./authClient";
-import { getAuthErrorMessage } from "./authErrors";
 import { clearJWT } from "./jwtManager";
 
-type BetterAuthError = { code?: string } | null;
+export type AuthCallResult = { ok: true } | { ok: false; code?: string };
 
-function toResult(error: BetterAuthError): AuthResult {
-  return error ? { ok: false, message: getAuthErrorMessage(error.code) } : { ok: true };
+function toResult({ error }: { error: { code?: string } | null }): AuthCallResult {
+  return error ? { ok: false, code: error.code } : { ok: true };
 }
 
 export const authApi = {
-  async login(email: string, password: string): Promise<AuthResult> {
-    const { error } = await authClient.signIn.email({
-      email,
-      password,
-      callbackURL: "/home",
-      rememberMe: false,
-    });
-    return toResult(error);
-  },
+  login: async (data: { email: string; password: string; callbackURL: string; rememberMe: boolean }) =>
+    toResult(await authClient.signIn.email(data)),
 
-  async signup(name: string, email: string, password: string): Promise<AuthResult> {
-    const { error } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-      callbackURL: "/home",
-    });
-    return toResult(error);
-  },
+  signup: async (data: { name: string; email: string; password: string; callbackURL: string }) =>
+    toResult(await authClient.signUp.email(data)),
 
-  async logout(): Promise<AuthResult> {
+  logout: async () => {
     // El JWT en memoria se descarta antes, así no queda un token de la sesión anterior
     clearJWT();
-    const { error } = await authClient.signOut();
-    return error
-      ? { ok: false, message: "Tuvimos un error al cerrar tu sesión." }
-      : { ok: true };
+    return toResult(await authClient.signOut());
   },
 
-  async loginWithGoogle(callbackURL = "/explore"): Promise<AuthResult> {
-    // Si sale bien, el navegador se va a Google: esta promesa no vuelve
-    const { error } = await authClient.signIn.social({
-      provider: "google",
-      callbackURL,
-      errorCallbackURL: "/auth/login?error=social",
-    });
-    return toResult(error);
-  },
+  /** Si sale bien, el navegador se va a Google: esta promesa no vuelve. */
+  loginWithGoogle: async (data: { callbackURL: string; errorCallbackURL: string }) =>
+    toResult(await authClient.signIn.social({ provider: "google", ...data })),
 
-  async requestPasswordReset(email: string): Promise<AuthResult> {
-    const { error } = await authClient.requestPasswordReset({
-      email,
-      // Better Auth agrega ?token=... a esta URL en el correo
-      redirectTo: "/auth/reset-password",
-    });
-    return toResult(error);
-  },
+  /** Better Auth agrega ?token=... a `redirectTo` en el correo. */
+  requestPasswordReset: async (data: { email: string; redirectTo: string }) =>
+    toResult(await authClient.requestPasswordReset(data)),
 
-  async resetPassword(token: string, newPassword: string): Promise<AuthResult> {
-    const { error } = await authClient.resetPassword({ newPassword, token });
-    return toResult(error);
-  },
+  resetPassword: async (data: { token: string; newPassword: string }) =>
+    toResult(await authClient.resetPassword(data)),
 };

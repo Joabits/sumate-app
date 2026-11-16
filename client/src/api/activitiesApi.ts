@@ -1,6 +1,5 @@
 /**
- * Llamadas HTTP al backend para actividades. Solo hace la petición y convierte
- * la respuesta: las validaciones y reglas están en ActivitiesProvider.
+ * Llamadas HTTP al backend para actividades. Solo hace la petición: las validaciones y reglas están en ActivitiesProvider.
  */
 
 import type {
@@ -9,7 +8,6 @@ import type {
 } from "./apiResults";
 import {
   apiRequestData,
-  apiRequestFormStatus,
   apiRequestStatus,
 } from "./http";
 import type {
@@ -19,7 +17,30 @@ import type {
   Cause,
   MyActivityListItem,
 } from "@/activities/context/activitiesTypes";
-import { activityMapper } from "@/api/mappers/activitiesMapper";
+
+/** Nombre de cada filtro en la query de GET /activities/search */
+const SEARCH_KEYS: Record<keyof ActivitySearchParams, string> = {
+  q: "q",
+  timeOfDay: "time_of_day",
+  datePreset: "date_preset",
+  capacityRange: "capacity_range",
+  causeIds: "cause_ids",
+  userLat: "user_lat",
+  userLon: "user_lon",
+  maxDistanceKm: "max_distance_km",
+};
+
+/** Filtros de la app → query string. Los que vienen undefined no se mandan. */
+function toSearchQuery(params: ActivitySearchParams): URLSearchParams {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined) continue;
+    for (const item of [value].flat()) {
+      query.append(SEARCH_KEYS[key as keyof ActivitySearchParams], String(item));
+    }
+  }
+  return query;
+}
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/activities`;
 
@@ -28,47 +49,16 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/explore`,
       method: "GET",
-      mapData: activityMapper.toActivityList,
+      mapData: (json: { items: ActivityListItem[] }) => json.items,
       fallbackMessage: "Error al cargar las actividades para explorar.",
     });
   },
 
-  async searchActivities(params?: ActivitySearchParams): Promise<ApiResult<ActivityListItem[]>> {
-    const searchParams = new URLSearchParams();
-    if (params?.q?.trim()) {
-      searchParams.set("q", params.q.trim());
-    }
-    if (params?.timeOfDay && params.timeOfDay !== "any") {
-      searchParams.set("time_of_day", params.timeOfDay);
-    }
-    if (params?.datePreset && params.datePreset !== "upcoming") {
-      searchParams.set("date_preset", params.datePreset);
-    }
-    if (params?.capacityRange && params.capacityRange !== "any") {
-      searchParams.set("capacity_range", params.capacityRange);
-    }
-    if (params?.causeIds && params.causeIds.length > 0) {
-      params.causeIds.forEach((id) => {
-        if (id && id !== "all") {
-          searchParams.append("cause_ids", id);
-        }
-      });
-    }
-    if (params?.userLat !== undefined && params?.userLon !== undefined) {
-      searchParams.set("user_lat", params.userLat.toString());
-      searchParams.set("user_lon", params.userLon.toString());
-    }
-    if (params?.maxDistanceKm !== undefined) {
-      searchParams.set("max_distance_km", params.maxDistanceKm.toString());
-    }
-
-    const queryString = searchParams.toString();
-    const url = queryString ? `${BASE_URL}/search?${queryString}` : `${BASE_URL}/search`;
-
+  async searchActivities(params: ActivitySearchParams): Promise<ApiResult<ActivityListItem[]>> {
     return apiRequestData({
-      url,
+      url: `${BASE_URL}/search?${toSearchQuery(params)}`,
       method: "GET",
-      mapData: activityMapper.toActivityList,
+      mapData: (json: { items: ActivityListItem[] }) => json.items,
       fallbackMessage: "Error al realizar la búsqueda de actividades.",
     });
   },
@@ -77,7 +67,7 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/my-activities`,
       method: "GET",
-      mapData: activityMapper.toMyActivityList,
+      mapData: (json: { items: MyActivityListItem[] }) => json.items,
       fallbackMessage: "Error al cargar mis actividades.",
     });
   },
@@ -86,7 +76,6 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/${id}`,
       method: "GET",
-      mapData: activityMapper.toActivityDetailData,
       fallbackMessage: "Error al cargar el detalle de la actividad.",
     });
   },
@@ -95,7 +84,7 @@ export const activitiesApi = {
     return apiRequestData({
       url: `${BASE_URL}/causes`,
       method: "GET",
-      mapData: activityMapper.toCauseList,
+      mapData: (json: { items: Cause[] }) => json.items,
       fallbackMessage: "Error al cargar el catálogo de causas.",
     });
   },
@@ -124,7 +113,7 @@ export const activitiesApi = {
     formData.set("date", data.date);
     formData.set("capacity", String(data.capacity));
     formData.set("image", data.image);
-    return apiRequestFormStatus({
+    return apiRequestStatus({
       url: BASE_URL,
       method: "POST",
       body: formData,
@@ -159,7 +148,7 @@ export const activitiesApi = {
   async updateImage(id: string, image: File): Promise<ApiActionResult> {
     const formData = new FormData();
     formData.set("image", image);
-    return apiRequestFormStatus({
+    return apiRequestStatus({
       url: `${BASE_URL}/${id}/image`,
       method: "PATCH",
       body: formData,

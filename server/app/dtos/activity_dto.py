@@ -5,6 +5,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import Form
+from app.dtos.base import ReadModel
 from sqlmodel import Field, SQLModel
 
 from app.entities.activity import Activity
@@ -108,7 +109,7 @@ class UpdateActivityCapacityRequest(SQLModel):
 # ══════════════════════════════════════════════════════════════════════════════
 # SALIDA
 # ══════════════════════════════════════════════════════════════════════════════
-class ActivityListItemRead(SQLModel):
+class ActivityListItemRead(ReadModel):
     id: UUID
     name: str
     image_url: str
@@ -122,11 +123,11 @@ class ActivityListItemRead(SQLModel):
     registered_count: int = 0
 
 
-class ActivityListRead(SQLModel):
+class ActivityListRead(ReadModel):
     items: list[ActivityListItemRead]
 
 
-class MyActivityListItemRead(SQLModel):
+class MyActivityListItemRead(ReadModel):
     id: UUID
     name: str
     image_url: str
@@ -140,11 +141,11 @@ class MyActivityListItemRead(SQLModel):
     causes: list[CauseRead] = []
 
 
-class MyActivityListRead(SQLModel):
+class MyActivityListRead(ReadModel):
     items: list[MyActivityListItemRead]
 
 
-class ActivityDetailDataRead(SQLModel):
+class ActivityDetailDataRead(ReadModel):
     id: UUID
     activity_id: UUID
     latitude: float | None = None
@@ -154,7 +155,7 @@ class ActivityDetailDataRead(SQLModel):
     description: str | None = None
 
 
-class ActivityParticipantRead(SQLModel):
+class ActivityParticipantRead(ReadModel):
     id: str
     name: str
     image: str | None = None
@@ -162,7 +163,7 @@ class ActivityParticipantRead(SQLModel):
     estado_anterior: str | None = None
 
 
-class ActivityDetailRead(SQLModel):
+class ActivityDetailRead(ReadModel):
     id: UUID
     name: str
     owner_id: str

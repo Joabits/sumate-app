@@ -10,13 +10,6 @@ import type {
   EstadoSolicitud,
 } from "@/activities/context/activitiesTypes";
 
-export type Participation = {
-  id: string;
-  activityId: string;
-  userId: string;
-  createdAt: string;
-};
-
 export type ParticipatedActivityListItem = {
   id: string;
   name: string;
@@ -32,12 +25,10 @@ export type ParticipatedActivityListItem = {
   motivoCancelacion: string | null;
   /** Si la organización canceló la actividad: el estado que tenía la solicitud. */
   estadoAnterior: EstadoSolicitud | null;
-  creatorName?: string;
-  creatorImage?: string;
+  creatorName?: string | null;
+  creatorImage?: string | null;
   causes?: Cause[];
 };
-
-export type ParticipationFilter = "all" | "upcoming" | "past";
 
 /** Solicitudes que se pueden retirar. */
 export type EstadoRetirable = "pendiente" | "aceptada" | "en_espera";

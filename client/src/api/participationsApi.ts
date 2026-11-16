@@ -1,6 +1,5 @@
 /**
- * Llamadas HTTP al backend para participaciones. Solo hace la petición y
- * convierte la respuesta: las reglas están en ParticipationsProvider.
+ * Llamadas HTTP al backend para participaciones. Solo hace la petición: las reglas están en ParticipationsProvider.
  */
 
 import type {
@@ -12,7 +11,6 @@ import {
   apiRequestStatus,
 } from "./http";
 import type { ParticipatedActivityListItem, Retiro } from "@/participations/context/participationsTypes";
-import { participationMapper } from "@/api/mappers/participationsMapper";
 
 const BASE_URL = `${import.meta.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api"}/participaciones`;
 
@@ -46,7 +44,6 @@ export const participationsApi = {
       url: `${BASE_URL}/${activityId}/retiro`,
       method: "POST",
       body: { motivo },
-      mapData: participationMapper.toRetiro,
       fallbackMessage: "No se pudo completar tu retiro de la actividad.",
     });
   },
@@ -55,7 +52,7 @@ export const participationsApi = {
     return apiRequestData({
       url: `${BASE_URL}/me`,
       method: "GET",
-      mapData: participationMapper.toParticipatedActivityList,
+      mapData: (json: { items: ParticipatedActivityListItem[] }) => json.items,
       fallbackMessage: "Error al cargar el historial de participaciones.",
     });
   },

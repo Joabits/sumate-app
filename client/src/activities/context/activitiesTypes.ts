@@ -22,8 +22,8 @@ export type Activity = {
   date: string; // Formato ISO 8601 string
   capacity: number;
   status: ActivityStatus;
-  creatorName?: string;
-  creatorImage?: string;
+  creatorName?: string | null;
+  creatorImage?: string | null;
 };
 
 export type ActivityListItem = Pick<

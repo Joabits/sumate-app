@@ -1,7 +1,7 @@
 import Image from "@/shared/components/Image";
 import { Map, Pencil, Plus } from "lucide-react";
-import { EditActivityDateForm } from "./EditActivityDateForm";
-import { EditActivityCapacityForm } from "./EditActivityCapacityForm";
+import { InlineEditForm } from "./InlineEditForm";
+import { useActivities } from "@/activities/hooks/useActivities";
 import { EditActivityCausesForm } from "./EditActivityCausesForm";
 import { useActivityDetail } from "@/activities/hooks/useActivityDetail";
 
@@ -102,6 +102,7 @@ function toLocalDatetimeString(dateString: string): string {
 
 export function ActivityDetailInfo() {
   const { activity, isEditMode, activeField, setActiveField, openLocationSheet } = useActivityDetail();
+  const { updateDate, updateCapacity } = useActivities();
   const { id: activityId, name, date, capacity, isOwner, detail } = activity;
 
   const { fullDate, time } = formatDetailedDate(date);
@@ -128,12 +129,28 @@ export function ActivityDetailInfo() {
     <section className="space-y-4" data-purpose="key-event-information">
         {/* Fila: Fecha y Hora */}
         {activeField === "date" ? (
-          <EditActivityDateForm
-            activityId={activityId}
-            initialDate={toLocalDatetimeString(date)}
-            onCancel={() => setActiveField(null)}
-            onSuccess={() => setActiveField(null)}
-          />
+          <InlineEditForm
+            initialValue={toLocalDatetimeString(date)}
+            save={(value) => updateDate(activityId, value)}
+            successMessage="Fecha actualizada."
+            errorTitle="Error al actualizar fecha"
+            onClose={() => setActiveField(null)}
+            className="pb-4 border-b border-slate-100/90 space-y-3 w-full"
+            header={{
+              icon: "/assets/icons/date.webp",
+              title: "Fecha y hora",
+              subtitle: "Selecciona la fecha y hora de la actividad",
+            }}
+          >
+            {(value, setValue) => (
+              <input
+                type="datetime-local"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                className="w-full text-sm bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+              />
+            )}
+          </InlineEditForm>
         ) : (
           <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
             <div className="flex items-center flex-1 mr-2">
@@ -190,12 +207,30 @@ export function ActivityDetailInfo() {
 
         {/* Fila: Cupos */}
         {activeField === "capacity" ? (
-          <EditActivityCapacityForm
-            activityId={activityId}
-            initialCapacity={capacity}
-            onCancel={() => setActiveField(null)}
-            onSuccess={() => setActiveField(null)}
-          />
+          <InlineEditForm
+            initialValue={String(capacity)}
+            save={(value) => updateCapacity(activityId, Number(value))}
+            successMessage="Cupos actualizados."
+            errorTitle="Error al actualizar cupos"
+            onClose={() => setActiveField(null)}
+            className="pb-4 border-b border-slate-100/90 space-y-3 w-full"
+            header={{
+              icon: "/assets/icons/capacity.webp",
+              title: "Cupos disponibles",
+              subtitle: "Define la cantidad de cupos disponibles",
+            }}
+          >
+            {(value, setValue) => (
+              <input
+                type="number"
+                min={1}
+                max={10000}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                className="w-full text-sm font-semibold bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+              />
+            )}
+          </InlineEditForm>
         ) : (
           <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
             <div className="flex items-center flex-1 mr-2">

@@ -1,5 +1,5 @@
 import type { ApiActionResult } from "@/api/apiResults";
-import { handleApiResultError } from "@/api/errors/errorHandler";
+import { showErrorList } from "@/shared/components/Toast";
 import { useApiErrorRecovery } from "./useApiErrorRecovery";
 
 type SubmitActionOptions = {
@@ -21,16 +21,13 @@ export function useSubmitAction() {
     try {
       result = await action();
     } catch {
-      handleApiResultError(
-        { errors: ["No pudimos completar la operación. Intenta nuevamente."] },
-        { title: errorTitle },
-      );
+      showErrorList(["No pudimos completar la operación. Intenta nuevamente."], { title: errorTitle });
       return;
     }
 
     if (!result.ok) {
       if (await recoverApiError(result)) return;
-      handleApiResultError(result, { title: errorTitle });
+      showErrorList(result.errors.slice(0, 1), { title: errorTitle });
       return;
     }
 
