@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "@/shared/components/Image";
-import { Search, LogOut, X, CircleUser, FileText } from "lucide-react";
+import { Search, LogOut, X, CircleUser, FileText, UserCog } from "lucide-react";
 import { useAuth } from "@/auth/hooks/useAuth";
 import { appToast } from "./Toast";
 import { useNavigate } from "react-router";
@@ -127,7 +127,7 @@ export function AppHeader() {
               </p>
             </div>
 
-            {/* Pie: constancia de horas y cerrar sesión */}
+            {/* Pie: constancia de horas, mis datos y cerrar sesión */}
             <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
               <button
                 type="button"
@@ -139,6 +139,17 @@ export function AppHeader() {
               >
                 <FileText className="w-4 h-4" />
                 <span>Mi constancia de horas</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  navigate("/mis-datos");
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 active:scale-95 transition-all focus:outline-none cursor-pointer"
+              >
+                <UserCog className="w-4 h-4" />
+                <span>Mis datos y cuenta</span>
               </button>
               <button
                 type="button"

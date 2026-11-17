@@ -29,6 +29,7 @@ const NOMBRE_FLUJO: Record<FlujoRechazado, string> = {
   crear_actividad: "Crear actividad",
   publicar_actividad: "Publicar actividad",
   horas: "Horas de voluntariado",
+  eliminar_cuenta: "Eliminar la cuenta",
 };
 
 const NOMBRE_MOTIVO: Record<MotivoRechazo, string> = {
@@ -38,6 +39,7 @@ const NOMBRE_MOTIVO: Record<MotivoRechazo, string> = {
   validacion: "Datos inválidos",
   actividad_cancelada: "Actividad cancelada",
   conflicto: "Conflicto con el estado actual",
+  actividades_por_terminar: "Organiza actividades por terminar",
 };
 
 type Caida = { desde: string; hasta: string; perdidos: number; base: number };

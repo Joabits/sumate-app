@@ -48,7 +48,8 @@ export type FlujoRechazado =
   | "retiro"
   | "crear_actividad"
   | "publicar_actividad"
-  | "horas";
+  | "horas"
+  | "eliminar_cuenta";
 
 /** Por qué se frenó. Lista fija: nunca el mensaje del error ni lo que escribió la persona. */
 export type MotivoRechazo =
@@ -57,7 +58,9 @@ export type MotivoRechazo =
   | "sin_permiso"
   | "validacion"
   | "actividad_cancelada"
-  | "conflicto";
+  | "conflicto"
+  /** Tarea 10: organiza actividades que no terminaron y no puede eliminar la cuenta */
+  | "actividades_por_terminar";
 
 /** Eventos de la app y las únicas propiedades que lleva cada uno. */
 export type Eventos = {
@@ -86,6 +89,12 @@ export type Eventos = {
   horas_respondidas: { respuesta: "aceptadas" | "reclamadas" };
   /** Se ejecutó una búsqueda (sin el texto buscado) */
   busqueda_realizada: { con_texto: boolean; con_filtros: boolean; con_resultados: boolean };
+  /** Descargó el archivo con sus datos (Tarea 10) */
+  mis_datos_descargados: Record<string, never>;
+  /** Abrió la confirmación para eliminar la cuenta */
+  eliminacion_cuenta_iniciada: Record<string, never>;
+  /** La cuenta quedó eliminada en el backend */
+  cuenta_eliminada: Record<string, never>;
   /** Un error de validación o permiso frenó la tarea */
   accion_rechazada: { flujo: FlujoRechazado; motivo: MotivoRechazo };
 };

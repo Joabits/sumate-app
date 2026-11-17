@@ -12,6 +12,7 @@ const MOTIVO_POR_CODIGO: Record<string, MotivoRechazo> = {
   ACTIVIDAD_NO_TERMINADA: "fuera_de_plazo",
   ACTIVITY_CAPACITY_EXCEEDED: "sin_cupos",
   ACTIVIDAD_CANCELADA: "actividad_cancelada",
+  CUENTA_CON_ACTIVIDADES_POR_TERMINAR: "actividades_por_terminar",
 };
 
 /**

@@ -10,6 +10,7 @@ import ResetPasswordPage from "@/auth/pages/ResetPasswordPage";
 import SignupPage from "@/auth/pages/SignupPage";
 import VerifyEmailPage from "@/auth/pages/VerifyEmailPage";
 import WelcomePage from "@/auth/pages/WelcomePage";
+import MisDatosPage from "@/cuenta/pages/MisDatosPage";
 import ConstanciaPage from "@/horas/pages/ConstanciaPage";
 import RecentlyPage from "@/participations/pages/RecentlyPage";
 import { AppProviders } from "@/shared/components/AppProviders";
@@ -48,6 +49,8 @@ export function AppRoutes() {
             <Route path="/my-activities" element={<MyActivitiesPage />} />
             <Route path="/recently" element={<RecentlyPage />} />
             <Route path="/search" element={<SearchPage />} />
+            {/* Tarea 10: ver y descargar mis datos, eliminar la cuenta */}
+            <Route path="/mis-datos" element={<MisDatosPage />} />
             {/* Panel del equipo: no aparece en el menú */}
             <Route path="/analitica" element={<AnaliticaPage />} />
           </Route>
