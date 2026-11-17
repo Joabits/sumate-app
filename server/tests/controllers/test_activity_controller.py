@@ -214,8 +214,8 @@ def test_el_voluntario_ve_su_puesto_y_el_organizador_la_lista_completa(db_sessio
     assert de_carlos.estado_solicitud == "en_espera"
     assert de_carlos.posicion_en_espera == 2
     assert de_carlos.lista_de_espera == []
-    # Sin nombre en la base se muestra "Usuario"
-    assert [p.name for p in de_carlos.participants] == ["Usuario"]
+    # Sin fila en la tabla user (cuenta eliminada) se muestra "Usuario eliminado"
+    assert [p.name for p in de_carlos.participants] == ["Usuario eliminado"]
 
 
 # ── Edición ───────────────────────────────────────────────────────────────────

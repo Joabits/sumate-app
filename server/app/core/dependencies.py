@@ -12,6 +12,7 @@ from app.core.database import DBSession
 from app.services.activity_service import ActivityService
 from app.services.analitica_service import AnaliticaService
 from app.services.cause_service import CauseService
+from app.services.cuenta_service import CuentaService
 from app.services.horas_service import HorasService
 from app.services.participation_service import ParticipationService
 
@@ -32,6 +33,10 @@ def get_cause_service(session: DBSession) -> CauseService:
     return CauseService(session)
 
 
+def get_cuenta_service(session: DBSession) -> CuentaService:
+    return CuentaService(session)
+
+
 def get_analitica_service(session: DBSession) -> AnaliticaService:
     return AnaliticaService(session)
 
@@ -41,3 +46,4 @@ ParticipationServiceDep = Annotated[ParticipationService, Depends(get_participat
 HorasServiceDep = Annotated[HorasService, Depends(get_horas_service)]
 CauseServiceDep = Annotated[CauseService, Depends(get_cause_service)]
 AnaliticaServiceDep = Annotated[AnaliticaService, Depends(get_analitica_service)]
+CuentaServiceDep = Annotated[CuentaService, Depends(get_cuenta_service)]

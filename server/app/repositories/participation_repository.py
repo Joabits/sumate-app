@@ -117,3 +117,13 @@ class ParticipationRepository:
 
     def flush(self) -> None:
         self.session.flush()
+
+    def find_all_of_user(self, user_id: str) -> list[Participation]:
+        """Todas las solicitudes del usuario, en cualquier estado (Mis datos y eliminar la cuenta)."""
+        statement = (
+            select(Participation)
+            .where(Participation.user_id == user_id, Participation.deleted_date.is_(None))
+            .options(selectinload(Participation.activity))
+            .order_by(Participation.created_date.asc())
+        )
+        return list(self.session.exec(statement).all())

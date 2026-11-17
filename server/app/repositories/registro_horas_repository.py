@@ -45,3 +45,16 @@ class RegistroHorasRepository:
 
     def save_all(self, registros: list[RegistroHoras]) -> None:
         self.session.add_all(registros)
+
+    def find_all_of_user(self, user_id: str) -> list[RegistroHoras]:
+        """Todas las horas del voluntario, en cualquier estado (Mis datos y eliminar la cuenta)."""
+        statement = (
+            select(RegistroHoras)
+            .where(RegistroHoras.user_id == user_id, RegistroHoras.deleted_date.is_(None))
+            .options(selectinload(RegistroHoras.activity))
+            .order_by(RegistroHoras.jornada.asc())
+        )
+        return list(self.session.exec(statement).all())
+
+    def delete(self, registro: RegistroHoras) -> None:
+        self.session.delete(registro)

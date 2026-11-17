@@ -32,7 +32,14 @@ from app.repositories.evento_repository import EventoRepository
 # ── Valores de las listas fijas ───────────────────────────────────────────────
 ESTADOS_RETIRO = ("pendiente", "aceptada", "en_espera")
 RESPUESTAS_HORAS = ("aceptadas", "reclamadas")
-FLUJOS = ("postulacion", "retiro", "crear_actividad", "publicar_actividad", "horas")
+FLUJOS = (
+    "postulacion",
+    "retiro",
+    "crear_actividad",
+    "publicar_actividad",
+    "horas",
+    "eliminar_cuenta",
+)
 MOTIVOS_RECHAZO = (
     "fuera_de_plazo",
     "sin_cupos",
@@ -40,6 +47,8 @@ MOTIVOS_RECHAZO = (
     "validacion",
     "actividad_cancelada",
     "conflicto",
+    # Tarea 10: organiza actividades que todavía no terminan
+    "actividades_por_terminar",
 )
 
 # Tipo de cada propiedad: bool, int o una tupla con los únicos textos posibles.
@@ -57,6 +66,9 @@ PROPIEDADES: dict[E, dict[str, Tipo]] = {
     E.HORAS_REGISTRADAS: {"participantes": int},
     E.HORAS_RESPONDIDAS: {"respuesta": RESPUESTAS_HORAS},
     E.BUSQUEDA_REALIZADA: {"con_texto": bool, "con_filtros": bool, "con_resultados": bool},
+    E.MIS_DATOS_DESCARGADOS: {},
+    E.ELIMINACION_CUENTA_INICIADA: {},
+    E.CUENTA_ELIMINADA: {},
     E.ACCION_RECHAZADA: {"flujo": FLUJOS, "motivo": MOTIVOS_RECHAZO},
 }
 
@@ -139,6 +151,22 @@ EMBUDOS: tuple[Embudo, ...] = (
             Paso(E.BUSQUEDA_REALIZADA, "Buscaron"),
             Paso(E.BUSQUEDA_REALIZADA, "Encontraron resultados", filtro={"con_resultados": True}),
         ),
+    ),
+    Embudo(
+        clave="eliminar_cuenta",
+        titulo="Mis datos y eliminar la cuenta",
+        pregunta="¿Cuántos de los que abren la eliminación la terminan y cuántos frena la regla de la app?",
+        pasos=(
+            Paso(E.ELIMINACION_CUENTA_INICIADA, "Abrieron la eliminación"),
+            Paso(E.CUENTA_ELIMINADA, "Eliminaron su cuenta"),
+        ),
+        flujos=("eliminar_cuenta",),
+    ),
+    Embudo(
+        clave="mis_datos",
+        titulo="Descargar mis datos",
+        pregunta="¿Cuántas personas descargan sus datos?",
+        pasos=(Paso(E.MIS_DATOS_DESCARGADOS, "Descargaron sus datos"),),
     ),
 )
 

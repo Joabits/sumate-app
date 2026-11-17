@@ -223,3 +223,20 @@ class MotivoReclamoObligatorioException(ValidationException):
 class EventoInvalidoException(ValidationException):
     code = "EVENTO_INVALIDO"
     message = "El evento no tiene las propiedades definidas."
+
+
+# ── Cuenta (Tarea 10) ─────────────────────────────────────────────────────────
+class CuentaConActividadesPorTerminarException(ConflictException):
+    """Organiza actividades que todavía no terminan: hay voluntarios que dependen de ellas."""
+
+    code = "CUENTA_CON_ACTIVIDADES_POR_TERMINAR"
+
+    def __init__(self, nombres: list[str]) -> None:
+        lista = ", ".join(f"«{nombre}»" for nombre in nombres)
+        super().__init__(
+            message=(
+                f"Todavía no puedes eliminar tu cuenta porque organizas actividades que no "
+                f"terminaron: {lista}. Cancélalas desde Mis actividades (los voluntarios verán el "
+                "motivo) o espera a que terminen, y vuelve a intentarlo."
+            ),
+        )

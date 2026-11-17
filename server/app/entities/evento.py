@@ -48,6 +48,14 @@ class NombreEvento(StrEnum):
     # ── Buscar actividades ──
     BUSQUEDA_REALIZADA = "busqueda_realizada"
 
+    # ── Mis datos y eliminar la cuenta (Tarea 10) ──
+    # Descargó el archivo con sus datos
+    MIS_DATOS_DESCARGADOS = "mis_datos_descargados"
+    # Abrió la confirmación para eliminar la cuenta
+    ELIMINACION_CUENTA_INICIADA = "eliminacion_cuenta_iniciada"
+    # La cuenta quedó eliminada en el backend
+    CUENTA_ELIMINADA = "cuenta_eliminada"
+
     # ── Errores que frenan la tarea (validación o permiso), con motivo de una lista fija ──
     ACCION_RECHAZADA = "accion_rechazada"
 

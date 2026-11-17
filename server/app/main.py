@@ -21,6 +21,7 @@ from app.controllers import (
     activity_controller,
     analitica_controller,
     cause_controller,
+    cuenta_controller,
     health_controller,
     horas_controller,
     participation_controller,
@@ -84,3 +85,4 @@ app.include_router(activity_controller.router, prefix="/api")
 app.include_router(participation_controller.router, prefix="/api")
 app.include_router(horas_controller.router, prefix="/api")
 app.include_router(analitica_controller.router, prefix="/api")
+app.include_router(cuenta_controller.router, prefix="/api")

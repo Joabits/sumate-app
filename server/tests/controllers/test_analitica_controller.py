@@ -166,6 +166,8 @@ def test_sin_eventos_el_panel_queda_en_cero(db_session):
         "crear_actividad",
         "horas",
         "busqueda",
+        "eliminar_cuenta",
+        "mis_datos",
     ]
     assert all(p.cantidad == 0 for e in resumen.embudos for p in e.pasos)
     assert resumen.rechazos == []

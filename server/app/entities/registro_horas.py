@@ -62,7 +62,7 @@ class RegistroHoras(BaseEntity, table=True):
     # ── Getters ───────────────────────────────────────────────────────────────
     @property
     def user_name(self) -> str:
-        return self.user.name if self.user and self.user.name else "Usuario"
+        return self.user.name if self.user and self.user.name else "Usuario eliminado"
 
     @property
     def user_image(self) -> str | None:
