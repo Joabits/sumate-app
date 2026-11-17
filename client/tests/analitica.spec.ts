@@ -261,6 +261,8 @@ test('El panel /analitica muestra un embudo por flujo con los números del backe
     'Crear y publicar una actividad',
     'Horas de voluntariado',
     'Buscar actividades',
+    'Mis datos y eliminar la cuenta',
+    'Descargar mis datos',
   ]);
   for (const embudo of embudos) {
     const region = ana.getByRole('region', { name: embudo.titulo });

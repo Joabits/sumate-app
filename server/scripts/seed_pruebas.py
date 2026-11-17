@@ -34,9 +34,28 @@ from seed_demo import ACTIVITIES, DEMO_PASSWORD, IMG, USERS, hash_password
 USUARIOS = USERS + [
     # Sin actividades ni solicitudes: sirve para ver los estados vacíos
     {"id": "demo-pedro", "name": "Pedro Nuevo", "email": "nuevo@sumate.dev"},
+    # Tarea 10: Valeria elimina su cuenta en la E2E (se vuelve a crear en cada corrida)
+    {"id": "demo-valeria", "name": "Valeria Prueba", "email": "valeria@sumate.dev"},
+    # Tarea 10: está en la lista de espera y entra al cupo que libera Valeria
+    {"id": "demo-tomas", "name": "Tomás Espera", "email": "tomas@sumate.dev"},
 ]
 
 ACTIVIDADES_PRUEBAS = [
+    {
+        # Eliminar la cuenta: Valeria tiene el único cupo y Tomás espera; al eliminarla entra Tomás
+        "name": "Feria de reciclaje en la plaza",
+        "owner": "demo-ana",
+        "image": IMG.format("1532996122724-e3c354a0b15b"),
+        "days": 6,
+        "capacity": 1,
+        "causes": ["medio-ambiente"],
+        "place": "Plaza 14 de Septiembre",
+        "lat": -17.3936,
+        "lng": -66.1570,
+        "description": "Armamos puestos para separar residuos y enseñar a reciclar.",
+        "participants": ["demo-valeria"],
+        "en_espera": ["demo-tomas"],
+    },
     {
         # Horas y constancia: ya terminó (hace 3 días), con Luis y Sofía aceptados
         "name": "Jornada de reforestación en el Tunari",
