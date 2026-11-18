@@ -13,6 +13,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./auth";
+import { coberturaActiva, recibirCobertura } from "./cobertura";
 
 const PORT = Number(process.env.PORT ?? 3000);
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -82,6 +83,10 @@ async function main() {
   server.on("request", (req, res) => {
     if (req.url?.startsWith("/api/auth")) {
       void authHandler(req, res);
+      return;
+    }
+    if (coberturaActiva && req.method === "POST" && req.url === "/__cobertura") {
+      recibirCobertura(req, res);
       return;
     }
     appHandler(req, res);

@@ -4,6 +4,7 @@
  *   AuthProvider  → la sesión, para toda la app
  *   BrowserRouter → las rutas (routers/AppRoutes.tsx)
  */
+import "@/cobertura";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";

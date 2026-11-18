@@ -48,3 +48,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Cobertura de las E2E (COBERTURA=1)
+/.nyc_output/
+/coverage-e2e/
