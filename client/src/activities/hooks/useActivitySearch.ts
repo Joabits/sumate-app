@@ -14,7 +14,14 @@ export const DEFAULT_SEARCH_FILTERS: SearchFilterState = {
   distanceKm: 50,
 };
 
-function getDiscreetUserLocation(): Promise<{ latitude: number; longitude: number } | null> {
+// Con 50 km o más el filtro de distancia está apagado
+export const DISTANCIA_SIN_FILTRO = 50;
+
+/**
+ * Pide la ubicación del dispositivo. Solo se llama al aplicar el filtro de
+ * distancia, que explica para qué la usa; si no está disponible devuelve null.
+ */
+function pedirUbicacion(): Promise<{ latitude: number; longitude: number } | null> {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !("geolocation" in navigator)) {
       resolve(null);
@@ -49,6 +56,7 @@ export function useActivitySearch() {
   const [hasSearched, setHasSearched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<ActivityListItem[]>([]);
+  const [sinUbicacion, setSinUbicacion] = useState(false);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -82,10 +90,18 @@ export function useActivitySearch() {
 
       setHasSearched(true);
       setIsLoading(true);
+      setSinUbicacion(false);
 
       try {
-        // Pedir la ubicación actual de forma discreta
-        const location = await getDiscreetUserLocation();
+        const usaDistancia = filtersToSearch.distanceKm < DISTANCIA_SIN_FILTRO;
+        const location = usaDistancia ? await pedirUbicacion() : null;
+        // Sin ubicación no se puede filtrar por cercanía: se avisa en vez de
+        // mostrar resultados que no respetan el filtro elegido
+        if (usaDistancia && !location) {
+          setSinUbicacion(true);
+          setItems([]);
+          return;
+        }
 
         const encontradas = await searchActivities({
           q: trimmedQuery || undefined,
@@ -95,8 +111,7 @@ export function useActivitySearch() {
           causeIds: filtersToSearch.causeIds,
           userLat: location?.latitude,
           userLon: location?.longitude,
-          maxDistanceKm:
-            filtersToSearch.distanceKm < 50 ? filtersToSearch.distanceKm : undefined,
+          maxDistanceKm: usaDistancia ? filtersToSearch.distanceKm : undefined,
         });
 
         setItems(encontradas);
@@ -138,6 +153,13 @@ export function useActivitySearch() {
     setDraftFilters(DEFAULT_SEARCH_FILTERS);
   };
 
+  const quitarFiltroDeDistancia = () => {
+    const sinDistancia = { ...filters, distanceKm: DISTANCIA_SIN_FILTRO };
+    setFilters(sinDistancia);
+    setDraftFilters(sinDistancia);
+    executeSearch(query, sinDistancia);
+  };
+
   const clearQuery = () => {
     setQuery("");
     const areFiltersDefault =
@@ -174,5 +196,7 @@ export function useActivitySearch() {
     items,
     activeFiltersCount,
     hasActiveFilters,
+    sinUbicacion,
+    quitarFiltroDeDistancia,
   };
 }

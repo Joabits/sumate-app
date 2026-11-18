@@ -346,6 +346,12 @@ export function ActivitySearchFiltersSheet({
                   step={1}
                 />
               </div>
+              {/* Antes de pedir el permiso se dice para qué y qué otra opción hay */}
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Solo si eliges una distancia te pediremos tu ubicación, para ver qué
+                actividades están cerca. No la guardamos en tu cuenta. Si prefieres no
+                compartirla, escribe tu zona en el buscador.
+              </p>
             </div>
 
             {/* Sub-filtro 2: Tamaño de asistentes (Plano) */}
