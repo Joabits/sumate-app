@@ -65,19 +65,19 @@ export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: Reclamar
     <AlertDialog open={isOpen} onOpenChange={cambiarApertura}>
       <AlertDialogContent className="rounded-3xl p-6 sm:p-7 max-w-sm sm:max-w-md">
         <AlertDialogHeader>
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100 text-rose-600 mb-1">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-error-suave text-error mb-1">
             <MessageSquareWarning className="h-7 w-7" />
           </div>
           <AlertDialogTitle>Reclamar horas</AlertDialogTitle>
           <AlertDialogDescription>
-            Te registraron <span className="font-semibold text-slate-900">{formatoHoras(registro.horas)}</span>{" "}
+            Te registraron <span className="font-semibold text-texto">{formatoHoras(registro.horas)}</span>{" "}
             el {formatoJornada(registro.jornada)}. Cuenta qué no está bien; si la organización
             corrige, tendrás que aceptar las horas nuevas.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         <div className="space-y-1.5">
-          <label htmlFor="motivo-reclamo" className="text-sm font-semibold text-slate-800">
+          <label htmlFor="motivo-reclamo" className="text-sm font-semibold text-texto">
             Motivo del reclamo
           </label>
           <textarea
@@ -92,10 +92,10 @@ export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: Reclamar
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "error-motivo-reclamo" : undefined}
             placeholder="Ej: Me quedé hasta las 18:00, fueron 5 horas."
-            className="w-full text-sm text-slate-900 border border-slate-300 rounded-xl px-3.5 py-2.5 resize-none focus:ring-2 focus:ring-rose-500 focus:border-transparent focus:outline-none placeholder:text-slate-400"
+            className="w-full text-sm text-texto border border-borde-fuerte rounded-xl px-3.5 py-2.5 resize-none focus:ring-2 focus:ring-error focus:border-transparent focus:outline-none placeholder:text-texto-tenue"
           />
           {error && (
-            <p id="error-motivo-reclamo" role="alert" className="text-xs font-medium text-rose-700">
+            <p id="error-motivo-reclamo" role="alert" className="text-xs font-medium text-error-fuerte">
               {error}
             </p>
           )}
@@ -104,7 +104,7 @@ export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: Reclamar
         <AlertDialogFooter className="mt-2">
           <AlertDialogCancel
             disabled={isPending}
-            className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+            className="w-full h-11 rounded-xl bg-superficie-alta hover:bg-superficie-hover text-texto-secundario hover:text-texto border-none shadow-none font-medium cursor-pointer"
           >
             Volver
           </AlertDialogCancel>
@@ -112,7 +112,7 @@ export function ReclamarHorasDialog({ registro, isOpen, onOpenChange }: Reclamar
             type="button"
             disabled={isPending}
             onClick={enviar}
-            className="w-full h-11 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold shadow-xs cursor-pointer"
+            className="w-full h-11 rounded-xl bg-error hover:bg-error-fuerte text-sobre-accion font-semibold shadow-xs cursor-pointer"
           >
             {isPending ? (
               <>

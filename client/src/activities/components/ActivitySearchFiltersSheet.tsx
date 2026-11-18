@@ -74,7 +74,7 @@ function CollapsibleSection({
   children,
 }: CollapsibleSectionProps) {
   return (
-    <div className="border-b border-slate-100 last:border-b-0 pb-4 pt-1">
+    <div className="border-b border-borde-suave last:border-b-0 pb-4 pt-1">
       <button
         type="button"
         onClick={onToggle}
@@ -82,18 +82,18 @@ function CollapsibleSection({
         className="w-full flex items-center justify-between py-2 text-left group cursor-pointer focus:outline-none"
       >
         <div className="flex items-center gap-2">
-          {Icon && <Icon className="w-4 h-4 text-slate-500 group-hover:text-slate-800 transition-colors shrink-0" />}
-          <span className="text-sm font-bold text-slate-900 group-hover:text-[#6355de] transition-colors">
+          {Icon && <Icon className="w-4 h-4 text-texto-tenue group-hover:text-texto transition-colors shrink-0" />}
+          <span className="text-sm font-bold text-texto group-hover:text-accion transition-colors">
             {title}
           </span>
           {badge != null && (
-            <span className="ml-1 text-[11px] font-semibold text-[#6355de] bg-[#f3f1fd] px-2 py-0.5 rounded-full">
+            <span className="ml-1 text-[11px] font-semibold text-accion bg-accion-suave px-2 py-0.5 rounded-full">
               {badge}
             </span>
           )}
         </div>
         <ChevronDown
-          className={`w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-transform duration-200 shrink-0 ${
+          className={`w-4 h-4 text-texto-tenue group-hover:text-texto-secundario transition-transform duration-200 shrink-0 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
@@ -230,8 +230,8 @@ export function ActivitySearchFiltersSheet({
                   onClick={() => handleSelectTimeOfDay(opt.id)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                      ? "bg-accion text-sobre-accion border border-accion shadow-sm"
+                      : "bg-fondo text-texto border border-borde hover:border-borde-fuerte"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -260,8 +260,8 @@ export function ActivitySearchFiltersSheet({
                   onClick={() => handleSelectDatePreset(opt.id)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                      ? "bg-accion text-sobre-accion border border-accion shadow-sm"
+                      : "bg-fondo text-texto border border-borde hover:border-borde-fuerte"
                   }`}
                 >
                   <span>{opt.label}</span>
@@ -285,8 +285,8 @@ export function ActivitySearchFiltersSheet({
               onClick={handleSelectAllCauses}
               className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                 isAllCausesSelected
-                  ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                  : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                  ? "bg-accion text-sobre-accion border border-accion shadow-sm"
+                  : "bg-fondo text-texto border border-borde hover:border-borde-fuerte"
               }`}
             >
               <span>Todas</span>
@@ -301,8 +301,8 @@ export function ActivitySearchFiltersSheet({
                   onClick={() => handleToggleCause(cause.id)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                      : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                      ? "bg-accion text-sobre-accion border border-accion shadow-sm"
+                      : "bg-fondo text-texto border border-borde hover:border-borde-fuerte"
                   }`}
                 >
                   <Tag className="w-3 h-3 shrink-0" />
@@ -326,12 +326,12 @@ export function ActivitySearchFiltersSheet({
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
-                  <span className="text-xs font-bold text-slate-800">
+                  <MapPin className="w-4 h-4 text-texto-tenue shrink-0" />
+                  <span className="text-xs font-bold text-texto">
                     Radio de distancia
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-[#6355de] bg-slate-100 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-accion bg-superficie-alta px-2.5 py-0.5 rounded-full">
                   {draftFilters.distanceKm >= 50
                     ? "Cualquier distancia"
                     : `${Math.round(draftFilters.distanceKm)} km`}
@@ -347,7 +347,7 @@ export function ActivitySearchFiltersSheet({
                 />
               </div>
               {/* Antes de pedir el permiso se dice para qué y qué otra opción hay */}
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-texto-tenue leading-relaxed">
                 Solo si eliges una distancia te pediremos tu ubicación, para ver qué
                 actividades están cerca. No la guardamos en tu cuenta. Si prefieres no
                 compartirla, escribe tu zona en el buscador.
@@ -357,8 +357,8 @@ export function ActivitySearchFiltersSheet({
             {/* Sub-filtro 2: Tamaño de asistentes (Plano) */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-slate-500 shrink-0" />
-                <span className="text-xs font-bold text-slate-800">
+                <Users className="w-4 h-4 text-texto-tenue shrink-0" />
+                <span className="text-xs font-bold text-texto">
                   Tamaño de asistentes
                 </span>
               </div>
@@ -372,8 +372,8 @@ export function ActivitySearchFiltersSheet({
                       onClick={() => handleSelectCapacityRange(opt.id)}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                         isSelected
-                          ? "bg-[#6355de] text-white border border-[#6355de] shadow-sm"
-                          : "bg-white text-slate-800 border border-slate-200 hover:border-slate-300"
+                          ? "bg-accion text-sobre-accion border border-accion shadow-sm"
+                          : "bg-fondo text-texto border border-borde hover:border-borde-fuerte"
                       }`}
                     >
                       <span>{opt.label}</span>
@@ -387,18 +387,18 @@ export function ActivitySearchFiltersSheet({
       </div>
 
       {/* Footer Fijo con Limpiar todo y Aplicar filtros */}
-      <div className="bg-white/95 backdrop-blur-sm border-t border-slate-100 px-6 lg:px-8 py-4 flex items-center justify-between shrink-0">
+      <div className="bg-fondo/95 backdrop-blur-sm border-t border-borde-suave px-6 lg:px-8 py-4 flex items-center justify-between shrink-0">
         <button
           type="button"
           onClick={onReset}
-          className="text-slate-500 hover:text-slate-900 text-sm font-semibold py-2 px-1 cursor-pointer transition-colors"
+          className="text-texto-tenue hover:text-texto text-sm font-semibold py-2 px-1 cursor-pointer transition-colors"
         >
           Limpiar todo
         </button>
         <button
           type="button"
           onClick={onApply}
-          className="bg-[#6355de] text-white hover:bg-[#5245c7] active:scale-95 font-semibold text-sm px-6 py-2.5 rounded-full shadow-md shadow-[#6355de]/20 cursor-pointer transition-all"
+          className="bg-accion text-sobre-accion hover:bg-accion-hover active:scale-95 font-semibold text-sm px-6 py-2.5 rounded-full shadow-md shadow-accion/20 cursor-pointer transition-all"
         >
           Aplicar filtros
         </button>

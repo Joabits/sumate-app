@@ -120,32 +120,32 @@ export function AppSheet({
           preventCloseOnOutsideClick ? (e) => e.preventDefault() : undefined
         }
         className={cn(
-          "flex flex-col bg-white p-0 text-popover-foreground shadow-2xl",
+          "flex flex-col bg-fondo p-0 text-popover-foreground shadow-2xl",
           getDimensionsClass(),
           resolvedSide === "top" && "rounded-b-3xl",
           resolvedSide === "bottom" && "rounded-t-3xl",
-          resolvedSide === "right" && "border-l border-slate-100",
+          resolvedSide === "right" && "border-l border-borde-suave",
           className
         )}
       >
         {/* Handle pill únicamente para bottom sheet en móvil */}
         {resolvedSide === "bottom" && (
-          <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mt-3 mb-1 shrink-0" />
+          <div className="w-10 h-1 bg-superficie-hover rounded-full mx-auto mt-3 mb-1 shrink-0" />
         )}
 
         {showHeader && title ? (
           <div
             className={cn(
               "px-6 lg:px-8 pt-6 pb-2",
-              showDivider && "border-b border-slate-100"
+              showDivider && "border-b border-borde-suave"
             )}
           >
             <SheetHeader className="p-0 space-y-1 text-left pr-10">
-              <SheetTitle className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tight">
+              <SheetTitle className="text-xl lg:text-2xl font-bold text-texto tracking-tight">
                 {title}
               </SheetTitle>
               {description ? (
-                <SheetDescription className="text-xs lg:text-sm text-slate-500 font-normal">
+                <SheetDescription className="text-xs lg:text-sm text-texto-tenue font-normal">
                   {description}
                 </SheetDescription>
               ) : null}

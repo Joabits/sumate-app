@@ -77,7 +77,7 @@ export function EditActivityCausesForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="pb-4 border-b border-slate-100/90 space-y-4 w-full">
+    <form onSubmit={handleSubmit} className="pb-4 border-b border-borde-suave/90 space-y-4 w-full">
       <div className="flex items-center">
         <div className="shrink-0 flex items-center justify-center mr-6">
           <Image
@@ -90,17 +90,17 @@ export function EditActivityCausesForm({
           />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900 leading-tight">
+          <p className="text-sm font-semibold text-texto leading-tight">
             Causas temáticas
           </p>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-texto-tenue mt-0.5">
             Selecciona una o más causas que representen esta actividad
           </p>
         </div>
       </div>
 
       {isLoadingCatalog ? (
-        <div className="flex items-center justify-center py-4 text-slate-400 gap-2">
+        <div className="flex items-center justify-center py-4 text-texto-tenue gap-2">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-xs">Cargando causas disponibles...</span>
         </div>
@@ -115,8 +115,8 @@ export function EditActivityCausesForm({
                 onClick={() => toggleCause(cause.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-[#6355de] text-white border-[#6355de] shadow-sm shadow-[#6355de]/20"
-                    : "bg-white text-slate-700 hover:bg-slate-100 border-slate-200 shadow-2xs"
+                    ? "bg-accion text-sobre-accion border-accion shadow-sm shadow-accion/20"
+                    : "bg-fondo text-texto-secundario hover:bg-superficie-alta border-borde shadow-2xs"
                 }`}
               >
                 {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
@@ -132,14 +132,14 @@ export function EditActivityCausesForm({
           type="button"
           onClick={onCancel}
           disabled={isSaving}
-          className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+          className="w-full rounded-xl bg-superficie-alta hover:bg-superficie-hover text-texto-secundario hover:text-texto border-none shadow-none font-medium cursor-pointer"
         >
           Cancelar
         </Button>
         <Button
           type="submit"
           disabled={isSaving || isLoadingCatalog}
-          className="w-full bg-[#6355de] hover:bg-[#5446cc] text-white rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full bg-accion hover:bg-accion-hover text-sobre-accion rounded-xl flex items-center justify-center gap-2 cursor-pointer"
         >
           {isSaving ? (
             <>

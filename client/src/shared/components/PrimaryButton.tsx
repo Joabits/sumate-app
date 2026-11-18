@@ -6,14 +6,14 @@ export type PrimaryButtonProps = React.ComponentProps<typeof Button>;
 
 /**
  * PrimaryButton — Botón con el color primario de la aplicación.
- * Utiliza el componente Button de Shadcn UI pero le aplica directamente
- * la clase bg-app-primary y text-app-primary-foreground definidas en el tema.
+ * Usa el Button de Shadcn UI con los tokens de la acción principal
+ * (styles/tokens.css): bg-accion, text-sobre-accion y hover:bg-accion-hover.
  */
 export function PrimaryButton({ className, ...props }: PrimaryButtonProps) {
   return (
     <Button
       className={cn(
-        "bg-app-primary text-app-primary-foreground hover:bg-app-primary/90 shadow-sm",
+        "bg-accion text-sobre-accion hover:bg-accion-hover shadow-sm",
         className
       )}
       {...props}

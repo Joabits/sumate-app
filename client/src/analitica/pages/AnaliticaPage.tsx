@@ -65,11 +65,11 @@ function EmbudoSeccion({ embudo }: { embudo: Embudo }) {
   const id = `embudo-${embudo.clave}`;
 
   return (
-    <section aria-labelledby={id} className="mt-5 rounded-2xl border border-slate-200 p-4 sm:p-5">
-      <h2 id={id} className="text-base font-bold text-slate-900">
+    <section aria-labelledby={id} className="mt-5 rounded-2xl border border-borde p-4 sm:p-5">
+      <h2 id={id} className="text-base font-bold text-texto">
         {embudo.titulo}
       </h2>
-      <p className="mt-1 text-xs text-slate-500 leading-relaxed">{embudo.pregunta}</p>
+      <p className="mt-1 text-xs text-texto-tenue leading-relaxed">{embudo.pregunta}</p>
 
       {/* Las barras repiten lo que dice la tabla */}
       <div className="mt-4 space-y-2" aria-hidden="true">
@@ -77,14 +77,14 @@ function EmbudoSeccion({ embudo }: { embudo: Embudo }) {
           const ancho = inicio === 0 ? 0 : Math.min(100, Math.round((paso.cantidad / inicio) * 100));
           return (
             <div key={`${paso.evento}-${i}`} className="flex items-center gap-3">
-              <span className="w-40 shrink-0 text-xs font-semibold text-slate-600 truncate">{paso.etiqueta}</span>
-              <div className="flex-1 h-3 rounded-full bg-slate-100 overflow-hidden">
+              <span className="w-40 shrink-0 text-xs font-semibold text-texto-secundario truncate">{paso.etiqueta}</span>
+              <div className="flex-1 h-3 rounded-full bg-superficie-alta overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${i === embudo.pasos.length - 1 ? "bg-emerald-600" : "bg-[#6355de]"}`}
+                  className={`h-full rounded-full ${i === embudo.pasos.length - 1 ? "bg-exito" : "bg-accion"}`}
                   style={{ width: `${ancho}%` }}
                 />
               </div>
-              <span className="w-8 shrink-0 text-right text-xs font-bold text-slate-900 tabular-nums">
+              <span className="w-8 shrink-0 text-right text-xs font-bold text-texto tabular-nums">
                 {paso.cantidad}
               </span>
             </div>
@@ -95,7 +95,7 @@ function EmbudoSeccion({ embudo }: { embudo: Embudo }) {
       <table className="mt-4 w-full text-sm">
         <caption className="sr-only">Pasos de {embudo.titulo}</caption>
         <thead>
-          <tr className="text-xs text-slate-500">
+          <tr className="text-xs text-texto-tenue">
             <th scope="col" className="py-1 text-left font-semibold">Paso</th>
             <th scope="col" className="py-1 text-right font-semibold">Llegaron</th>
             <th scope="col" className="py-1 text-right font-semibold">Del inicio</th>
@@ -107,14 +107,14 @@ function EmbudoSeccion({ embudo }: { embudo: Embudo }) {
             const anterior = embudo.pasos[i - 1];
             const perdidos = anterior ? anterior.cantidad - paso.cantidad : 0;
             return (
-              <tr key={`${paso.evento}-${i}`} className="border-t border-slate-100">
-                <th scope="row" className="py-2 text-left font-medium text-slate-700">
+              <tr key={`${paso.evento}-${i}`} className="border-t border-borde-suave">
+                <th scope="row" className="py-2 text-left font-medium text-texto-secundario">
                   {paso.etiqueta}
-                  <span className="block font-mono text-[11px] font-normal text-[#4f43c4]">{paso.evento}</span>
+                  <span className="block font-mono text-[11px] font-normal text-accion-hover">{paso.evento}</span>
                 </th>
-                <td className="py-2 text-right tabular-nums text-slate-900">{paso.cantidad}</td>
-                <td className="py-2 text-right tabular-nums text-slate-700">{porcentaje(paso.cantidad, inicio)}</td>
-                <td className="py-2 text-right tabular-nums text-rose-700">
+                <td className="py-2 text-right tabular-nums text-texto">{paso.cantidad}</td>
+                <td className="py-2 text-right tabular-nums text-texto-secundario">{porcentaje(paso.cantidad, inicio)}</td>
+                <td className="py-2 text-right tabular-nums text-error-fuerte">
                   {anterior && perdidos > 0 ? `−${porcentaje(perdidos, anterior.cantidad)}` : "—"}
                 </td>
               </tr>
@@ -124,15 +124,15 @@ function EmbudoSeccion({ embudo }: { embudo: Embudo }) {
       </table>
 
       {caida ? (
-        <p className="mt-3 text-sm font-semibold text-rose-700">
+        <p className="mt-3 text-sm font-semibold text-error-fuerte">
           Mayor caída: de «{caida.desde}» a «{caida.hasta}» se pierden {caida.perdidos} de {caida.base} (
           {porcentaje(caida.perdidos, caida.base)}).
         </p>
       ) : (
-        <p className="mt-3 text-sm text-slate-500">Todavía no hay caída entre pasos.</p>
+        <p className="mt-3 text-sm text-texto-tenue">Todavía no hay caída entre pasos.</p>
       )}
       {embudo.rechazos > 0 && (
-        <p className="mt-1 text-xs text-slate-600">
+        <p className="mt-1 text-xs text-texto-secundario">
           Se frenó {embudo.rechazos} {embudo.rechazos === 1 ? "vez" : "veces"} por un error de validación o permiso.
         </p>
       )}
@@ -148,14 +148,14 @@ export default function AnaliticaPage() {
 
   if (error) return <ErrorView error={error} />;
   if (!data) {
-    return <p className="py-8 text-center text-sm text-slate-500">Cargando la analítica...</p>;
+    return <p className="py-8 text-center text-sm text-texto-tenue">Cargando la analítica...</p>;
   }
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto pb-10">
       <div className="pt-4 lg:pt-5 max-w-3xl">
-        <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Analítica</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-xl lg:text-2xl font-extrabold text-texto tracking-tight">Analítica</h1>
+        <p className="text-sm text-texto-tenue mt-0.5">
           Dónde se traba la gente en cada flujo de Súmate. Se registra la acción, no quién la hizo.
         </p>
 
@@ -163,19 +163,19 @@ export default function AnaliticaPage() {
           <EmbudoSeccion key={embudo.clave} embudo={embudo} />
         ))}
 
-        <section aria-labelledby="errores" className="mt-5 rounded-2xl border border-slate-200 p-4 sm:p-5">
-          <h2 id="errores" className="text-base font-bold text-slate-900">
+        <section aria-labelledby="errores" className="mt-5 rounded-2xl border border-borde p-4 sm:p-5">
+          <h2 id="errores" className="text-base font-bold text-texto">
             Errores que frenan la tarea
           </h2>
-          <p className="mt-1 text-xs text-slate-500">
-            <code className="font-mono text-[#4f43c4]">accion_rechazada</code> con el motivo de una lista fija.
+          <p className="mt-1 text-xs text-texto-tenue">
+            <code className="font-mono text-accion-hover">accion_rechazada</code> con el motivo de una lista fija.
           </p>
           {data.rechazos.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">Todavía no hay errores registrados.</p>
+            <p className="mt-2 text-sm text-texto-tenue">Todavía no hay errores registrados.</p>
           ) : (
             <table className="mt-3 w-full text-sm">
               <thead>
-                <tr className="text-xs text-slate-500">
+                <tr className="text-xs text-texto-tenue">
                   <th scope="col" className="py-1 text-left font-semibold">Flujo</th>
                   <th scope="col" className="py-1 text-left font-semibold">Motivo</th>
                   <th scope="col" className="py-1 text-right font-semibold">Veces</th>
@@ -183,10 +183,10 @@ export default function AnaliticaPage() {
               </thead>
               <tbody>
                 {data.rechazos.map((r) => (
-                  <tr key={`${r.flujo}-${r.motivo}`} className="border-t border-slate-100">
-                    <td className="py-2 text-slate-700">{NOMBRE_FLUJO[r.flujo] ?? r.flujo}</td>
-                    <td className="py-2 text-slate-700">{NOMBRE_MOTIVO[r.motivo] ?? r.motivo}</td>
-                    <td className="py-2 text-right tabular-nums font-semibold text-slate-900">{r.cantidad}</td>
+                  <tr key={`${r.flujo}-${r.motivo}`} className="border-t border-borde-suave">
+                    <td className="py-2 text-texto-secundario">{NOMBRE_FLUJO[r.flujo] ?? r.flujo}</td>
+                    <td className="py-2 text-texto-secundario">{NOMBRE_MOTIVO[r.motivo] ?? r.motivo}</td>
+                    <td className="py-2 text-right tabular-nums font-semibold text-texto">{r.cantidad}</td>
                   </tr>
                 ))}
               </tbody>
@@ -194,16 +194,16 @@ export default function AnaliticaPage() {
           )}
         </section>
 
-        <section aria-labelledby="ultimos-eventos" className="mt-5 rounded-2xl border border-slate-200 p-4 sm:p-5">
-          <h2 id="ultimos-eventos" className="text-base font-bold text-slate-900">
+        <section aria-labelledby="ultimos-eventos" className="mt-5 rounded-2xl border border-borde p-4 sm:p-5">
+          <h2 id="ultimos-eventos" className="text-base font-bold text-texto">
             Últimos eventos
           </h2>
           {data.ultimos.length === 0 ? (
-            <p className="mt-2 text-sm text-slate-500">Todavía no hay eventos.</p>
+            <p className="mt-2 text-sm text-texto-tenue">Todavía no hay eventos.</p>
           ) : (
             <table className="mt-3 w-full text-xs">
               <thead>
-                <tr className="text-slate-500">
+                <tr className="text-texto-tenue">
                   <th scope="col" className="py-1 pr-2 text-left font-semibold">Evento</th>
                   <th scope="col" className="py-1 pr-2 text-left font-semibold">Propiedades</th>
                   <th scope="col" className="py-1 text-right font-semibold">Fecha</th>
@@ -211,10 +211,10 @@ export default function AnaliticaPage() {
               </thead>
               <tbody>
                 {data.ultimos.map((evento, i) => (
-                  <tr key={`${evento.fecha}-${i}`} className="border-t border-slate-100 align-top">
-                    <td className="py-2 pr-2 font-mono text-slate-800 break-all">{evento.evento}</td>
-                    <td className="py-2 pr-2 font-mono text-slate-600 break-all">{textoProps(evento.props)}</td>
-                    <td className="py-2 text-right text-slate-500 whitespace-nowrap">{fechaHora(evento.fecha)}</td>
+                  <tr key={`${evento.fecha}-${i}`} className="border-t border-borde-suave align-top">
+                    <td className="py-2 pr-2 font-mono text-texto break-all">{evento.evento}</td>
+                    <td className="py-2 pr-2 font-mono text-texto-secundario break-all">{textoProps(evento.props)}</td>
+                    <td className="py-2 text-right text-texto-tenue whitespace-nowrap">{fechaHora(evento.fecha)}</td>
                   </tr>
                 ))}
               </tbody>

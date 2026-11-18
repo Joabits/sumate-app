@@ -46,7 +46,7 @@ export function ActivitySearchView() {
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
                 key={n}
-                className="bg-white rounded-2xl border border-slate-100 lg:border-none p-3 shadow-xs lg:shadow-none space-y-3"
+                className="bg-fondo rounded-2xl border border-borde-suave lg:border-none p-3 shadow-xs lg:shadow-none space-y-3"
               >
                 <Skeleton className="w-full h-44 rounded-xl" />
                 <div className="space-y-2">
@@ -62,13 +62,13 @@ export function ActivitySearchView() {
         {/* Estado Inicial (Sin búsqueda disparada) */}
         {!isLoading && !hasSearched && (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#f3f1fd] text-[#6355de] flex items-center justify-center mb-3">
+            <div className="w-16 h-16 rounded-full bg-accion-suave text-accion flex items-center justify-center mb-3">
               <Search className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-texto">
               Explora actividades
             </h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-xs leading-relaxed">
+            <p className="text-sm text-texto-tenue mt-1 max-w-xs leading-relaxed">
               No hay resultados aún, intenta buscar algo
             </p>
           </div>
@@ -77,13 +77,13 @@ export function ActivitySearchView() {
         {/* Filtro de distancia sin ubicación: se explica y se ofrecen otras salidas */}
         {!isLoading && sinUbicacion && (
           <div role="status" className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+            <div className="w-16 h-16 rounded-full bg-superficie-alta text-texto-tenue flex items-center justify-center mb-3">
               <MapPinOff className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-texto">
               No pudimos usar tu ubicación
             </h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-xs leading-relaxed">
+            <p className="text-sm text-texto-tenue mt-1 max-w-xs leading-relaxed">
               El filtro de distancia la necesita para saber qué actividades están cerca.
               Puedes permitirla en tu navegador, o escribir tu zona en el buscador
               (por ejemplo, «Sopocachi») y quitar el filtro.
@@ -91,7 +91,7 @@ export function ActivitySearchView() {
             <button
               type="button"
               onClick={quitarFiltroDeDistancia}
-              className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#6355de] bg-[#f3f1fd] hover:bg-[#eae6fd] active:scale-95 transition-all cursor-pointer shadow-xs border border-[#6355de]/15"
+              className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-accion bg-accion-suave hover:bg-accion-suave-hover active:scale-95 transition-all cursor-pointer shadow-xs border border-accion/15"
             >
               Quitar el filtro de distancia
             </button>
@@ -101,20 +101,20 @@ export function ActivitySearchView() {
         {/* Estado Vacío (Búsqueda ejecutada sin coincidencias) */}
         {!isLoading && hasSearched && !sinUbicacion && items.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+            <div className="w-16 h-16 rounded-full bg-superficie-alta text-texto-tenue flex items-center justify-center mb-3">
               <SearchX className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-slate-800">
+            <h3 className="text-lg font-bold text-texto">
               Sin resultados
             </h3>
-            <p className="text-sm text-slate-500 mt-1 max-w-xs leading-relaxed">
+            <p className="text-sm text-texto-tenue mt-1 max-w-xs leading-relaxed">
               No se ha encontrado nada en base a ese filtro de búsqueda
             </p>
             <button
               type="button"
               onClick={openFiltersSheet}
               aria-label="Ajustar filtros de búsqueda"
-              className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-[#6355de] bg-[#f3f1fd] hover:bg-[#eae6fd] active:scale-95 transition-all cursor-pointer shadow-xs border border-[#6355de]/15"
+              className="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-accion bg-accion-suave hover:bg-accion-suave-hover active:scale-95 transition-all cursor-pointer shadow-xs border border-accion/15"
             >
               <SlidersHorizontal className="w-3.5 h-3.5" />
               <span>Ajustar filtros</span>

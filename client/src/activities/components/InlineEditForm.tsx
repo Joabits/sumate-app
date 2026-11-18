@@ -60,8 +60,8 @@ export function InlineEditForm({
             />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900 leading-tight">{header.title}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{header.subtitle}</p>
+            <p className="text-sm font-semibold text-texto leading-tight">{header.title}</p>
+            <p className="text-xs text-texto-tenue mt-0.5">{header.subtitle}</p>
           </div>
         </div>
       )}
@@ -72,7 +72,7 @@ export function InlineEditForm({
         <Button
           type="button"
           onClick={onClose}
-          className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+          className="w-full rounded-xl bg-superficie-alta hover:bg-superficie-hover text-texto-secundario hover:text-texto border-none shadow-none font-medium cursor-pointer"
         >
           Cancelar
         </Button>
@@ -80,7 +80,7 @@ export function InlineEditForm({
           text="Guardar"
           pendingText="Guardando..."
           icon={<Check className="w-4 h-4" />}
-          className="w-full bg-[#6355de] hover:bg-[#5446cc] text-white rounded-xl"
+          className="w-full bg-accion hover:bg-accion-hover text-sobre-accion rounded-xl"
         />
       </div>
     </form>

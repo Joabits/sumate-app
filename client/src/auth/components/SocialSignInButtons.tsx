@@ -56,16 +56,16 @@ export default function SocialSignInButtons({
       onClick={handleGoogleSignIn}
       disabled={isLoading}
       className={cn(
-        "w-full h-[52px] bg-white border border-[#E2E4E9] rounded-full flex items-center justify-center gap-3 shadow-[0_2px_4px_rgba(0,0,0,0.04)] hover:bg-gray-50 active:scale-[0.98] transition cursor-pointer select-none disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100",
+        "w-full h-[52px] bg-fondo border border-borde rounded-full flex items-center justify-center gap-3 shadow-xs hover:bg-superficie active:scale-[0.98] transition cursor-pointer select-none disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100",
         className
       )}
     >
       {isLoading ? (
-        <Loader2 className="h-5 w-5 animate-spin text-[#6355DE] shrink-0" />
+        <Loader2 className="h-5 w-5 animate-spin text-accion shrink-0" />
       ) : (
         <GoogleIcon />
       )}
-      <span className="text-[15px] font-semibold text-[#2D3139]">
+      <span className="text-[15px] font-semibold text-texto">
         Continuar con Google
       </span>
     </button>

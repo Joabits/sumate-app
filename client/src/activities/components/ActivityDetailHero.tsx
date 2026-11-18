@@ -33,36 +33,36 @@ export function ActivityDetailHero() {
     switch (status) {
       case "active":
         return (
-          <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse" />
-            <span className="text-xs font-semibold text-slate-700 tracking-tight">
+          <div className="absolute top-3.5 left-3.5 bg-fondo/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-exito mr-2 animate-pulse" />
+            <span className="text-xs font-semibold text-texto-secundario tracking-tight">
               Inscripciones abiertas
             </span>
           </div>
         );
       case "draft":
         return (
-          <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse" />
-            <span className="text-xs font-semibold text-amber-800 tracking-tight">
+          <div className="absolute top-3.5 left-3.5 bg-fondo/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-aviso mr-2 animate-pulse" />
+            <span className="text-xs font-semibold text-aviso-fuerte tracking-tight">
               Borrador
             </span>
           </div>
         );
       case "closed":
         return (
-          <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-slate-400 mr-2" />
-            <span className="text-xs font-semibold text-slate-600 tracking-tight">
+          <div className="absolute top-3.5 left-3.5 bg-fondo/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-texto-tenue mr-2" />
+            <span className="text-xs font-semibold text-texto-secundario tracking-tight">
               Convocatoria cerrada
             </span>
           </div>
         );
       case "cancelled":
         return (
-          <div className="absolute top-3.5 left-3.5 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-rose-500 mr-2" />
-            <span className="text-xs font-semibold text-rose-700 tracking-tight">
+          <div className="absolute top-3.5 left-3.5 bg-fondo/95 backdrop-blur-md px-3.5 py-1.5 rounded-full flex items-center shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-error mr-2" />
+            <span className="text-xs font-semibold text-error-fuerte tracking-tight">
               Cancelada
             </span>
           </div>
@@ -72,7 +72,7 @@ export function ActivityDetailHero() {
 
   return (
     <section
-      className="relative w-full h-64 sm:h-72 mb-6 overflow-hidden rounded-3xl shadow-sm bg-slate-100 group"
+      className="relative w-full h-64 sm:h-72 mb-6 overflow-hidden rounded-3xl shadow-sm bg-superficie-alta group"
       data-purpose="hero-image-container"
     >
       <Image
@@ -103,7 +103,7 @@ export function ActivityDetailHero() {
             onClick={() => fileInputRef.current?.click()}
             disabled={isPending}
             aria-label="Cambiar foto de portada"
-            className="absolute bottom-3.5 right-3.5 bg-black/60 hover:bg-black/80 backdrop-blur-md text-white p-3 rounded-full shadow-lg transition-all active:scale-95 flex items-center justify-center cursor-pointer"
+            className="absolute bottom-3.5 right-3.5 bg-velo/60 hover:bg-velo/80 backdrop-blur-md text-sobre-accion p-3 rounded-full shadow-lg transition-all active:scale-95 flex items-center justify-center cursor-pointer"
             title="Cambiar foto de portada"
           >
             {isPending ? (

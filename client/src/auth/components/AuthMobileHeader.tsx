@@ -34,12 +34,12 @@ export function AuthMobileHeader({
         type="button"
         onClick={handleBack}
         aria-label="Volver"
-        className="p-2 -ml-2 text-zinc-800 hover:text-zinc-600 active:scale-95 transition-transform rounded-full focus:outline-none focus:ring-2 focus:ring-[#6355DE] cursor-pointer"
+        className="p-2 -ml-2 text-texto hover:text-texto-secundario active:scale-95 transition-transform rounded-full focus:outline-none focus:ring-2 focus:ring-accion cursor-pointer"
       >
         <IconComponent className="w-6 h-6 stroke-[2.2]" />
       </button>
 
-      <span className="text-xl font-bold tracking-tight text-zinc-900 absolute left-1/2 -translate-x-1/2 select-none">
+      <span className="text-xl font-bold tracking-tight text-texto absolute left-1/2 -translate-x-1/2 select-none">
         {title}
       </span>
 

@@ -7,9 +7,9 @@ export function ActivitiesListSkeleton() {
       data-purpose="activities-skeleton"
     >
       {/* Filtros Skeleton */}
-      <div className="flex items-center justify-start gap-2 pt-4 pb-3 border-b border-slate-100/80 px-1 bg-white shrink-0">
+      <div className="flex items-center justify-start gap-2 pt-4 pb-3 border-b border-borde-suave/80 px-1 bg-fondo shrink-0">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-7 w-20 rounded-full bg-slate-100" />
+          <Skeleton key={i} className="h-7 w-20 rounded-full bg-superficie-alta" />
         ))}
       </div>
 
@@ -19,18 +19,18 @@ export function ActivitiesListSkeleton() {
           {[1, 2, 3, 4, 5, 6].map((item) => (
             <div
               key={item}
-              className="pb-6 lg:pb-0 border-b border-slate-100 lg:border-none animate-pulse duration-700 flex flex-col"
+              className="pb-6 lg:pb-0 border-b border-borde-suave lg:border-none animate-pulse duration-700 flex flex-col"
             >
               {/* Skeleton para imagen */}
-              <Skeleton className="w-full h-44 lg:h-52 rounded-2xl bg-slate-200/90 shrink-0" />
+              <Skeleton className="w-full h-44 lg:h-52 rounded-2xl bg-superficie-hover/90 shrink-0" />
 
               {/* Skeleton para textos */}
               <div className="pt-3 px-1 space-y-2.5">
-                <Skeleton className="h-5 w-4/5 rounded-md bg-slate-200/90" />
-                <Skeleton className="h-4 w-1/3 rounded-md bg-slate-200/80" />
+                <Skeleton className="h-5 w-4/5 rounded-md bg-superficie-hover/90" />
+                <Skeleton className="h-4 w-1/3 rounded-md bg-superficie-hover/80" />
                 <div className="flex items-center justify-between pt-2">
-                  <Skeleton className="h-4 w-28 rounded-md bg-slate-100" />
-                  <Skeleton className="h-4 w-16 rounded-md bg-slate-100" />
+                  <Skeleton className="h-4 w-28 rounded-md bg-superficie-alta" />
+                  <Skeleton className="h-4 w-16 rounded-md bg-superficie-alta" />
                 </div>
               </div>
             </div>

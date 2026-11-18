@@ -54,24 +54,24 @@ export function SolicitudesPendientes() {
 
   return (
     <section
-      className="mt-6 pt-5 border-t border-slate-100"
+      className="mt-6 pt-5 border-t border-borde-suave"
       data-purpose="solicitudes-pendientes"
       aria-labelledby="titulo-solicitudes-pendientes"
     >
       <div className="flex items-center justify-between mb-3">
         <h3
           id="titulo-solicitudes-pendientes"
-          className="text-xs font-semibold tracking-wider text-slate-500 uppercase"
+          className="text-xs font-semibold tracking-wider text-texto-tenue uppercase"
         >
           Solicitudes pendientes
         </h3>
-        <span className="text-[11px] font-semibold bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full">
+        <span className="text-[11px] font-semibold bg-aviso-suave text-aviso-fuerte px-2.5 py-0.5 rounded-full">
           {solicitudes.length}
         </span>
       </div>
 
       {cuposLlenos && (
-        <p className="mb-3 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl px-3 py-2">
+        <p className="mb-3 text-xs text-error bg-error-suave border border-error-suave rounded-xl px-3 py-2">
           Los cupos están completos. Para aceptar a alguien más, aumenta la capacidad de la actividad.
         </p>
       )}
@@ -83,11 +83,11 @@ export function SolicitudesPendientes() {
           return (
             <li
               key={p.id}
-              className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-amber-50/60 border border-amber-100"
+              className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-aviso-suave/60 border border-aviso-suave"
             >
               <div className="flex items-center gap-3 min-w-0">
                 {p.image ? (
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-superficie-alta shrink-0 border border-borde">
                     <Image
                       src={p.image}
                       alt={p.name}
@@ -98,13 +98,13 @@ export function SolicitudesPendientes() {
                     />
                   </div>
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-700 font-bold text-sm shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-aviso-suave border border-aviso-borde flex items-center justify-center text-aviso-fuerte font-bold text-sm shrink-0">
                     {inicial}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-900 truncate">{p.name}</p>
-                  <p className="text-xs text-amber-700 flex items-center gap-1">
+                  <p className="text-sm font-medium text-texto truncate">{p.name}</p>
+                  <p className="text-xs text-aviso-fuerte flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     Esperando tu respuesta
                   </p>
@@ -117,7 +117,7 @@ export function SolicitudesPendientes() {
                   onClick={() => manejarDecision(p.id, p.name, "rechazar")}
                   disabled={enProceso}
                   aria-label={`Rechazar solicitud de ${p.name}`}
-                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-fondo border border-error-borde text-error hover:bg-error-suave text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {estaOcupado && ocupado?.decision === "rechazar" ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -131,7 +131,7 @@ export function SolicitudesPendientes() {
                   onClick={() => manejarDecision(p.id, p.name, "aceptar")}
                   disabled={enProceso || cuposLlenos}
                   aria-label={`Aceptar solicitud de ${p.name}`}
-                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  className="flex items-center gap-1 h-11 px-4 rounded-full bg-exito hover:bg-exito-fuerte text-sobre-accion text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {estaOcupado && ocupado?.decision === "aceptar" ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

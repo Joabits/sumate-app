@@ -107,13 +107,13 @@ export function ActivitiesFeed({
       <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-24 lg:pb-12" data-purpose="activities-feed-scroll">
         {filteredActivities.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+            <div className="w-16 h-16 rounded-full bg-superficie-alta text-texto-tenue flex items-center justify-center mb-3">
               <CalendarX className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-zinc-800">
+            <h3 className="text-lg font-bold text-texto">
               {emptyTitle || (scope === "mine" ? "No se encontraron actividades" : "Sin actividades próximas")}
             </h3>
-            <p className="text-sm text-zinc-500 mt-1 max-w-xs leading-relaxed">
+            <p className="text-sm text-texto-tenue mt-1 max-w-xs leading-relaxed">
               {emptyMessage || "No hay iniciativas que coincidan con el filtro seleccionado."}
             </p>
           </div>

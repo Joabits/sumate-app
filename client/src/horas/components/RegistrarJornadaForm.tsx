@@ -53,15 +53,15 @@ export function RegistrarJornadaForm({ activityId, activityDate, participantes }
     <form
       onSubmit={registrar}
       aria-label="Registrar jornada"
-      className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4 sm:p-5 space-y-4"
+      className="rounded-2xl border border-borde-suave bg-superficie/60 p-4 sm:p-5 space-y-4"
     >
-      <div className="flex items-center gap-2 text-slate-800">
-        <CalendarPlus className="w-5 h-5 text-[#6355DE]" aria-hidden="true" />
+      <div className="flex items-center gap-2 text-texto">
+        <CalendarPlus className="w-5 h-5 text-accion" aria-hidden="true" />
         <h3 className="text-base font-bold">Registrar jornada</h3>
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="fecha-jornada" className="block text-sm font-semibold text-slate-800">
+        <label htmlFor="fecha-jornada" className="block text-sm font-semibold text-texto">
           Fecha de la jornada
         </label>
         <input
@@ -72,18 +72,18 @@ export function RegistrarJornadaForm({ activityId, activityDate, participantes }
           max={hoy}
           value={jornada}
           onChange={(e) => setJornada(e.target.value)}
-          className="w-full sm:w-56 h-11 text-sm text-slate-900 border border-slate-300 rounded-xl px-3.5 bg-white focus:ring-2 focus:ring-[#6355DE] focus:border-transparent focus:outline-none"
+          className="w-full sm:w-56 h-11 text-sm text-texto border border-borde-fuerte rounded-xl px-3.5 bg-fondo focus:ring-2 focus:ring-accion focus:border-transparent focus:outline-none"
         />
       </div>
 
       <fieldset className="space-y-2">
-        <legend className="text-sm font-semibold text-slate-800 mb-1">
+        <legend className="text-sm font-semibold text-texto mb-1">
           Horas de cada participante
         </legend>
-        <p className="text-xs text-slate-500">Deja en blanco a quien no fue a esta jornada.</p>
+        <p className="text-xs text-texto-tenue">Deja en blanco a quien no fue a esta jornada.</p>
         {participantes.map((p) => (
-          <div key={p.id} className="flex items-center justify-between gap-3 rounded-xl bg-white border border-slate-100 px-3 py-2">
-            <label htmlFor={`horas-${p.id}`} className="text-sm text-slate-800 truncate">
+          <div key={p.id} className="flex items-center justify-between gap-3 rounded-xl bg-fondo border border-borde-suave px-3 py-2">
+            <label htmlFor={`horas-${p.id}`} className="text-sm text-texto truncate">
               Horas de {p.name}
             </label>
             <input
@@ -99,14 +99,14 @@ export function RegistrarJornadaForm({ activityId, activityDate, participantes }
                 setHoras((prev) => ({ ...prev, [p.id]: e.target.value }));
                 if (error) setError(null);
               }}
-              className="w-24 h-10 text-sm text-right text-slate-900 border border-slate-300 rounded-lg px-2.5 focus:ring-2 focus:ring-[#6355DE] focus:border-transparent focus:outline-none"
+              className="w-24 h-10 text-sm text-right text-texto border border-borde-fuerte rounded-lg px-2.5 focus:ring-2 focus:ring-accion focus:border-transparent focus:outline-none"
             />
           </div>
         ))}
       </fieldset>
 
       {error && (
-        <p role="alert" className="text-sm font-medium text-rose-700">
+        <p role="alert" className="text-sm font-medium text-error-fuerte">
           {error}
         </p>
       )}
@@ -114,7 +114,7 @@ export function RegistrarJornadaForm({ activityId, activityDate, participantes }
       <Button
         type="submit"
         disabled={isPending}
-        className="w-full sm:w-auto h-11 px-6 rounded-xl bg-[#6355DE] hover:bg-[#5244cc] text-white font-semibold cursor-pointer"
+        className="w-full sm:w-auto h-11 px-6 rounded-xl bg-accion hover:bg-accion-hover text-sobre-accion font-semibold cursor-pointer"
       >
         {isPending ? (
           <>

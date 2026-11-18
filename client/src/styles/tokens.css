@@ -1,0 +1,119 @@
+/*
+ * ==============================================================================
+ * TOKENS DE SÚMATE · el único lugar donde se escriben los colores y el radio
+ * ==============================================================================
+ * Nombrados por uso, no por apariencia, y con los mismos nombres que las
+ * Variables de Figma (colección «Súmate», modos Claro y Oscuro).
+ *
+ * Tailwind crea una utilidad por cada token: --color-accion → bg-accion,
+ * text-accion, border-accion, ring-accion/20... Los componentes usan esas
+ * utilidades y nunca un valor (#6355de, bg-slate-100, text-rose-700).
+ *
+ * Tema oscuro: los mismos nombres con otros valores en [data-tema="oscuro"].
+ * La tabla token ↔ componente ↔ archivo está en docs/sistema-de-diseno.md.
+ */
+
+@theme {
+  /* ── Acción principal (botones primarios, enlaces, selección) ──────────── */
+  --color-accion: #6355de;
+  --color-accion-hover: #5244cc;
+  --color-accion-suave: #f3f1fd;
+  --color-accion-suave-hover: #e5e0fd;
+  --color-accion-borde: #ddd8fc;
+  --color-sobre-accion: #ffffff;
+
+  /* ── Texto ─────────────────────────────────────────────────────────────── */
+  --color-texto: #0f172b;
+  --color-texto-secundario: #45556c;
+  --color-texto-tenue: #62748e;
+  --color-texto-deshabilitado: #cad5e2;
+
+  /* ── Fondos y superficies ──────────────────────────────────────────────── */
+  --color-fondo: #ffffff;
+  --color-superficie: #f8fafc;
+  --color-superficie-alta: #f1f5f9;
+  --color-superficie-hover: #e2e8f0;
+  --color-velo: #000000;
+
+  /* ── Bordes ────────────────────────────────────────────────────────────── */
+  --color-borde-suave: #f1f5f9;
+  --color-borde: #e2e8f0;
+  --color-borde-fuerte: #cad5e2;
+
+  /* ── Estados: error y acciones peligrosas ──────────────────────────────── */
+  --color-error: #ec003f;
+  --color-error-fuerte: #c70036;
+  --color-error-suave: #fff1f2;
+  --color-error-borde: #ffccd3;
+
+  /* ── Estados: éxito (aceptada, confirmada) ─────────────────────────────── */
+  --color-exito: #009966;
+  --color-exito-fuerte: #007a55;
+  --color-exito-suave: #ecfdf5;
+  --color-exito-borde: #a4f4cf;
+
+  /* ── Estados: aviso (pendiente, en espera) ─────────────────────────────── */
+  --color-aviso: #e17100;
+  --color-aviso-fuerte: #bb4d00;
+  --color-aviso-suave: #fffbeb;
+  --color-aviso-borde: #fee685;
+
+  /* ── Estados: información ──────────────────────────────────────────────── */
+  --color-info: #0084d1;
+  --color-info-fuerte: #0069a8;
+  --color-info-suave: #f0f9ff;
+  --color-info-borde: #b8e6fe;
+
+  /* ── Forma ─────────────────────────────────────────────────────────────── */
+  --radius-control: var(--radio-control);
+}
+
+:root {
+  /* Botones y campos de formulario (Figma: radio-control) */
+  --radio-control: 12px;
+}
+
+/* Tema oscuro: mismos nombres, otros valores */
+[data-tema="oscuro"] {
+  --color-accion: #a9a2ed;
+  --color-accion-hover: #bdb7f2;
+  --color-accion-suave: #26224a;
+  --color-accion-suave-hover: #322c5e;
+  --color-accion-borde: #4a4380;
+  --color-sobre-accion: #0f172b;
+
+  --color-texto: #f1f5f9;
+  --color-texto-secundario: #cad5e2;
+  --color-texto-tenue: #90a1b9;
+  --color-texto-deshabilitado: #45556c;
+
+  --color-fondo: #0f172b;
+  --color-superficie: #1d293d;
+  --color-superficie-alta: #314158;
+  --color-superficie-hover: #45556c;
+  --color-velo: #000000;
+
+  --color-borde-suave: #1d293d;
+  --color-borde: #314158;
+  --color-borde-fuerte: #45556c;
+
+  --color-error: #ff637e;
+  --color-error-fuerte: #ffa1ad;
+  --color-error-suave: #4d0218;
+  --color-error-borde: #8b0836;
+
+  --color-exito: #00d492;
+  --color-exito-fuerte: #5ee9b5;
+  --color-exito-suave: #002c22;
+  --color-exito-borde: #004f3b;
+
+  --color-aviso: #ffb900;
+  --color-aviso-fuerte: #ffd230;
+  --color-aviso-suave: #461901;
+  --color-aviso-borde: #7b3306;
+
+  --color-info: #00bcff;
+  --color-info-fuerte: #74d4ff;
+  --color-info-suave: #052f4a;
+  --color-info-borde: #024a70;
+}

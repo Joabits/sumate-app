@@ -35,7 +35,7 @@ export function MisHoras({ horas }: { horas: HorasActividad }) {
 
   if (horas.registros.length === 0) {
     return (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-texto-tenue">
         La organización todavía no registró tus horas de esta actividad.
       </p>
     );
@@ -59,7 +59,7 @@ export function MisHoras({ horas }: { horas: HorasActividad }) {
                       type="button"
                       disabled={aceptando === registro.id}
                       onClick={() => aceptarHoras(registro)}
-                      className="h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer"
+                      className="h-9 rounded-xl bg-exito hover:bg-exito-fuerte text-sobre-accion text-xs font-semibold cursor-pointer"
                     >
                       {aceptando === registro.id ? "Aceptando..." : "Aceptar horas"}
                     </Button>
@@ -67,7 +67,7 @@ export function MisHoras({ horas }: { horas: HorasActividad }) {
                       type="button"
                       variant="outline"
                       onClick={() => setReclamando(registro)}
-                      className="h-9 rounded-xl text-xs font-semibold text-rose-700 border-rose-200 hover:bg-rose-50 cursor-pointer"
+                      className="h-9 rounded-xl text-xs font-semibold text-error-fuerte border-error-borde hover:bg-error-suave cursor-pointer"
                     >
                       Reclamar
                     </Button>
@@ -80,14 +80,14 @@ export function MisHoras({ horas }: { horas: HorasActividad }) {
       </ul>
 
       {horas.registros.some((r) => r.estado === "reclamada") && (
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-texto-tenue">
           Tu reclamo está en revisión. Si la organización corrige, verás las horas nuevas para aceptarlas.
         </p>
       )}
 
       <Link
         href="/constancia"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-[#6355DE] hover:underline"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-accion hover:underline"
       >
         <FileText className="w-4 h-4" aria-hidden="true" />
         Ver mi constancia

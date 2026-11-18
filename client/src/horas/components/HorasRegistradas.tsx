@@ -6,15 +6,15 @@ import { EstadoHorasBadge } from "./EstadoHorasBadge";
 /** Horas de un registro: si se corrigieron, muestra "antes 3 h → 5 h". */
 export function HorasConCorreccion({ registro }: { registro: RegistroHoras }) {
   return (
-    <span className="text-sm text-slate-900">
+    <span className="text-sm text-texto">
       {registro.horasAnteriores !== null && (
-        <span className="text-slate-400 line-through mr-1.5">
+        <span className="text-texto-tenue line-through mr-1.5">
           {formatoHoras(registro.horasAnteriores)}
         </span>
       )}
       <span className="font-bold">{formatoHoras(registro.horas)}</span>
       {registro.horasAnteriores !== null && (
-        <span className="ml-1.5 text-xs font-medium text-indigo-600">corregidas</span>
+        <span className="ml-1.5 text-xs font-medium text-accion">corregidas</span>
       )}
     </span>
   );
@@ -33,18 +33,18 @@ export function FilaHoras({ registro, titulo, etiqueta, acciones }: FilaHorasPro
   return (
     <li
       aria-label={etiqueta}
-      className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-3"
+      className="flex flex-col gap-2 rounded-2xl border border-borde-suave bg-fondo px-4 py-3"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-slate-800 truncate">{titulo}</div>
+          <div className="text-sm font-semibold text-texto truncate">{titulo}</div>
           <HorasConCorreccion registro={registro} />
         </div>
         <EstadoHorasBadge estado={registro.estado} />
       </div>
 
       {registro.motivoReclamo && registro.estado === "reclamada" && (
-        <p className="rounded-xl bg-rose-50/70 px-3 py-2 text-xs text-rose-800">
+        <p className="rounded-xl bg-error-suave/70 px-3 py-2 text-xs text-error-fuerte">
           <span className="font-semibold">Reclamo: </span>
           {registro.motivoReclamo}
         </p>

@@ -73,18 +73,18 @@ function LocationMapSheetContent() {
         className: "custom-map-pin-container",
         html: `
           <div style="
-            background-color: #6355de;
+            background-color: var(--color-accion);
             width: 32px;
             height: 32px;
             border-radius: 50% 50% 50% 0;
             transform: rotate(-45deg);
-            border: 3px solid white;
-            box-shadow: 0 4px 10px rgba(99, 85, 222, 0.45);
+            border: 3px solid var(--color-fondo);
+            box-shadow: 0 4px 10px color-mix(in srgb, var(--color-accion) 45%, transparent);
             display: flex;
             align-items: center;
             justify-content: center;
           ">
-            <div style="width: 8px; height: 8px; background: white; border-radius: 50%;"></div>
+            <div style="width: 8px; height: 8px; background: var(--color-fondo); border-radius: 50%;"></div>
           </div>
         `,
         iconSize: [32, 32],
@@ -187,10 +187,10 @@ function LocationMapSheetContent() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[85vh] sm:h-[80vh] max-h-[92vh] animate-in slide-in-from-bottom duration-300">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-velo/50 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+      <div className="w-full max-w-lg bg-fondo rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[85vh] sm:h-[80vh] max-h-[92vh] animate-in slide-in-from-bottom duration-300">
         {/* Cabecera del Sheet */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-borde-suave">
           <div className="flex items-center gap-5">
             <div className="shrink-0 flex items-center justify-center p-0 m-0">
               <Image
@@ -203,10 +203,10 @@ function LocationMapSheetContent() {
               />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900 leading-tight">
+              <h2 className="text-base font-bold text-texto leading-tight">
                 Seleccionar Ubicación
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-texto-tenue">
                 Haz clic en el mapa para marcar las coordenadas exactas
               </p>
             </div>
@@ -215,36 +215,36 @@ function LocationMapSheetContent() {
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-full bg-superficie-alta text-texto-tenue flex items-center justify-center hover:bg-superficie-hover transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Mapa Leaflet expandido */}
-        <div className="relative w-full flex-1 min-h-[300px] bg-slate-100">
+        <div className="relative w-full flex-1 min-h-[300px] bg-superficie-alta">
           <div ref={mapContainerRef} className="w-full h-full z-0" />
 
           {/* Botón flotante para detectar ubicación actual */}
           <button
             type="button"
             onClick={handleDetectLocation}
-            className="absolute top-3 right-3 z-10 bg-white/95 backdrop-blur-md text-slate-700 p-2.5 rounded-full shadow-md hover:bg-white active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+            className="absolute top-3 right-3 z-10 bg-fondo/95 backdrop-blur-md text-texto-secundario p-2.5 rounded-full shadow-md hover:bg-fondo active:scale-95 transition-all flex items-center justify-center cursor-pointer"
             title="Usar mi ubicación actual"
           >
-            <LocateFixed className="w-5 h-5 text-[#6355de]" />
+            <LocateFixed className="w-5 h-5 text-accion" />
           </button>
         </div>
 
         {/* Footer con input de lugar y botón de confirmar ubicación */}
-        <div className="p-4 sm:p-5 bg-white border-t border-slate-100 space-y-3.5 w-full">
+        <div className="p-4 sm:p-5 bg-fondo border-t border-borde-suave space-y-3.5 w-full">
           <div className="space-y-1.5">
             <label
               htmlFor="place"
-              className="text-xs font-semibold text-slate-700 flex items-center justify-between"
+              className="text-xs font-semibold text-texto-secundario flex items-center justify-between"
             >
               <span>Nombre o referencia del lugar</span>
-              <span className="text-[11px] font-normal text-slate-400">Requerido</span>
+              <span className="text-[11px] font-normal text-texto-tenue">Requerido</span>
             </label>
             <input
               id="place"
@@ -260,9 +260,9 @@ function LocationMapSheetContent() {
                 }
               }}
               placeholder="Ej: Parque Lincoln, Campus Central UMSS, Auditorio..."
-              className="w-full text-sm font-medium text-slate-900 border border-slate-300 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-[#6355de] focus:border-transparent focus:outline-none transition-all placeholder:text-slate-400"
+              className="w-full text-sm font-medium text-texto border border-borde-fuerte rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-accion focus:border-transparent focus:outline-none transition-all placeholder:text-texto-tenue"
             />
-            <p className="text-[11px] text-slate-500 leading-normal">
+            <p className="text-[11px] text-texto-tenue leading-normal">
               Indica el nombre del sitio o punto de encuentro. La dirección detallada se obtendrá automáticamente con las coordenadas fijadas en el mapa.
             </p>
           </div>
@@ -271,7 +271,7 @@ function LocationMapSheetContent() {
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="w-full bg-[#6355de] hover:bg-[#5446cc] text-white rounded-xl py-3 flex items-center justify-center gap-2 text-sm font-semibold shadow-sm transition-all cursor-pointer"
+            className="w-full bg-accion hover:bg-accion-hover text-sobre-accion rounded-xl py-3 flex items-center justify-center gap-2 text-sm font-semibold shadow-sm transition-all cursor-pointer"
           >
             {isPending ? (
               <>

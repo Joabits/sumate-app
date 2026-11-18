@@ -45,7 +45,7 @@ export function AppAlertDialog({
           {icon ? (
             icon
           ) : isDestructive ? (
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100 text-rose-600 mb-1">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-error-suave text-error mb-1">
               <Trash2 className="h-7 w-7" />
             </div>
           ) : null}
@@ -57,7 +57,7 @@ export function AppAlertDialog({
         <AlertDialogFooter className="mt-4">
           <AlertDialogCancel
             disabled={actionDisabled}
-            className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+            className="w-full h-11 rounded-control bg-superficie-alta hover:bg-superficie-hover text-texto-secundario hover:text-texto border-none shadow-none font-medium cursor-pointer"
           >
             {cancelText}
           </AlertDialogCancel>
@@ -65,10 +65,10 @@ export function AppAlertDialog({
             type="button"
             disabled={actionDisabled}
             onClick={onAction}
-            className={`w-full h-11 rounded-xl font-semibold shadow-xs cursor-pointer ${
+            className={`w-full h-11 rounded-control font-semibold shadow-xs cursor-pointer ${
               isDestructive
-                ? "bg-rose-600 hover:bg-rose-700 text-white"
-                : "bg-[#6355de] hover:bg-[#5244cc] text-white"
+                ? "bg-error hover:bg-error-fuerte text-sobre-accion"
+                : "bg-accion hover:bg-accion-hover text-sobre-accion"
             }`}
           >
             {actionText}

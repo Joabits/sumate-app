@@ -12,17 +12,17 @@ type ErrorViewProps = {
 export function ErrorView({ error, onRetry = () => window.location.reload() }: ErrorViewProps) {
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-5 selection:bg-indigo-100">
-      <div className="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-100 text-center animate-in fade-in zoom-in-95 duration-200">
-        <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+    <div className="min-h-screen bg-superficie flex items-center justify-center p-5 selection:bg-accion-suave">
+      <div className="w-full max-w-md bg-fondo rounded-3xl p-6 sm:p-8 shadow-xl shadow-borde/60 border border-borde-suave text-center animate-in fade-in zoom-in-95 duration-200">
+        <div className="w-16 h-16 rounded-2xl bg-error-suave text-error flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-8 h-8" />
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-texto tracking-tight">
           Algo no salió como esperábamos
         </h1>
 
-        <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+        <p className="mt-2 text-sm text-texto-tenue leading-relaxed">
           {error.message
             ? error.message
             : "Ocurrió un error inesperado al procesar la solicitud. Por favor intenta nuevamente."}
@@ -32,7 +32,7 @@ export function ErrorView({ error, onRetry = () => window.location.reload() }: E
           <Button
             type="button"
             onClick={onRetry}
-            className="flex-1 bg-[#6355de] hover:bg-[#5446cc] text-white rounded-xl py-2.5 flex items-center justify-center gap-2 cursor-pointer font-semibold"
+            className="flex-1 bg-accion hover:bg-accion-hover text-sobre-accion rounded-xl py-2.5 flex items-center justify-center gap-2 cursor-pointer font-semibold"
           >
             <RefreshCw className="w-4 h-4" />
             <span>Reintentar</span>
@@ -41,7 +41,7 @@ export function ErrorView({ error, onRetry = () => window.location.reload() }: E
           <Button
             asChild
             variant="outline"
-            className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl py-2.5 font-semibold"
+            className="flex-1 border-borde text-texto-secundario hover:bg-superficie rounded-xl py-2.5 font-semibold"
           >
             <Link href="/explore" className="flex items-center justify-center gap-2">
               <Home className="w-4 h-4" />

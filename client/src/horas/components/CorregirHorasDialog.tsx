@@ -54,26 +54,26 @@ export function CorregirHorasDialog({ registro, isOpen, onOpenChange }: Corregir
     <AlertDialog open={isOpen} onOpenChange={cambiarApertura}>
       <AlertDialogContent className="rounded-3xl p-6 sm:p-7 max-w-sm sm:max-w-md">
         <AlertDialogHeader>
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-100 text-[#6355DE] mb-1">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accion-suave text-accion mb-1">
             <PencilLine className="h-7 w-7" />
           </div>
           <AlertDialogTitle>Corregir horas</AlertDialogTitle>
           <AlertDialogDescription>
             {registro.userName}, {formatoJornada(registro.jornada)}. Ahora figuran{" "}
-            <span className="font-semibold text-slate-900">{formatoHoras(registro.horas)}</span>.
+            <span className="font-semibold text-texto">{formatoHoras(registro.horas)}</span>.
             Al corregir, las horas vuelven a quedar pendientes hasta que las acepte.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
         {registro.motivoReclamo && registro.estado === "reclamada" && (
-          <p className="rounded-xl bg-rose-50/70 px-3 py-2 text-sm text-rose-800">
+          <p className="rounded-xl bg-error-suave/70 px-3 py-2 text-sm text-error-fuerte">
             <span className="font-semibold">Reclamo: </span>
             {registro.motivoReclamo}
           </p>
         )}
 
         <div className="space-y-1.5">
-          <label htmlFor="horas-corregidas" className="text-sm font-semibold text-slate-800">
+          <label htmlFor="horas-corregidas" className="text-sm font-semibold text-texto">
             Horas correctas
           </label>
           <input
@@ -90,10 +90,10 @@ export function CorregirHorasDialog({ registro, isOpen, onOpenChange }: Corregir
             }}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? "error-horas-corregidas" : undefined}
-            className="w-full h-11 text-sm text-slate-900 border border-slate-300 rounded-xl px-3.5 focus:ring-2 focus:ring-[#6355DE] focus:border-transparent focus:outline-none"
+            className="w-full h-11 text-sm text-texto border border-borde-fuerte rounded-xl px-3.5 focus:ring-2 focus:ring-accion focus:border-transparent focus:outline-none"
           />
           {error && (
-            <p id="error-horas-corregidas" role="alert" className="text-xs font-medium text-rose-700">
+            <p id="error-horas-corregidas" role="alert" className="text-xs font-medium text-error-fuerte">
               {error}
             </p>
           )}
@@ -102,7 +102,7 @@ export function CorregirHorasDialog({ registro, isOpen, onOpenChange }: Corregir
         <AlertDialogFooter className="mt-2">
           <AlertDialogCancel
             disabled={isPending}
-            className="w-full h-11 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 border-none shadow-none font-medium cursor-pointer"
+            className="w-full h-11 rounded-xl bg-superficie-alta hover:bg-superficie-hover text-texto-secundario hover:text-texto border-none shadow-none font-medium cursor-pointer"
           >
             Volver
           </AlertDialogCancel>
@@ -110,7 +110,7 @@ export function CorregirHorasDialog({ registro, isOpen, onOpenChange }: Corregir
             type="button"
             disabled={isPending}
             onClick={guardar}
-            className="w-full h-11 rounded-xl bg-[#6355DE] hover:bg-[#5244cc] text-white font-semibold shadow-xs cursor-pointer"
+            className="w-full h-11 rounded-xl bg-accion hover:bg-accion-hover text-sobre-accion font-semibold shadow-xs cursor-pointer"
           >
             {isPending ? (
               <>

@@ -25,7 +25,7 @@ import { useParticipations } from "@/participations/hooks/useParticipations";
  * participar» y con el nombre de la acción, no la etiqueta del estado.
  */
 const BOTON_SALIDA =
-  "flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-white border border-slate-300 text-slate-800 font-semibold text-sm shadow-lg shadow-slate-900/10 transition-all hover:bg-slate-50 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 cursor-pointer disabled:opacity-50";
+  "flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-fondo border border-borde-fuerte text-texto font-semibold text-sm shadow-lg shadow-texto/10 transition-all hover:bg-superficie active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-texto-tenue cursor-pointer disabled:opacity-50";
 
 export function ActivityDetailActions() {
   const { activity } = useActivityDetail();
@@ -187,7 +187,7 @@ export function ActivityDetailActions() {
           <button
             type="button"
             disabled
-            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-700 font-semibold text-sm cursor-not-allowed shadow-sm"
+            className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
           >
             <Ban className="w-4 h-4" />
             <span>Actividad cancelada</span>
@@ -207,7 +207,7 @@ export function ActivityDetailActions() {
                 <button
                   type="button"
                   disabled
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
                 >
                   <CheckCircle2 className="w-5 h-5 stroke-current" />
                   <span>Asististe</span>
@@ -216,7 +216,7 @@ export function ActivityDetailActions() {
                 <button
                   type="button"
                   disabled
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
                 >
                   <Lock className="w-4 h-4" />
                   <span>Actividad finalizada</span>
@@ -229,14 +229,14 @@ export function ActivityDetailActions() {
                   onClick={abrirRetiro}
                   disabled={isPending}
                   aria-label="Retirarme de la actividad"
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-rose-600/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 cursor-pointer bg-rose-600 hover:bg-rose-700 text-white"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-error/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error cursor-pointer bg-error hover:bg-error-fuerte text-sobre-accion"
                 >
                   <UserMinus className="w-5 h-5 stroke-current" />
                   <span>Retirarme</span>
                 </button>
               ) : solicitudPendiente ? (
                 <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
-                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-amber-50 border border-amber-200 text-amber-800 font-semibold text-sm shadow-sm">
+                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-aviso-suave border border-aviso-borde text-aviso-fuerte font-semibold text-sm shadow-sm">
                     <Clock className="w-4 h-4 stroke-current" aria-hidden="true" />
                     Solicitud pendiente
                   </p>
@@ -247,7 +247,7 @@ export function ActivityDetailActions() {
                 </div>
               ) : enListaDeEspera ? (
                 <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
-                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-sky-50 border border-sky-200 text-sky-800 font-semibold text-sm shadow-sm">
+                  <p className="flex items-center gap-2 px-4 py-3 rounded-full bg-info-suave border border-info-borde text-info-fuerte font-semibold text-sm shadow-sm">
                     <ListOrdered className="w-4 h-4 stroke-current" aria-hidden="true" />
                     En lista de espera, puesto {posicionEnEspera}
                   </p>
@@ -260,7 +260,7 @@ export function ActivityDetailActions() {
                 <button
                   type="button"
                   disabled
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
                 >
                   <XCircle className="w-4 h-4" />
                   <span>Solicitud rechazada</span>
@@ -270,7 +270,7 @@ export function ActivityDetailActions() {
                   type="button"
                   onClick={abrirPostulacion}
                   disabled={isPending}
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-sky-700/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-700 cursor-pointer bg-sky-700 hover:bg-sky-800 text-white"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-info-fuerte/25 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-info-fuerte cursor-pointer bg-info-fuerte hover:bg-info-fuerte text-sobre-accion"
                 >
                   <ListOrdered className="w-5 h-5 stroke-current" />
                   <span>Unirme a la lista de espera</span>
@@ -281,7 +281,7 @@ export function ActivityDetailActions() {
                   onClick={abrirPostulacion}
                   disabled={isPending}
                   aria-label="Solicitar participar en el evento"
-                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] cursor-pointer bg-[#6355de] hover:bg-[#5244cc] text-white"
+                  className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-semibold text-sm shadow-lg shadow-accion/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accion cursor-pointer bg-accion hover:bg-accion-hover text-sobre-accion"
                 >
                   <Check className="w-5 h-5 stroke-current" />
                   <span>Solicitar participar</span>
@@ -291,7 +291,7 @@ export function ActivityDetailActions() {
               <button
                 type="button"
                 disabled
-                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+                className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
               >
                 <Lock className="w-4 h-4" />
                 <span>Convocatoria cerrada</span>
@@ -303,7 +303,7 @@ export function ActivityDetailActions() {
               onClick={handlePublish}
               disabled={isPending}
               aria-label="Publicar actividad"
-              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-[#6355de] text-white shadow-lg shadow-[#6355de]/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#6355de] font-semibold text-sm disabled:opacity-50 cursor-pointer"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-accion text-sobre-accion shadow-lg shadow-accion/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accion font-semibold text-sm disabled:opacity-50 cursor-pointer"
             >
               {isPending ? (
                 <>
@@ -323,7 +323,7 @@ export function ActivityDetailActions() {
               onClick={handleClose}
               disabled={isPending}
               aria-label="Cerrar convocatoria"
-              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-rose-600 text-white shadow-lg shadow-rose-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-error text-sobre-accion shadow-lg shadow-error/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-error font-semibold text-sm disabled:opacity-50 cursor-pointer"
             >
               {isPending ? (
                 <>
@@ -341,7 +341,7 @@ export function ActivityDetailActions() {
             <button
               type="button"
               disabled
-              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-300 text-slate-600 font-semibold text-sm cursor-not-allowed shadow-sm"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-superficie-hover text-texto-secundario font-semibold text-sm cursor-not-allowed shadow-sm"
             >
               <Lock className="w-4 h-4" />
               <span>Evento finalizado (Cerrado)</span>
@@ -352,7 +352,7 @@ export function ActivityDetailActions() {
               onClick={handleReopen}
               disabled={isPending}
               aria-label="Reabrir convocatoria"
-              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 font-semibold text-sm disabled:opacity-50 cursor-pointer"
+              className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-accion hover:bg-accion-hover text-sobre-accion shadow-lg shadow-accion/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accion font-semibold text-sm disabled:opacity-50 cursor-pointer"
             >
               {isPending ? (
                 <>

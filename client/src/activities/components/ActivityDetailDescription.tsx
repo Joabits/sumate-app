@@ -8,7 +8,7 @@ type ActivityDetailDescriptionProps = {
 };
 
 export function ActivityDetailDescription({
-  className = "mt-6 pt-5 border-t border-slate-100",
+  className = "mt-6 pt-5 border-t border-borde-suave",
 }: ActivityDetailDescriptionProps) {
   const { activity, isEditMode, activeField, setActiveField } = useActivityDetail();
   const { id: activityId, isOwner } = activity;
@@ -24,7 +24,7 @@ export function ActivityDetailDescription({
       data-purpose="event-description-section"
     >
       <div className="flex items-center justify-between mb-2.5">
-        <h2 className="text-lg font-bold text-slate-900">Descripción</h2>
+        <h2 className="text-lg font-bold text-texto">Descripción</h2>
         {isOwner && isEditMode && !isEditing && (
           <button
             type="button"
@@ -33,8 +33,8 @@ export function ActivityDetailDescription({
             aria-label="Editar descripción"
             className={`p-1.5 rounded-full transition-all cursor-pointer ${
               isOtherActive
-                ? "opacity-30 cursor-not-allowed text-slate-300"
-                : "text-slate-400 hover:text-[#6355de] hover:bg-slate-100"
+                ? "opacity-30 cursor-not-allowed text-texto-deshabilitado"
+                : "text-texto-tenue hover:text-accion hover:bg-superficie-alta"
             }`}
           >
             <Pencil className="w-4 h-4" />
@@ -55,18 +55,18 @@ export function ActivityDetailDescription({
               rows={5}
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              className="w-full text-sm leading-relaxed text-slate-700 bg-white border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+              className="w-full text-sm leading-relaxed text-texto-secundario bg-fondo border border-borde-fuerte rounded-xl p-3 focus:ring-2 focus:ring-accion focus:outline-none"
               placeholder="Describe la actividad, requisitos para voluntarios y objetivo social..."
               autoFocus
             />
           )}
         </InlineEditForm>
       ) : (
-        <p className="text-sm leading-relaxed text-slate-600 font-normal whitespace-pre-line">
+        <p className="text-sm leading-relaxed text-texto-secundario font-normal whitespace-pre-line">
           {description?.trim() ? (
             description
           ) : (
-            <span className="italic text-slate-400">
+            <span className="italic text-texto-tenue">
               {isOwner
                 ? "Aún no has agregado una descripción. Activa el modo edición para redactarla."
                 : "Sin descripción añadida aún."}

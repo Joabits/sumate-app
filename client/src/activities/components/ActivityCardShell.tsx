@@ -59,13 +59,13 @@ export function ActivityCardShell({
     <Link
       href={`/activities/${id}`}
       aria-label={name}
-      className="block group pb-3 mb-3 border-b border-slate-100 last:border-b-0 last:mb-0 last:pb-0 lg:border-none lg:p-0 lg:mb-0 lg:pb-0 transition-all"
+      className="block group pb-3 mb-3 border-b border-borde-suave last:border-b-0 last:mb-0 last:pb-0 lg:border-none lg:p-0 lg:mb-0 lg:pb-0 transition-all"
     >
       <article
         className="transition-transform active:scale-[0.99] text-left flex flex-col h-full"
         data-purpose="activity-card-shell"
       >
-        <div className="relative w-full h-44 lg:h-52 rounded-2xl overflow-hidden bg-slate-100 shrink-0">
+        <div className="relative w-full h-44 lg:h-52 rounded-2xl overflow-hidden bg-superficie-alta shrink-0">
           <Image
             src={imageUrl}
             alt={name}
@@ -84,18 +84,18 @@ export function ActivityCardShell({
 
         <div className="pt-3 px-1 flex-1 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-[#6355de] transition-colors">
+            <h2 className="text-base font-bold text-texto leading-snug line-clamp-2 group-hover:text-accion transition-colors">
               {name}
             </h2>
 
-            <p className="mt-1 text-xs font-semibold text-[#6355de] flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-[#6355de] shrink-0" />
+            <p className="mt-1 text-xs font-semibold text-accion flex items-center gap-1.5">
+              <Calendar className="w-3.5 h-3.5 text-accion shrink-0" />
               <span>{formattedDate}</span>
             </p>
 
             {/* Causas temáticas integradas uniformemente en el shell */}
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-[#6355de]">
-              <Tag className="w-3.5 h-3.5 text-[#6355de]/80 shrink-0" />
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-accion">
+              <Tag className="w-3.5 h-3.5 text-accion/80 shrink-0" />
               <span className="truncate font-medium">
                 {causes && causes.length > 0
                   ? causes.map((c) => c.name).join(", ")

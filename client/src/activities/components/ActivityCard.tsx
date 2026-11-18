@@ -18,22 +18,22 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
       case "draft":
         return {
           label: "Borrador",
-          className: "bg-amber-50 text-amber-700 border border-amber-200/70",
+          className: "bg-aviso-suave text-aviso-fuerte border border-aviso-borde/70",
         };
       case "active":
         return {
           label: "Activa",
-          className: "bg-emerald-50 text-emerald-700 border border-emerald-200/70",
+          className: "bg-exito-suave text-exito-fuerte border border-exito-borde/70",
         };
       case "closed":
         return {
           label: "Cerrada",
-          className: "bg-slate-100 text-slate-600 border border-slate-200/70",
+          className: "bg-superficie-alta text-texto-secundario border border-borde/70",
         };
       case "cancelled":
         return {
           label: "Cancelada",
-          className: "bg-rose-50 text-rose-700 border border-rose-200/70",
+          className: "bg-error-suave text-error-fuerte border border-error-borde/70",
         };
       default:
         return null;
@@ -52,14 +52,14 @@ export function ActivityCard({ activity, scope, priority = false }: ActivityCard
       priority={priority}
     >
       {activity.creatorName && !isMine && (
-        <p className="text-xs text-slate-500">
-          Por <span className="font-semibold text-slate-700">{activity.creatorName}</span>
+        <p className="text-xs text-texto-tenue">
+          Por <span className="font-semibold text-texto-secundario">{activity.creatorName}</span>
         </p>
       )}
 
       <div className="mt-2 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-1.5 font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-lg">
-          <Users className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-1.5 font-semibold text-exito-fuerte bg-exito-suave border border-exito-borde/80 px-2.5 py-1 rounded-lg">
+          <Users className="w-3.5 h-3.5 text-exito shrink-0" />
           {isMine ? (
             <span>
               {registeredCount} / {activity.capacity} inscritos

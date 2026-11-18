@@ -59,7 +59,7 @@ export function LoginForm({
         <div className="flex justify-end pt-0.5">
           <Link
             href="/auth/forgot-password"
-            className="text-xs font-semibold text-[#6355DE] hover:underline"
+            className="text-xs font-semibold text-accion hover:underline"
           >
             ¿Olvidaste tu contraseña?
           </Link>
@@ -70,7 +70,7 @@ export function LoginForm({
         <SubmitButton
           text="Iniciar sesión"
           pendingText="Iniciando sesión..."
-          className="w-full py-4 px-6 bg-[#6355DE] hover:bg-[#5244cc] active:scale-[0.99] text-white font-bold text-base rounded-full shadow-md shadow-[#6355DE]/20 transition-all duration-150 h-[52px]"
+          className="w-full py-4 px-6 bg-accion hover:bg-accion-hover active:scale-[0.99] text-sobre-accion font-bold text-base rounded-full shadow-md shadow-accion/20 transition-all duration-150 h-[52px]"
         />
       </div>
     </form>

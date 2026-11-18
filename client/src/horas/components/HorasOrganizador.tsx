@@ -32,20 +32,20 @@ export function HorasOrganizador({ horas, activityDate }: HorasOrganizadorProps)
             participantes={horas.participantesAceptados}
           />
         ) : (
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-texto-tenue">
             No hubo participantes aceptados, así que no hay horas que registrar.
           </p>
         ))}
 
       {reclamos > 0 && (
-        <p role="status" className="rounded-xl bg-rose-50 px-3.5 py-2.5 text-sm font-medium text-rose-800">
+        <p role="status" className="rounded-xl bg-error-suave px-3.5 py-2.5 text-sm font-medium text-error-fuerte">
           {reclamos === 1 ? "Hay 1 reclamo" : `Hay ${reclamos} reclamos`} por revisar. Corrige las horas para que el voluntario las acepte.
         </p>
       )}
 
       {[...jornadas.entries()].map(([jornada, registros]) => (
         <section key={jornada} aria-label={`Jornada del ${formatoJornada(jornada)}`} className="space-y-2">
-          <h3 className="text-sm font-bold text-slate-700">{formatoJornada(jornada)}</h3>
+          <h3 className="text-sm font-bold text-texto-secundario">{formatoJornada(jornada)}</h3>
           <ul className="space-y-2">
             {registros.map((registro) => (
               <FilaHoras

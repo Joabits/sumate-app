@@ -9,7 +9,7 @@ export function AppNavbar() {
   return (
     <nav
       aria-label="Pestañas de navegación principal"
-      className="flex items-center overflow-x-auto no-scrollbar bg-white"
+      className="flex items-center overflow-x-auto no-scrollbar bg-fondo"
       role="tablist"
     >
       {NAVIGATION_ITEMS.filter((item) => item.enabled).map((item) => {
@@ -25,8 +25,8 @@ export function AppNavbar() {
             aria-selected={isActive}
             className={`flex-1 flex flex-col items-center justify-center pt-2.5 pb-2 transition-all shrink-0 min-w-[70px] border-b-2 ${
               isActive
-                ? "border-black text-black font-bold"
-                : "border-transparent text-zinc-600 font-medium hover:text-black"
+                ? "border-velo text-velo font-bold"
+                : "border-transparent text-texto-secundario font-medium hover:text-velo"
             }`}
           >
             <div className="relative w-[26px] h-[26px] mb-1 shrink-0">

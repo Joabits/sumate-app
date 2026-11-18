@@ -36,7 +36,7 @@
    * ── Color Primario (Marca / Acción Principal) ──────────────────────────────
    * Disponible mediante clases de Tailwind: bg-app-primary, text-app-primary, etc.
    */
-  --app-primary: oklch(0.5423 0.2006 282);
+  --app-primary: var(--color-accion);
   --app-primary-foreground: oklch(0.985 0 0);
 
   /* 
@@ -90,9 +90,9 @@
   /* 
    * ── Estados del Sistema y Feedback ────────────────────────────────────────
    */
-  --app-success: oklch(0.723 0.219 142.136);
-  --app-info: oklch(0.685 0.169 237.323);
-  --app-warning: oklch(0.795 0.184 86.047);
-  --app-destructive: oklch(0.577 0.245 27.325);
+  --app-success: var(--color-exito);
+  --app-info: var(--color-info);
+  --app-warning: var(--color-aviso);
+  --app-destructive: var(--color-error);
   --app-status-foreground: oklch(0.985 0 0);
 }

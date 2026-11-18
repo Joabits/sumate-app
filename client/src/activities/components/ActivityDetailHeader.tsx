@@ -75,7 +75,7 @@ export function ActivityDetailHeader() {
   return (
     <>
       <header
-        className="sticky top-0 z-40 flex items-center justify-between px-0 pt-3 sm:pt-4 pb-3 mb-4 bg-white transition-colors"
+        className="sticky top-0 z-40 flex items-center justify-between px-0 pt-3 sm:pt-4 pb-3 mb-4 bg-fondo transition-colors"
         data-purpose="top-navigation-bar"
       >
         {/* Botón Volver Atrás: en móvil solo ícono, en desktop (>= lg) ícono + texto "Volver" */}
@@ -83,7 +83,7 @@ export function ActivityDetailHeader() {
           type="button"
           onClick={handleBack}
           aria-label="Volver atrás"
-          className="h-11 px-3.5 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+          className="h-11 px-3.5 lg:px-4 rounded-full bg-superficie-alta flex items-center justify-center text-texto-secundario active:scale-95 hover:bg-superficie-hover transition-all cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5 -ml-1 shrink-0" />
           <span className="hidden lg:inline ml-1 text-sm font-semibold tracking-tight">
@@ -98,7 +98,7 @@ export function ActivityDetailHeader() {
             onClick={handleShare}
             aria-label="Compartir evento"
             title="Compartir evento"
-            className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-slate-100 flex items-center justify-center gap-1.5 text-slate-700 active:scale-95 hover:bg-slate-200 transition-all cursor-pointer"
+            className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-superficie-alta flex items-center justify-center gap-1.5 text-texto-secundario active:scale-95 hover:bg-superficie-hover transition-all cursor-pointer"
           >
             <Share2 className="w-4.5 h-4.5 shrink-0" />
             <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
@@ -112,7 +112,7 @@ export function ActivityDetailHeader() {
               onClick={() => setIsCancelDialogOpen(true)}
               aria-label="Cancelar actividad"
               title="Cancelar actividad"
-              className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-amber-100 transition-all cursor-pointer"
+              className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-aviso-suave text-aviso-fuerte flex items-center justify-center gap-1.5 active:scale-95 hover:bg-aviso-suave transition-all cursor-pointer"
             >
               <Ban className="w-4.5 h-4.5 shrink-0" />
               <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
@@ -129,7 +129,7 @@ export function ActivityDetailHeader() {
                 onClick={() => setIsDeleteDialogOpen(true)}
                 aria-label="Eliminar actividad"
                 title="Eliminar actividad"
-                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center gap-1.5 active:scale-95 hover:bg-rose-100 transition-all cursor-pointer"
+                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-error-suave text-error flex items-center justify-center gap-1.5 active:scale-95 hover:bg-error-suave transition-all cursor-pointer"
               >
                 <Trash2 className="w-4.5 h-4.5 shrink-0" />
                 <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">
@@ -144,8 +144,8 @@ export function ActivityDetailHeader() {
                 title={isEditMode ? "Volver a modo lectura" : "Editar actividad"}
                 className={`h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer ${
                   isEditMode
-                    ? "bg-[#6355de] text-white shadow-md shadow-[#6355de]/30 ring-2 ring-[#6355de] ring-offset-2"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    ? "bg-accion text-sobre-accion shadow-md shadow-accion/30 ring-2 ring-accion ring-offset-2"
+                    : "bg-superficie-alta text-texto-secundario hover:bg-superficie-hover"
                 }`}
               >
                 {isEditMode ? (

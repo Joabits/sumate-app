@@ -9,7 +9,7 @@ export function DesktopSidebar() {
   return (
     <aside
       aria-label="Navegación lateral de escritorio"
-      className="hidden lg:flex flex-col justify-between w-64 xl:w-72 h-full shrink-0 bg-[#fafbfd] select-none"
+      className="hidden lg:flex flex-col justify-between w-64 xl:w-72 h-full shrink-0 bg-superficie select-none"
     >
       <div className="flex flex-col pt-6 px-4">
         {/* Lista de navegación vertical */}
@@ -26,8 +26,8 @@ export function DesktopSidebar() {
                 aria-current={isActive ? "page" : undefined}
                 className={`group relative flex items-center gap-3.5 px-4 py-3 text-sm font-semibold transition-all rounded-2xl ${
                   isActive
-                    ? "bg-slate-200/80 text-slate-900"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
+                    ? "bg-superficie-hover/80 text-texto"
+                    : "text-texto-secundario hover:text-texto hover:bg-superficie-alta/70"
                 }`}
               >
                 {/* Ícono a la izquierda */}
@@ -48,7 +48,7 @@ export function DesktopSidebar() {
                 {isActive && (
                   <span
                     aria-hidden="true"
-                    className="absolute right-3 top-2.5 bottom-2.5 w-1 bg-black rounded-full"
+                    className="absolute right-3 top-2.5 bottom-2.5 w-1 bg-velo rounded-full"
                   />
                 )}
               </Link>
@@ -59,7 +59,7 @@ export function DesktopSidebar() {
 
       {/* Pie de navegación lateral */}
       <div className="px-6 py-5">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-texto-tenue">
           © {new Date().getFullYear()} Súmate
         </p>
       </div>

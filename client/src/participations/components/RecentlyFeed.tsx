@@ -24,33 +24,33 @@ type Grupo = {
 const ETIQUETA_ESTADO: Record<EstadoSolicitud, { texto: string; clase: string }> = {
   aceptada: {
     texto: "Solicitud aceptada",
-    clase: "bg-emerald-50 text-emerald-700 border-emerald-200/70",
+    clase: "bg-exito-suave text-exito-fuerte border-exito-borde/70",
   },
   pendiente: {
     texto: "Solicitud pendiente",
-    clase: "bg-amber-50 text-amber-700 border-amber-200/70",
+    clase: "bg-aviso-suave text-aviso-fuerte border-aviso-borde/70",
   },
   en_espera: {
     texto: "En lista de espera",
-    clase: "bg-sky-50 text-sky-800 border-sky-200/70",
+    clase: "bg-info-suave text-info-fuerte border-info-borde/70",
   },
   rechazada: {
     texto: "Solicitud rechazada",
-    clase: "bg-rose-50 text-rose-700 border-rose-200/70",
+    clase: "bg-error-suave text-error-fuerte border-error-borde/70",
   },
   cancelada: {
     texto: "Cancelada",
-    clase: "bg-rose-50 text-rose-700 border-rose-200/70",
+    clase: "bg-error-suave text-error-fuerte border-error-borde/70",
   },
   retirada: {
     texto: "Te retiraste",
-    clase: "bg-slate-100 text-slate-600 border-slate-200/70",
+    clase: "bg-superficie-alta text-texto-secundario border-borde/70",
   },
 };
 
 const REALIZADA = {
   texto: "Realizada",
-  clase: "bg-slate-100 text-slate-600 border-slate-200/70",
+  clase: "bg-superficie-alta text-texto-secundario border-borde/70",
 };
 
 // Próximas: lo que todavía puede pasar, agrupado por la respuesta del organizador
@@ -119,10 +119,10 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0 h-full" data-purpose="recently-feed-wrapper">
       <div className="pt-4 lg:pt-5 shrink-0">
-        <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-xl lg:text-2xl font-extrabold text-texto tracking-tight">
           Mis solicitudes
         </h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <p className="text-sm text-texto-tenue mt-0.5">
           El estado de cada actividad a la que pediste sumarte.
         </p>
 
@@ -130,7 +130,7 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
         <div
           role="tablist"
           aria-label="Secciones de Mis solicitudes"
-          className="mt-3 flex gap-6 border-b border-slate-200"
+          className="mt-3 flex gap-6 border-b border-borde"
         >
           {pestanas.map((p) => {
             const activa = seccion === p.id;
@@ -145,14 +145,14 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                 onClick={() => setSeccion(p.id)}
                 className={`-mb-px h-11 flex items-center gap-2 border-b-2 text-sm font-semibold transition-colors cursor-pointer ${
                   activa
-                    ? "border-[#6355de] text-[#4f43c4]"
-                    : "border-transparent text-slate-600 hover:text-slate-900"
+                    ? "border-accion text-accion-hover"
+                    : "border-transparent text-texto-secundario hover:text-texto"
                 }`}
               >
                 {p.texto}
                 <span
                   className={`text-[11px] px-2 py-0.5 rounded-full ${
-                    activa ? "bg-[#ece9fc] text-[#4f43c4]" : "bg-slate-100 text-slate-600"
+                    activa ? "bg-accion-suave text-accion-hover" : "bg-superficie-alta text-texto-secundario"
                   }`}
                 >
                   {p.total}
@@ -172,22 +172,22 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
       >
         {participations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mb-3">
+            <div className="w-16 h-16 rounded-full bg-superficie-alta text-texto-tenue flex items-center justify-center mb-3">
               <Clock className="w-8 h-8" />
             </div>
-            <h3 className="text-lg font-bold text-zinc-800">Sin participaciones</h3>
-            <p className="text-sm text-zinc-500 mt-1 max-w-xs leading-relaxed">
+            <h3 className="text-lg font-bold text-texto">Sin participaciones</h3>
+            <p className="text-sm text-texto-tenue mt-1 max-w-xs leading-relaxed">
               Aún no te has sumado a ninguna actividad. ¡Explora y participa!
             </p>
             <Link
               href="/explore"
-              className="mt-5 inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white bg-[#6355de] hover:bg-[#5244cc] active:scale-95 transition-all"
+              className="mt-5 inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-sobre-accion bg-accion hover:bg-accion-hover active:scale-95 transition-all"
             >
               Explorar actividades
             </Link>
           </div>
         ) : grupos.length === 0 ? (
-          <p className="py-12 text-center text-sm text-slate-500">
+          <p className="py-12 text-center text-sm text-texto-tenue">
             {seccion === "proximas"
               ? "No tienes solicitudes para actividades próximas."
               : "Todavía no tienes actividades en el historial."}
@@ -198,10 +198,10 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
               <section key={grupo.id} aria-labelledby={`grupo-${grupo.id}`}>
                 <h2
                   id={`grupo-${grupo.id}`}
-                  className="mb-3 text-sm font-bold text-slate-800 flex items-center gap-2"
+                  className="mb-3 text-sm font-bold text-texto flex items-center gap-2"
                 >
                   {grupo.titulo}
-                  <span className="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                  <span className="text-[11px] font-semibold bg-superficie-alta text-texto-secundario px-2 py-0.5 rounded-full">
                     {grupo.items.length}
                   </span>
                 </h2>
@@ -215,8 +215,8 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                       <ActivityCardShell key={item.id} activity={item} priority={index < 3}>
                         <div className="mt-1 flex items-center justify-between text-xs gap-2">
                           {item.creatorName ? (
-                            <p className="text-xs text-slate-500 truncate">
-                              Por <span className="font-semibold text-slate-700">{item.creatorName}</span>
+                            <p className="text-xs text-texto-tenue truncate">
+                              Por <span className="font-semibold text-texto-secundario">{item.creatorName}</span>
                             </p>
                           ) : (
                             <div />
@@ -228,7 +228,7 @@ export function RecentlyFeed({ participations }: RecentlyFeedProps) {
                           </span>
                         </div>
                         {item.estadoSolicitud === "cancelada" && (
-                          <p className="mt-2 text-xs leading-snug text-rose-900 bg-rose-50 border border-rose-100 rounded-lg px-2.5 py-1.5">
+                          <p className="mt-2 text-xs leading-snug text-error-fuerte bg-error-suave border border-error-suave rounded-lg px-2.5 py-1.5">
                             {`Cancelada por la organización${
                               item.estadoAnterior
                                 ? ` (estabas: ${NOMBRE_ESTADO_SOLICITUD[item.estadoAnterior].toLowerCase()})`

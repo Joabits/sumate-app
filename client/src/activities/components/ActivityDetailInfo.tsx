@@ -135,7 +135,7 @@ export function ActivityDetailInfo() {
             successMessage="Fecha actualizada."
             errorTitle="Error al actualizar fecha"
             onClose={() => setActiveField(null)}
-            className="pb-4 border-b border-slate-100/90 space-y-3 w-full"
+            className="pb-4 border-b border-borde-suave/90 space-y-3 w-full"
             header={{
               icon: "/assets/icons/date.webp",
               title: "Fecha y hora",
@@ -147,12 +147,12 @@ export function ActivityDetailInfo() {
                 type="datetime-local"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full text-sm bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+                className="w-full text-sm bg-fondo border border-borde-fuerte rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-accion focus:outline-none"
               />
             )}
           </InlineEditForm>
         ) : (
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
+          <div className="flex items-center justify-between pb-4 border-b border-borde-suave/90">
             <div className="flex items-center flex-1 mr-2">
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
@@ -165,11 +165,11 @@ export function ActivityDetailInfo() {
                 />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 leading-tight">
+                <p className="text-sm font-semibold text-texto leading-tight">
                   {fullDate}
                 </p>
                 {time && (
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{time}</p>
+                  <p className="text-xs text-texto-tenue font-medium mt-0.5">{time}</p>
                 )}
               </div>
             </div>
@@ -183,8 +183,8 @@ export function ActivityDetailInfo() {
                   aria-label="Editar fecha"
                   className={`p-1.5 rounded-full transition-all cursor-pointer ${
                     isOtherFieldActive("date")
-                      ? "opacity-30 cursor-not-allowed text-slate-300"
-                      : "text-slate-400 hover:text-[#6355de] hover:bg-slate-100"
+                      ? "opacity-30 cursor-not-allowed text-texto-deshabilitado"
+                      : "text-texto-tenue hover:text-accion hover:bg-superficie-alta"
                   }`}
                 >
                   <Pencil className="w-4 h-4" />
@@ -196,7 +196,7 @@ export function ActivityDetailInfo() {
                   rel="noopener noreferrer"
                   aria-label="Añadir fecha al calendario de Google"
                   title="Añadir a Google Calendar"
-                  className="text-slate-400 hover:text-[#6355de] transition-colors p-2 rounded-full hover:bg-slate-50 cursor-pointer"
+                  className="text-texto-tenue hover:text-accion transition-colors p-2 rounded-full hover:bg-superficie cursor-pointer"
                 >
                   <Plus className="w-5 h-5" />
                 </a>
@@ -213,7 +213,7 @@ export function ActivityDetailInfo() {
             successMessage="Cupos actualizados."
             errorTitle="Error al actualizar cupos"
             onClose={() => setActiveField(null)}
-            className="pb-4 border-b border-slate-100/90 space-y-3 w-full"
+            className="pb-4 border-b border-borde-suave/90 space-y-3 w-full"
             header={{
               icon: "/assets/icons/capacity.webp",
               title: "Cupos disponibles",
@@ -227,12 +227,12 @@ export function ActivityDetailInfo() {
                 max={10000}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full text-sm font-semibold bg-white border border-slate-300 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#6355de] focus:outline-none"
+                className="w-full text-sm font-semibold bg-fondo border border-borde-fuerte rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-accion focus:outline-none"
               />
             )}
           </InlineEditForm>
         ) : (
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
+          <div className="flex items-center justify-between pb-4 border-b border-borde-suave/90">
             <div className="flex items-center flex-1 mr-2">
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
@@ -245,10 +245,10 @@ export function ActivityDetailInfo() {
                 />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900 leading-tight">
+                <p className="text-sm font-semibold text-texto leading-tight">
                   Cupos disponibles
                 </p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                <p className="text-xs text-texto-tenue font-medium mt-0.5">
                   {enrolledCount} / {capacity} {capacity === 1 ? "cupo reservado" : "cupos reservados"}
                 </p>
               </div>
@@ -263,8 +263,8 @@ export function ActivityDetailInfo() {
                   aria-label="Editar cupos"
                   className={`p-1.5 rounded-full transition-all cursor-pointer ${
                     isOtherFieldActive("capacity")
-                      ? "opacity-30 cursor-not-allowed text-slate-300"
-                      : "text-slate-400 hover:text-[#6355de] hover:bg-slate-100"
+                      ? "opacity-30 cursor-not-allowed text-texto-deshabilitado"
+                      : "text-texto-tenue hover:text-accion hover:bg-superficie-alta"
                   }`}
                 >
                   <Pencil className="w-4 h-4" />
@@ -284,7 +284,7 @@ export function ActivityDetailInfo() {
             onSuccess={() => setActiveField(null)}
           />
         ) : (
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100/90">
+          <div className="flex items-center justify-between pb-4 border-b border-borde-suave/90">
             <div
               className={`flex items-center flex-1 mr-2 ${
                 isOwner && isEditMode && !isOtherFieldActive("causes") ? "cursor-pointer" : ""
@@ -306,14 +306,14 @@ export function ActivityDetailInfo() {
                 />
               </div>
               <div className="min-w-0 pr-2">
-                <p className="text-sm font-semibold text-slate-900 leading-tight">
+                <p className="text-sm font-semibold text-texto leading-tight">
                   {activity.causes && activity.causes.length > 0
                     ? "Causas temáticas"
                     : isOwner
                       ? "Causas por definir"
                       : "Causas temáticas"}
                 </p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
+                <p className="text-xs text-texto-tenue font-medium mt-0.5">
                   {activity.causes && activity.causes.length > 0
                     ? activity.causes.map((cause) => cause.name).join(", ")
                     : isOwner
@@ -334,8 +334,8 @@ export function ActivityDetailInfo() {
                   aria-label="Editar causas"
                   className={`p-1.5 rounded-full transition-all cursor-pointer ${
                     isOtherFieldActive("causes")
-                      ? "opacity-30 cursor-not-allowed text-slate-300"
-                      : "text-slate-400 hover:text-[#6355de] hover:bg-slate-100"
+                      ? "opacity-30 cursor-not-allowed text-texto-deshabilitado"
+                      : "text-texto-tenue hover:text-accion hover:bg-superficie-alta"
                   }`}
                 >
                   <Pencil className="w-4 h-4" />
@@ -364,10 +364,10 @@ export function ActivityDetailInfo() {
               />
             </div>
             <div className="pr-2">
-              <p className="text-sm font-semibold text-slate-900 leading-tight">
+              <p className="text-sm font-semibold text-texto leading-tight">
                 {detail?.place?.trim() || "Ubicación por definir"}
               </p>
-              <p className="text-xs text-slate-500 font-medium truncate max-w-[210px] sm:max-w-xs mt-0.5">
+              <p className="text-xs text-texto-tenue font-medium truncate max-w-[210px] sm:max-w-xs mt-0.5">
                 {detail?.address?.trim()
                   ? detail.address
                   : isOwner
@@ -389,8 +389,8 @@ export function ActivityDetailInfo() {
                 title="Editar ubicación en mapa"
                 className={`p-1.5 rounded-full transition-all cursor-pointer ${
                   isOtherFieldActive("location")
-                    ? "opacity-30 cursor-not-allowed text-slate-300"
-                    : "text-slate-400 hover:text-[#6355de] hover:bg-slate-100"
+                    ? "opacity-30 cursor-not-allowed text-texto-deshabilitado"
+                    : "text-texto-tenue hover:text-accion hover:bg-superficie-alta"
                 }`}
               >
                 <Pencil className="w-4 h-4" />
@@ -402,7 +402,7 @@ export function ActivityDetailInfo() {
                 rel="noopener noreferrer"
                 aria-label="Ver mapa en Google Maps"
                 title="Abrir en Google Maps"
-                className="text-slate-400 hover:text-[#6355de] transition-colors p-2 rounded-full hover:bg-slate-50 cursor-pointer"
+                className="text-texto-tenue hover:text-accion transition-colors p-2 rounded-full hover:bg-superficie cursor-pointer"
               >
                 <Map className="w-5 h-5" />
               </a>

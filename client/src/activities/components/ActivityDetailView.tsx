@@ -16,7 +16,7 @@ import { HorasActividadSection } from "@/horas/components/HorasActividadSection"
 /** Pantalla de detalle. Cada parte lee la actividad con useActivityDetail(), sin props. */
 export function ActivityDetailView() {
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col justify-between selection:bg-indigo-100">
+    <div className="min-h-screen bg-fondo text-texto flex flex-col justify-between selection:bg-accion-suave">
       {/* Contenedor responsivo: max-w-md centrado en móviles/tablets; max-w-6xl amplio en desktop (>= lg) */}
       <main className="w-full max-w-md lg:max-w-6xl mx-auto flex-1 pb-28 px-5 lg:px-8 pt-2 sm:pt-4">
         {/* Cabecera superior común con volver atrás (con texto en desktop), compartir, editar y eliminar */}
@@ -43,12 +43,12 @@ export function ActivityDetailView() {
           <ActivityDetailTitle />
 
           {/* 3. Detalles de la actividad dentro de un card */}
-          <div className="bg-slate-50/60 border border-slate-100 rounded-3xl p-5 sm:p-6 shadow-xs mb-6">
+          <div className="bg-superficie/60 border border-borde-suave rounded-3xl p-5 sm:p-6 shadow-xs mb-6">
             <ActivityDetailInfo />
           </div>
 
           {/* 4. Descripción de la actividad */}
-          <ActivityDetailDescription className="pt-5 border-t border-slate-100" />
+          <ActivityDetailDescription className="pt-5 border-t border-borde-suave" />
 
           {/* 5. Sección del organizador */}
           <ActivityDetailOrganizer />
@@ -79,7 +79,7 @@ export function ActivityDetailView() {
           </div>
 
           {/* Columna Derecha (~40%) */}
-          <div className="lg:col-span-5 flex flex-col bg-slate-50/60 border border-slate-100 rounded-3xl p-6 shadow-xs">
+          <div className="lg:col-span-5 flex flex-col bg-superficie/60 border border-borde-suave rounded-3xl p-6 shadow-xs">
             {/* Fecha y Hora, Cupos, Causas y Ubicación */}
             <ActivityDetailInfo />
 

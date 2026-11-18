@@ -83,7 +83,7 @@ export function ResetPasswordForm({
         <SubmitButton
           text="Guardar contraseña"
           pendingText="Guardando contraseña..."
-          className="w-full py-4 px-6 bg-[#6355DE] hover:bg-[#5244cc] active:scale-[0.99] text-white font-bold text-base rounded-full shadow-md shadow-[#6355DE]/20 transition-all duration-150 h-[52px]"
+          className="w-full py-4 px-6 bg-accion hover:bg-accion-hover active:scale-[0.99] text-sobre-accion font-bold text-base rounded-full shadow-md shadow-accion/20 transition-all duration-150 h-[52px]"
         />
       </div>
     </form>

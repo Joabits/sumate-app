@@ -32,28 +32,28 @@ export function HorasActividadSection() {
   if (!visible) return null;
 
   return (
-    <section aria-labelledby="titulo-horas" className="mt-8 pt-6 border-t border-slate-100 space-y-4">
+    <section aria-labelledby="titulo-horas" className="mt-8 pt-6 border-t border-borde-suave space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Timer className="w-5 h-5 text-[#6355DE]" aria-hidden="true" />
-          <h2 id="titulo-horas" className="text-lg font-extrabold text-slate-900">
+          <Timer className="w-5 h-5 text-accion" aria-hidden="true" />
+          <h2 id="titulo-horas" className="text-lg font-extrabold text-texto">
             Horas de voluntariado
           </h2>
         </div>
         {horas && !horas.esOrganizador && (
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-texto-secundario">
             Total confirmado:{" "}
-            <span className="font-bold text-slate-900">{formatoHoras(horas.totalConfirmado)}</span>
+            <span className="font-bold text-texto">{formatoHoras(horas.totalConfirmado)}</span>
           </p>
         )}
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-rose-700">
+        <p role="alert" className="text-sm text-error-fuerte">
           {error.message}
         </p>
       )}
-      {!horas && !error && <p className="text-sm text-slate-500">Cargando horas...</p>}
+      {!horas && !error && <p className="text-sm text-texto-tenue">Cargando horas...</p>}
       {horas &&
         (horas.esOrganizador ? (
           <HorasOrganizador horas={horas} activityDate={activity.date} />
