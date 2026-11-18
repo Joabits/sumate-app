@@ -8,7 +8,8 @@
     "start": "tsx server/index.ts --prod",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
-    "email:dev": "email dev -d server/emails"
+    "email:dev": "email dev -d server/emails",
+    "tokens:check": "node scripts/sin-colores-fijos.mjs"
   },
   "dependencies": {
     "@react-email/render": "^2.0.9",
