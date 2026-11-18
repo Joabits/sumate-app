@@ -150,7 +150,7 @@ test('Crear una actividad registra el inicio, el error de validación y el borra
   const nombre = `Feria de lectura ${Date.now()}`;
   await ana.goto('/my-activities');
 
-  await ana.getByRole('button', { name: 'Crear nueva actividad' }).click();
+  await ana.getByRole('button', { name: 'Crear actividad nueva' }).click();
   await ana.getByLabel('Nombre de la actividad').fill(nombre);
   await ana.getByLabel('Fecha de realización').fill(fechaFutura());
   await ana.getByLabel('Cantidad de cupos').fill('5');

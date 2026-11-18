@@ -41,7 +41,7 @@ export function AppHeader() {
           <button
             type="button"
             onClick={() => navigate("/search")}
-            aria-label="Buscar actividades"
+            aria-label="Buscar actividades por nombre, causa o lugar"
             className="w-full flex items-center justify-start gap-2.5 sm:gap-3 px-4 sm:px-5 py-2.5 lg:py-3 bg-superficie/80 border border-borde/80 rounded-2xl text-sm lg:text-[15px] text-texto-tenue shadow-xs hover:border-borde-fuerte hover:bg-superficie-alta/60 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-velo/10"
           >
             <Search className="w-4 h-4 lg:w-5 lg:h-5 text-texto-tenue shrink-0" />
@@ -68,7 +68,7 @@ export function AppHeader() {
                   className="object-cover"
                 />
               ) : (
-                <span className="font-bold text-xs lg:text-sm text-texto-secundario">
+                <span aria-hidden="true" className="font-bold text-xs lg:text-sm text-texto-secundario">
                   {userInitials}
                 </span>
               )}

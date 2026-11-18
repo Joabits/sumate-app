@@ -30,7 +30,6 @@ export function ActivityDetailParticipants() {
         type="button"
         onClick={() => setIsOpen(true)}
         className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-superficie hover:bg-superficie-alta/80 active:scale-[0.99] transition-all border border-borde-suave group text-left cursor-pointer"
-        aria-label="Ver participantes de la actividad"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-accion-suave border border-accion-suave flex items-center justify-center text-accion shrink-0">

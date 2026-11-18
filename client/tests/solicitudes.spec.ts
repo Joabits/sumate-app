@@ -20,7 +20,7 @@ test('María solicita participar, Ana la acepta y María ya ocupa un cupo', asyn
   await abrirMiActividad(ana, ACTIVIDAD);
   await ana.getByRole('button', { name: 'Aceptar solicitud de María López' }).click();
   await expect(ana.getByText('Aceptaste a María López. Ya ocupa un cupo.')).toBeVisible();
-  await expect(ana.getByRole('button', { name: 'Ver participantes de la actividad' })).toContainText(
+  await expect(ana.getByRole('button', { name: /participantes? confirmados?|Sin participantes/ })).toContainText(
     '1 participante confirmado',
   );
 

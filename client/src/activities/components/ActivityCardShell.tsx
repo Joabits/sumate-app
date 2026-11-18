@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import Image from "@/shared/components/Image";
 import Link from "@/shared/components/Link";
 import { Calendar, Tag } from "lucide-react";
@@ -54,11 +54,13 @@ export function ActivityCardShell({
 }: ActivityCardShellProps) {
   const { id, name, imageUrl, date, causes } = activity;
   const formattedDate = formatActivityDate(date);
+  // El enlace se nombra con el título visible de la tarjeta (WCAG 2.5.3)
+  const tituloId = useId();
 
   return (
     <Link
       href={`/activities/${id}`}
-      aria-label={name}
+      aria-labelledby={tituloId}
       className="block group pb-3 mb-3 border-b border-borde-suave last:border-b-0 last:mb-0 last:pb-0 lg:border-none lg:p-0 lg:mb-0 lg:pb-0 transition-all"
     >
       <article
@@ -84,7 +86,7 @@ export function ActivityCardShell({
 
         <div className="pt-3 px-1 flex-1 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-texto leading-snug line-clamp-2 group-hover:text-accion transition-colors">
+            <h2 id={tituloId} className="text-base font-bold text-texto leading-snug line-clamp-2 group-hover:text-accion transition-colors">
               {name}
             </h2>
 

@@ -42,7 +42,7 @@ test('Con el cupo lleno la solicitud espera y, si alguien se retira, la primera 
   // La organizadora ve a Sofía confirmada y a Carlos esperando
   const ana = await abrirSesion(USUARIOS.ana);
   await abrirMiActividad(ana, TALLER);
-  await expect(ana.getByRole('button', { name: 'Ver participantes de la actividad' })).toContainText(
+  await expect(ana.getByRole('button', { name: /participantes? confirmados?|Sin participantes/ })).toContainText(
     '1 participante confirmado',
   );
   await expect(ana.getByRole('list', { name: 'Lista de espera' })).toContainText('1. Carlos Quispe');

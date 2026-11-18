@@ -39,7 +39,7 @@ test('Un aceptado se retira a tiempo con motivo: libera el cupo y entra el prime
   // La organizadora ve a un confirmado y la lista de espera vacía
   const ana = await abrirSesion(USUARIOS.ana);
   await abrirMiActividad(ana, COMEDOR);
-  await expect(ana.getByRole('button', { name: 'Ver participantes de la actividad' })).toContainText(
+  await expect(ana.getByRole('button', { name: /participantes? confirmados?|Sin participantes/ })).toContainText(
     '1 participante confirmado',
   );
   await expect(ana.getByRole('list', { name: 'Lista de espera' })).toHaveCount(0);

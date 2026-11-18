@@ -152,9 +152,15 @@ export default function AnaliticaPage() {
   }
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto pb-10">
+    // Sin controles adentro: la zona con scroll recibe el foco para poder bajar con el teclado
+    <div
+      tabIndex={0}
+      role="region"
+      aria-labelledby="analitica-titulo"
+      className="flex-1 min-h-0 overflow-y-auto pb-10 rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accion/40"
+    >
       <div className="pt-4 lg:pt-5 max-w-3xl">
-        <h1 className="text-xl lg:text-2xl font-extrabold text-texto tracking-tight">Analítica</h1>
+        <h1 id="analitica-titulo" className="text-xl lg:text-2xl font-extrabold text-texto tracking-tight">Analítica</h1>
         <p className="text-sm text-texto-tenue mt-0.5">
           Dónde se traba la gente en cada flujo de Súmate. Se registra la acción, no quién la hizo.
         </p>

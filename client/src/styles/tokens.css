@@ -25,7 +25,7 @@
   /* ── Texto ─────────────────────────────────────────────────────────────── */
   --color-texto: #0f172b;
   --color-texto-secundario: #45556c;
-  --color-texto-tenue: #62748e;
+  --color-texto-tenue: #5e7089;
   --color-texto-deshabilitado: #cad5e2;
 
   /* ── Fondos y superficies ──────────────────────────────────────────────── */
@@ -84,7 +84,7 @@
 
   --color-texto: #f1f5f9;
   --color-texto-secundario: #cad5e2;
-  --color-texto-tenue: #90a1b9;
+  --color-texto-tenue: #9fafc4;
   --color-texto-deshabilitado: #45556c;
 
   --color-fondo: #0f172b;

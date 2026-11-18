@@ -20,7 +20,7 @@ Los cinco primeros son los de la [Clase 23](../evidencias/clase-23.md). El resto
 | `color-sobre-accion` | `#ffffff` | `#0f172b` | Texto e íconos encima de un color lleno (botón principal, peligro, insignias) |
 | `color-texto` | `#0f172b` | `#f1f5f9` | Títulos y texto principal |
 | `color-texto-secundario` | `#45556c` | `#cad5e2` | Texto de apoyo y etiquetas |
-| `color-texto-tenue` | `#62748e` | `#90a1b9` | Ayudas, fechas, placeholders e íconos. Contraste 4,76:1 sobre blanco (AA) |
+| `color-texto-tenue` | `#5e7089` | `#9fafc4` | Ayudas, fechas, placeholders e íconos. Cumple AA sobre `fondo` y sobre `superficie-alta` (4,61:1) |
 | `color-texto-deshabilitado` | `#cad5e2` | `#45556c` | Controles deshabilitados y separadores de texto |
 | `color-fondo` | `#ffffff` | `#0f172b` | Fondo de pantallas, tarjetas y diálogos |
 | `color-superficie` | `#f8fafc` | `#1d293d` | Bloques sobre el fondo (secciones, listas) |

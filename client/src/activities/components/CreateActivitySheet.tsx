@@ -40,7 +40,7 @@ export function CreateActivitySheet({
         <button
           type="button"
           onClick={abrir}
-          aria-label="Crear nueva actividad"
+          aria-label="Crear actividad nueva"
           className="pointer-events-auto flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-accion text-sobre-accion shadow-lg shadow-accion/35 transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accion font-semibold text-sm cursor-pointer"
         >
           <Plus className="w-5 h-5 stroke-[2.5]" />

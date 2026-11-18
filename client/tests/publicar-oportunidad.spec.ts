@@ -24,7 +24,7 @@ test('Ana publica una oportunidad y María la encuentra al buscar', async ({ pag
 
   // Crear la actividad
   await page.goto('/my-activities');
-  await page.getByRole('button', { name: 'Crear nueva actividad' }).click();
+  await page.getByRole('button', { name: 'Crear actividad nueva' }).click();
   const selectorDeArchivo = page.waitForEvent('filechooser');
   await page.getByText('Toca para subir una fotografía').click();
   await (await selectorDeArchivo).setFiles(path.join(__dirname, 'fixtures', 'portada.png'));
@@ -102,7 +102,7 @@ test('Ana crea una actividad desde Explorar sin pasar por Mis actividades', asyn
 
   await iniciarSesion(page, USUARIOS.ana);
   await page.goto('/explore');
-  await page.getByRole('button', { name: 'Crear nueva actividad' }).click();
+  await page.getByRole('button', { name: 'Crear actividad nueva' }).click();
 
   const selectorDeArchivo = page.waitForEvent('filechooser');
   await page.getByText('Toca para subir una fotografía').click();
