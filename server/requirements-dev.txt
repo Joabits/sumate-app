@@ -1,0 +1,4 @@
+# Dependencias para correr las pruebas y la cobertura (CI y local)
+-r requirements.txt
+pytest-cov==7.1.0
+diff-cover==11.0.3

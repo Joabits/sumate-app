@@ -1,0 +1,8 @@
+# Cobertura del backend: el código de la app (las semillas son datos de prueba
+# y corren en cada E2E, por eso no se miden aquí)
+[run]
+source = app
+
+[report]
+show_missing = true
+skip_covered = true

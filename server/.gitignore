@@ -10,3 +10,6 @@ server/*.sqlite3
 
 # Imágenes subidas por los usuarios
 uploads/
+
+coverage.xml
+.coverage
