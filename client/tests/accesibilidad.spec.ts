@@ -60,6 +60,27 @@ test.describe('Accesibilidad', () => {
     await expect(page.getByRole('link', { name: 'Limpieza del Parque Tunari' })).toBeVisible();
     await revisarAccesibilidad(page);
   });
+
+  test('Constancia de voluntariado', async ({ page }) => {
+    await iniciarSesion(page, USUARIOS.maria);
+    await page.goto('/constancia');
+    await expect(page.getByRole('heading', { name: 'Constancia de voluntariado' })).toBeVisible();
+    await revisarAccesibilidad(page);
+  });
+
+  test('Mis datos', async ({ page }) => {
+    await iniciarSesion(page, USUARIOS.maria);
+    await page.goto('/mis-datos');
+    await expect(page.getByRole('heading', { level: 1, name: 'Mis datos' })).toBeVisible();
+    await revisarAccesibilidad(page);
+  });
+
+  test('Analítica', async ({ page }) => {
+    await iniciarSesion(page, USUARIOS.ana);
+    await page.goto('/analitica');
+    await expect(page.getByRole('heading', { level: 1, name: 'Analítica' })).toBeVisible();
+    await revisarAccesibilidad(page);
+  });
 });
 
 test.describe('Área táctil (Fitts)', () => {
