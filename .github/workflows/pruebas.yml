@@ -1,0 +1,86 @@
+name: pruebas
+
+on: [push, pull_request]
+
+jobs:
+  unitarias:
+    name: Unitarias (backend) + cobertura
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # diff-cover compara contra el último commit del proyecto recibido
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: server/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Pruebas unitarias con cobertura
+        run: python -m pytest --cov --cov-report=xml --cov-report=term
+      - name: Cobertura de las líneas agregadas en el fork (diff-cover)
+        run: diff-cover coverage.xml --compare-branch=1fcbb48 --fail-under=100 --html-report cobertura-backend.html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cobertura-backend
+          path: |
+            server/coverage.xml
+            server/cobertura-backend.html
+
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      # La semilla de Playwright corre en el runner y escribe en la base del compose
+      DATABASE_URL: postgresql://sumate:sumate@localhost:5432/sumate
+    steps:
+      - uses: actions/checkout@v4
+      - name: Levantar la app (PostgreSQL + API + cliente)
+        run: docker compose up -d --build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: server/requirements.txt
+      - name: Dependencias de la semilla
+        run: pip install -r server/requirements.txt
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: client/package.json
+          version: 12.21.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: client
+      - run: pnpm exec playwright install --with-deps chromium
+        working-directory: client
+      - name: Esperar a que la app responda
+        run: |
+          for i in $(seq 1 90); do
+            curl -sf http://localhost:8001/health > /dev/null && curl -sf http://localhost:3000 > /dev/null && exit 0
+            sleep 2
+          done
+          docker compose logs
+          exit 1
+      - name: Pruebas E2E
+        run: pnpm exec playwright test
+        working-directory: client
+      - name: Logs de la app si algo falló
+        if: failure()
+        run: docker compose logs --tail=200
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporte-e2e
+          path: |
+            client/playwright-report
+            client/test-results

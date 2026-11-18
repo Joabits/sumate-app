@@ -47,7 +47,8 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+      // Localmente el Chrome instalado; en GitHub Actions el Chromium de Playwright
+      use: { ...devices['Desktop Chrome'], ...(process.env.CI ? {} : { channel: 'chrome' }) },
     },
 
     /* Test against mobile viewports. */
