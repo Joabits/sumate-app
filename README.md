@@ -71,6 +71,31 @@ El reporte está en [reportes/cobertura-backend.html](reportes/cobertura-backend
 
 **Qué queda sin probar** (no es código del fork): la validación del JWT de Better Auth contra el JWKS ([security.py](server/app/core/security.py), 46 %; se prueba de punta a punta con las E2E) y la geocodificación con un servicio externo ([geocoding.py](server/app/core/geocoding.py)). Las semillas (`server/scripts/seed_*.py`) son datos de prueba: corren en cada E2E y no se miden.
 
+### Cobertura del frontend (con las E2E)
+
+El frontend no tiene pruebas unitarias: su cobertura se mide con las E2E. Con `COBERTURA=1` Vite instrumenta `client/src` y cada página manda al servidor lo que ejecutó ([src/cobertura.ts](client/src/cobertura.ts)). Sin la variable, la app no cambia.
+
+```
+COBERTURA=1 docker compose up -d --build
+cd client
+DATABASE_URL=postgresql://sumate:sumate@localhost:5432/sumate pnpm exec playwright test
+docker compose exec -T client npx nyc report --temp-dir .nyc_output --report-dir coverage-e2e --reporter=cobertura --reporter=text-summary
+docker compose cp client:/app/coverage-e2e coverage-e2e
+sed -i "s#<source>/app</source>#<source>$PWD</source>#" coverage-e2e/cobertura-coverage.xml
+cd .. && diff-cover client/coverage-e2e/cobertura-coverage.xml --compare-branch=1fcbb48 --html-report reportes/cobertura-frontend.html
+```
+
+| Qué se mide | Cobertura |
+|---|---|
+| Líneas del frontend agregadas en el fork (diff-cover contra `1fcbb48`) | **79 %** (1012 de 1270) |
+| Todo el frontend (`client/src`), líneas | **77 %** (ramas 64 %) |
+
+Es una medida por debajo de la real: cada página manda su cobertura una vez por segundo, así que lo que ejecuta en el último segundo antes de cerrarse (por ejemplo, la redirección después de eliminar la cuenta) no siempre llega.
+
+El reporte está en [reportes/cobertura-frontend.html](reportes/cobertura-frontend.html) ([versión Markdown](reportes/cobertura-frontend.md)). En CI se genera en cada push, en el job de E2E.
+
+**Qué queda sin probar en el frontend:** la recuperación de errores de la API (sin conexión, sesión vencida, error 500: [useApiErrorRecovery.ts](client/src/shared/hooks/useApiErrorRecovery.ts), [apiError.ts](client/src/api/errors/apiError.ts)), los formularios de contraseña olvidada y restablecer contraseña (necesitan el correo real), el diálogo para reclamar horas ([ReclamarHorasDialog.tsx](client/src/horas/components/ReclamarHorasDialog.tsx)) y las validaciones locales de los Providers que la interfaz ya impide (por ejemplo, editar una actividad con datos vacíos).
+
 ### E2E con Playwright
 
 Semilla de las pruebas: un solo comando dentro de `server`, con la base ya migrada (`alembic upgrade head`). Carga las causas, crea los usuarios de prueba si faltan y deja sus actividades como al principio. No toca a otros usuarios.
