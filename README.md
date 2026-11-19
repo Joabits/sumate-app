@@ -36,6 +36,19 @@ El objetivo principal es reducir las barreras de participación juvenil en causa
 
 ---
 
+## ☁️ App desplegada
+
+Súmate corre en Google Cloud Run, con PostgreSQL en Cloud SQL cargada con las semillas de prueba (seed_pruebas.py) y de demostración (seed_presentacion.py).
+
+| Servicio | Enlace |
+|---|---|
+| Web | https://sumate-web-96840086064.us-central1.run.app |
+| API (documentación) | https://sumate-api-96840086064.us-central1.run.app/docs |
+
+Usuarios para probar: ana@sumate.dev (organizadora) y maria@sumate.dev (voluntaria), con la contraseña de la sección de pruebas. La imagen de la web se arma con [client/Dockerfile.cloudrun](client/Dockerfile.cloudrun).
+
+---
+
 ## ▶️ Levantar la app
 
 Con Docker Desktop abierto, en la raíz del repositorio:
@@ -104,6 +117,8 @@ Semilla de las pruebas: un solo comando dentro de `server`, con la base ya migra
 python scripts/seed_pruebas.py
 ```
 
+Para la demostración, `python scripts/seed_presentacion.py` suma 42 personas más, con 34 actividades en Cochabamba, solicitudes en todos los estados, listas de espera y horas confirmadas. No toca a los usuarios de prueba y se puede volver a correr para dejar todo como al principio.
+
 Usuarios de prueba (contraseña `Demo12345`):
 
 | Correo | Rol en las pruebas |
@@ -128,6 +143,8 @@ pnpm exec playwright test --ui
 
 56 pruebas: flujos principales, accesibilidad con axe en 10 pantallas, patrones oscuros y capturas aprobadas de inicio de sesión y registro.
 
+Último reporte de Playwright (56 de 56 en verde, 18/11/2026): [reportes/playwright-report/index.html](reportes/playwright-report/index.html). Se abre en el navegador. GitHub Actions también guarda el reporte de cada ejecución como artefacto (`reporte-e2e`).
+
 ### Sin colores fijos
 
 ```
@@ -141,7 +158,19 @@ Falla si una pantalla escribe un color a mano en vez de usar un token.
 ## 🎨 Sistema de diseño y accesibilidad
 
 * [Sistema de diseño](docs/sistema-de-diseno.md): tokens con los nombres de Figma ([tokens.css](client/src/styles/tokens.css)) y la tabla componente ↔ archivo.
-* [Reporte de accesibilidad](reportes/accesibilidad.md): Lighthouse en 10 pantallas (100), lo que se corrigió y el contraste AA de cada par de tokens.
+* [Reporte de accesibilidad](reportes/accesibilidad.md): Lighthouse (100) y WAVE (0 errores, 0 alertas, AIM 10) en 10 pantallas, lo que se corrigió y el contraste AA de cada par de tokens.
+
+---
+
+## 🎤 Presentación final
+
+| Qué | Dónde |
+|---|---|
+| Diapositivas de la venta, con notas del orador y el video incluido | [PowerPoint](presentacion/sumate-presentacion.pptx) · [PDF](presentacion/sumate-presentacion.pdf) |
+| Video de la app funcionando en un iPhone, de crear la cuenta a tener un cupo | [presentacion/video/sumate-iphone.mp4](presentacion/video/sumate-iphone.mp4) |
+| Capturas de la app real en iPhone 17 Pro | [presentacion/capturas/](presentacion/capturas/) |
+| Informe en formato APA 7 | [PDF](presentacion/informe-sumate.pdf) · [Word](presentacion/informe-sumate.docx) |
+| Figma: variables, 10 componentes y flujos del camino feliz | [figma/](figma/README.md) · [abrir en Figma](https://www.figma.com/design/lBOMcQacMQvV3kBp98fJTM) |
 
 ---
 

@@ -157,7 +157,7 @@ export function ActivityDetailInfo() {
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
                   src="/assets/icons/date.webp"
-                  alt="Fecha"
+                  alt=""
                   width={34}
                   height={34}
                   unoptimized
@@ -237,7 +237,7 @@ export function ActivityDetailInfo() {
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
                   src="/assets/icons/capacity.webp"
-                  alt="Cupos"
+                  alt=""
                   width={34}
                   height={34}
                   unoptimized
@@ -298,7 +298,7 @@ export function ActivityDetailInfo() {
               <div className="shrink-0 flex items-center justify-center mr-6">
                 <Image
                   src="/assets/icons/cause.webp"
-                  alt="Causas"
+                  alt=""
                   width={34}
                   height={34}
                   unoptimized
@@ -356,7 +356,7 @@ export function ActivityDetailInfo() {
             <div className="shrink-0 flex items-center justify-center mr-6">
               <Image
                 src="/assets/icons/ubication.webp"
-                alt="Ubicación"
+                alt=""
                 width={34}
                 height={34}
                 unoptimized

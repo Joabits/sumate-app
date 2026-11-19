@@ -35,14 +35,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   TOKEN_EXPIRED:
     "El enlace expiró. Solicita uno nuevo desde '¿Olvidaste tu contraseña?'.",
 
-  // ─── Proveedores sociales ───────────────────────────────────────────────────
-  ACCOUNT_NOT_LINKED:
-    "Esta cuenta fue creada con email y contraseña. Inicia sesión de esa manera.",
-  SOCIAL_ACCOUNT_ALREADY_LINKED:
-    "Esta cuenta de Google ya está asociada a otro usuario.",
-  FAILED_TO_GET_USER_INFO:
-    "No pudimos obtener tu información del proveedor. Intenta de nuevo.",
-  PROVIDER_NOT_FOUND: "Este método de inicio de sesión no está disponible.",
+  // ─── Navegador ──────────────────────────────────────────────────────────────
   CROSS_SITE_NAVIGATION_LOGIN_BLOCKED:
     "El inicio de sesión fue bloqueado por el navegador. Intenta de nuevo.",
 };

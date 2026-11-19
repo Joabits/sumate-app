@@ -24,10 +24,6 @@ export const authApi = {
     return toResult(await authClient.signOut());
   },
 
-  /** Si sale bien, el navegador se va a Google: esta promesa no vuelve. */
-  loginWithGoogle: async (data: { callbackURL: string; errorCallbackURL: string }) =>
-    toResult(await authClient.signIn.social({ provider: "google", ...data })),
-
   /** Better Auth agrega ?token=... a `redirectTo` en el correo. */
   requestPasswordReset: async (data: { email: string; redirectTo: string }) =>
     toResult(await authClient.requestPasswordReset(data)),

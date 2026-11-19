@@ -3,7 +3,7 @@
  * TOKENS DE SÚMATE · el único lugar donde se escriben los colores y el radio
  * ==============================================================================
  * Nombrados por uso, no por apariencia, y con los mismos nombres que las
- * Variables de Figma (colección «Súmate», modos Claro y Oscuro).
+ * Variables de Figma (colección «Tokens», modos Claro y Oscuro).
  *
  * Tailwind crea una utilidad por cada token: --color-accion → bg-accion,
  * text-accion, border-accion, ring-accion/20... Los componentes usan esas
@@ -69,7 +69,7 @@
 }
 
 :root {
-  /* Botones y campos de formulario (Figma: radio-control) */
+  /* Botones y campos de formulario (Figma: radio/control) */
   --radio-control: 12px;
 }
 

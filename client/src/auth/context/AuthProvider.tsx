@@ -13,11 +13,6 @@ function toAuthResult(result: AuthCallResult, message?: string): AuthResult {
   return result.ok ? result : { ok: false, message: message ?? getAuthErrorMessage(result.code) };
 }
 
-const loginWithGoogle: Ctx["loginWithGoogle"] = async (callbackURL = "/explore") =>
-  toAuthResult(
-    await authApi.loginWithGoogle({ callbackURL, errorCallbackURL: "/auth/login?error=social" }),
-  );
-
 const requestPasswordReset: Ctx["requestPasswordReset"] = async (email) =>
   toAuthResult(await authApi.requestPasswordReset({ email, redirectTo: "/auth/reset-password" }));
 
@@ -67,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       signup,
       logout,
-      loginWithGoogle,
       requestPasswordReset,
       resetPassword,
     };

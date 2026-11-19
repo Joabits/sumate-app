@@ -1,6 +1,6 @@
 # Accesibilidad: reporte interpretado y corregido
 
-Fecha: 18/11/2026. Herramientas: Lighthouse 12.8.2 (categoría accesibilidad, Chrome sin interfaz) y axe-core con las reglas WCAG 2.0 A y AA dentro de la suite E2E ([accesibilidad.spec.ts](../client/tests/accesibilidad.spec.ts)).
+Fecha: 18/11/2026. Herramientas: Lighthouse 12.8.2 (categoría accesibilidad, Chrome sin interfaz), WAVE 3.3.1 de WebAIM (sección 5) y axe-core con las reglas WCAG 2.0 A y AA dentro de la suite E2E ([accesibilidad.spec.ts](../client/tests/accesibilidad.spec.ts)).
 
 Lighthouse se corrió con la sesión iniciada (María y Ana, de la semilla), para medir las pantallas reales y no la redirección al login. Los reportes completos están en [reportes/lighthouse](lighthouse/).
 
@@ -13,7 +13,7 @@ Lighthouse se corrió con la sesión iniciada (María y Ana, de la semilla), par
 | Explorar | 100 | [explorar.html](lighthouse/explorar.html) |
 | Buscar | 100 | [buscar.html](lighthouse/buscar.html) |
 | Detalle de una actividad | 100 | [detalle-actividad.html](lighthouse/detalle-actividad.html) |
-| Mi trayectoria | 100 | [mi-trayectoria.html](lighthouse/mi-trayectoria.html) |
+| Mis solicitudes | 100 | [mi-trayectoria.html](lighthouse/mi-trayectoria.html) |
 | Constancia | 100 | [constancia.html](lighthouse/constancia.html) |
 | Mis datos | 100 | [mis-datos.html](lighthouse/mis-datos.html) |
 | Mis actividades | 100 | [mis-actividades.html](lighthouse/mis-actividades.html) |
@@ -65,3 +65,32 @@ Todos los pares de texto y fondo que usa la app, calculados con la fórmula de W
 | `error-fuerte` | `fondo` | 6,03:1 ✅ | 9,30:1 ✅ |
 
 Además, la regla `color-contrast` de Lighthouse y de axe pasa en las 10 pantallas.
+
+## 5. WAVE
+
+Herramienta: extensión WAVE 3.3.1 de WebAIM en Chromium, con la sesión iniciada (María, Luis y Ana de la semilla), en las mismas 10 pantallas de Lighthouse. Cada captura muestra el panel de WAVE junto a la pantalla revisada; están en [reportes/wave](wave/).
+
+| Pantalla | Errores | Errores de contraste | Alertas | AIM | Captura |
+|---|---|---|---|---|---|
+| Inicio de sesión | 0 | 0 | 0 | 10 | [01-inicio-de-sesion.png](wave/01-inicio-de-sesion.png) |
+| Registro | 0 | 0 | 0 | 10 | [02-registro.png](wave/02-registro.png) |
+| Explorar | 0 | 0 | 0 | 10 | [03-explorar.png](wave/03-explorar.png) |
+| Buscar | 0 | 0 | 0 | 10 | [04-buscar.png](wave/04-buscar.png) |
+| Detalle de una actividad | 0 | 0 | 0 | 10 | [05-detalle-actividad.png](wave/05-detalle-actividad.png) |
+| Mis solicitudes | 0 | 0 | 0 | 10 | [06-mis-solicitudes.png](wave/06-mis-solicitudes.png) |
+| Mis datos | 0 | 0 | 0 | 10 | [07-mis-datos.png](wave/07-mis-datos.png) |
+| Constancia | 0 | 0 | 0 | 10 | [08-constancia.png](wave/08-constancia.png) |
+| Mis actividades | 0 | 0 | 0 | 10 | [09-mis-actividades.png](wave/09-mis-actividades.png) |
+| Analítica | 0 | 0 | 0 | 10 | [10-analitica.png](wave/10-analitica.png) |
+
+La primera pasada encontró 1 error y 58 alertas, con un AIM de 9,6 a 10. axe y Lighthouse no marcaban esto porque usan otras reglas; por ejemplo, aceptan el placeholder como nombre del campo. Lo que encontró WAVE y cómo lo corregimos:
+
+| Hallazgo | Tipo en WAVE | Dónde | Qué significa para la persona | Corrección |
+|---|---|---|---|---|
+| El campo de búsqueda solo tenía placeholder | Error: Missing form label (WCAG 1.3.1 y 3.3.2) | Buscar | El placeholder desaparece al escribir y algunos lectores de pantalla solo anuncian «campo de texto» | `aria-label` con el mismo texto visible ([ActivitySearchHeader.tsx](../client/src/activities/components/ActivitySearchHeader.tsx)) |
+| La foto de cada tarjeta repetía el título | Alerta: Redundant alternative text (49) | Explorar, Buscar, Mis solicitudes y Mis actividades | El lector de pantalla leía dos veces el nombre de cada actividad | `alt=""` en la foto, porque el enlace ya se nombra con el título ([ActivityCardShell.tsx](../client/src/activities/components/ActivityCardShell.tsx)) |
+| La portada, los íconos de cupos y causas y el avatar repetían el texto de al lado | Alerta: Redundant alternative text (4) | Detalle de una actividad | Se escuchaba «Cupos, Cupos disponibles» | `alt=""` en esas imágenes decorativas ([ActivityDetailHero.tsx](../client/src/activities/components/ActivityDetailHero.tsx), [ActivityDetailInfo.tsx](../client/src/activities/components/ActivityDetailInfo.tsx), [ActivityDetailOrganizer.tsx](../client/src/activities/components/ActivityDetailOrganizer.tsx)) |
+| La página no tenía encabezado de nivel 1 | Alerta: Missing first level heading (3) | Explorar, Buscar y Mis actividades | Quien navega por encabezados no encuentra dónde empieza el contenido | `h1` solo para lectores de pantalla ([ExplorePage.tsx](../client/src/activities/pages/ExplorePage.tsx), [ActivitySearchView.tsx](../client/src/activities/components/ActivitySearchView.tsx), [MyActivitiesPage.tsx](../client/src/activities/pages/MyActivitiesPage.tsx)) |
+| Tablas sin título | Alerta: Possible table caption (2) | Constancia y Analítica | La tabla se anuncia sin decir qué contiene | `caption` oculto a la vista ([ConstanciaPage.tsx](../client/src/horas/pages/ConstanciaPage.tsx), [AnaliticaPage.tsx](../client/src/analitica/pages/AnaliticaPage.tsx)) |
+
+Después de corregir, las 10 pantallas quedan con 0 errores, 0 errores de contraste, 0 alertas y AIM 10. Las 56 pruebas E2E, con axe, siguen en verde.

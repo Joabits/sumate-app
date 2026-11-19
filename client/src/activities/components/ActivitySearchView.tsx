@@ -28,6 +28,7 @@ export function ActivitySearchView() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0 h-full -mx-5 lg:-mx-8" data-purpose="activity-search-view">
+      <h1 className="sr-only">Buscar actividades</h1>
       {/* Header Fijo con Navegación y Acciones */}
       <ActivitySearchHeader
         query={query}

@@ -1,7 +1,7 @@
 /**
  * Servidor del frontend (un solo proceso Node en el puerto 3000):
  *
- *   /api/auth/*  → Better Auth: login, registro, sesión, Google y el JWT que usa FastAPI
+ *   /api/auth/*  → Better Auth: login, registro, sesión y el JWT que usa FastAPI
  *   todo lo demás → la app de React (src/main.tsx)
  *                   · desarrollo (pnpm dev):  Vite, con recarga al guardar
  *                   · producción (pnpm start): los archivos ya compilados de dist/

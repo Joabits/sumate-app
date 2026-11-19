@@ -53,7 +53,7 @@ Los diez componentes del sistema en Figma y dónde está cada uno en el código.
 | Botón secundario y de peligro | Secundario, peligro; normal, hover, deshabilitado | [AppAlertDialog.tsx](../client/src/shared/components/AppAlertDialog.tsx) | `superficie-alta`, `superficie-hover`, `error`, `error-fuerte`, `error-suave` |
 | Campo de texto | Normal, foco, error, deshabilitado | [TextFormField.tsx](../client/src/shared/components/TextFormField.tsx) | `fondo`, `borde`, `accion`, `texto`, `texto-tenue` |
 | Tarjeta de actividad | Abierta, llena, cancelada, pasada | [ActivityCard.tsx](../client/src/activities/components/ActivityCard.tsx), [ActivityCardShell.tsx](../client/src/activities/components/ActivityCardShell.tsx) | `superficie-alta`, `borde-suave`, `texto`, `accion` y los de estado |
-| Insignia de estado | Pendiente, aceptada, en espera, rechazada, confirmada | [EstadoHorasBadge.tsx](../client/src/horas/components/EstadoHorasBadge.tsx) | `aviso-*`, `exito-*`, `error-*` |
+| Insignia de estado | Solicitud: pendiente, aceptada, en lista de espera, rechazada. Horas: pendiente, confirmada, reclamada | [RecentlyFeed.tsx](../client/src/participations/components/RecentlyFeed.tsx), [EstadoHorasBadge.tsx](../client/src/horas/components/EstadoHorasBadge.tsx) | `aviso-*`, `exito-*`, `error-*` |
 | Diálogo de confirmación | Normal, peligro, enviando | [AppAlertDialog.tsx](../client/src/shared/components/AppAlertDialog.tsx) | `fondo`, `velo`, `texto`, `accion`, `error` |
 | Hoja inferior | Abierta, con pie fijo | [AppSheet.tsx](../client/src/shared/components/AppSheet.tsx) | `fondo`, `borde-suave`, `texto`, `texto-tenue` |
 | Encabezado | Móvil, escritorio, con menú abierto | [AppHeader.tsx](../client/src/shared/components/AppHeader.tsx) | `fondo`, `superficie`, `texto`, `accion-suave` |
@@ -62,6 +62,5 @@ Los diez componentes del sistema en Figma y dónde está cada uno en el código.
 
 ## Excepciones
 
-- **Logo de Google** en [SocialSignInButtons.tsx](../client/src/auth/components/SocialSignInButtons.tsx): sus cuatro colores son de la marca y no cambian con el tema. Están permitidos en `pnpm tokens:check`.
 - **Avisos de sileo y pin del mapa:** reciben el color como atributo o HTML, así que leen el token en tiempo de ejecución con `leerToken("--color-fondo")` ([tokens.ts](../client/src/shared/lib/tokens.ts)) o con `var(--color-accion)`.
 - **Máscara de la portada** en la bienvenida: `black` y `transparent` definen la transparencia del degradado, no un color que se vea.

@@ -98,6 +98,7 @@ export default function ConstanciaPage() {
                       <p className="text-xs text-texto-tenue mt-0.5">Organizada por {actividad.organizador}</p>
                     )}
                     <table className="mt-3 w-full text-sm">
+                      <caption className="sr-only">Horas por jornada en {actividad.nombre}</caption>
                       <thead>
                         <tr className="text-left text-xs uppercase tracking-wide text-texto-tenue">
                           <th className="py-1.5 font-semibold">Jornada</th>

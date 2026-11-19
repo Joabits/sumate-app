@@ -70,7 +70,8 @@ export function ActivityCardShell({
         <div className="relative w-full h-44 lg:h-52 rounded-2xl overflow-hidden bg-superficie-alta shrink-0">
           <Image
             src={imageUrl}
-            alt={name}
+            // El enlace ya se nombra con el título de la tarjeta: la foto es decorativa
+            alt=""
             fill
             priority={priority}
             unoptimized

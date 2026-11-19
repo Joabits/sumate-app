@@ -129,7 +129,7 @@ export function ActivityDetailHeader() {
                 onClick={() => setIsDeleteDialogOpen(true)}
                 aria-label="Eliminar actividad"
                 title="Eliminar actividad"
-                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-error-suave text-error flex items-center justify-center gap-1.5 active:scale-95 hover:bg-error-suave transition-all cursor-pointer"
+                className="h-11 w-11 lg:w-auto px-0 lg:px-4 rounded-full bg-error-suave text-error-fuerte flex items-center justify-center gap-1.5 active:scale-95 hover:bg-error-suave transition-all cursor-pointer"
               >
                 <Trash2 className="w-4.5 h-4.5 shrink-0" />
                 <span className="hidden lg:inline text-xs lg:text-sm font-semibold tracking-tight">

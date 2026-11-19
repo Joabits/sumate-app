@@ -14,6 +14,7 @@ export default function MyActivitiesPage() {
 
   return (
     <>
+      <h1 className="sr-only">Mis actividades</h1>
       <ActivitiesFeed
         activities={activities}
         scope="mine"

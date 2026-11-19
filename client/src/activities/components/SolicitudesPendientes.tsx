@@ -71,7 +71,7 @@ export function SolicitudesPendientes() {
       </div>
 
       {cuposLlenos && (
-        <p className="mb-3 text-xs text-error bg-error-suave border border-error-suave rounded-xl px-3 py-2">
+        <p className="mb-3 text-xs text-error-fuerte bg-error-suave border border-error-suave rounded-xl px-3 py-2">
           Los cupos están completos. Para aceptar a alguien más, aumenta la capacidad de la actividad.
         </p>
       )}

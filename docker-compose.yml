@@ -50,8 +50,6 @@ services:
       BETTER_AUTH_URL: http://localhost:3000
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       NEXT_PUBLIC_BACKEND_URL: http://localhost:8001/api
-      GOOGLE_CLIENT_ID: ""
-      GOOGLE_CLIENT_SECRET: ""
       # 1 = instrumenta el frontend para medir la cobertura de las E2E (ver README)
       COBERTURA: ${COBERTURA:-0}
     ports:

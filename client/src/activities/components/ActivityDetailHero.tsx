@@ -77,7 +77,7 @@ export function ActivityDetailHero() {
     >
       <Image
         src={imageUrl}
-        alt={activityName}
+        alt=""
         fill
         priority
         unoptimized

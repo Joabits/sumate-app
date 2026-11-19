@@ -180,6 +180,7 @@ export default function AnaliticaPage() {
             <p className="mt-2 text-sm text-texto-tenue">Todavía no hay errores registrados.</p>
           ) : (
             <table className="mt-3 w-full text-sm">
+              <caption className="sr-only">Errores que frenan la tarea, por flujo y motivo</caption>
               <thead>
                 <tr className="text-xs text-texto-tenue">
                   <th scope="col" className="py-1 text-left font-semibold">Flujo</th>
@@ -208,6 +209,7 @@ export default function AnaliticaPage() {
             <p className="mt-2 text-sm text-texto-tenue">Todavía no hay eventos.</p>
           ) : (
             <table className="mt-3 w-full text-xs">
+              <caption className="sr-only">Últimos eventos registrados</caption>
               <thead>
                 <tr className="text-texto-tenue">
                   <th scope="col" className="py-1 pr-2 text-left font-semibold">Evento</th>

@@ -1,6 +1,5 @@
 import Image from "@/shared/components/Image";
 import Link from "@/shared/components/Link";
-import SocialSignInButtons from "@/auth/components/SocialSignInButtons";
 
 export default function HomePage() {
   return (
@@ -52,9 +51,6 @@ export default function HomePage() {
 
         {/* Botones de acción */}
         <section className="flex flex-col gap-3.5 mt-2 w-full">
-          {/* Continuar con Google */}
-          <SocialSignInButtons />
-
           {/* Continuar con correo electrónico */}
           <Link
             href="/auth/login"
@@ -62,14 +58,6 @@ export default function HomePage() {
           >
             Continuar con correo electrónico
           </Link>
-
-          {/* Separador */}
-          <div className="relative flex items-center justify-center my-1">
-            <div className="border-t border-borde w-full absolute" />
-            <span className="bg-fondo px-3 text-xs font-semibold text-texto-tenue relative z-10">
-              o
-            </span>
-          </div>
 
           {/* Regístrate con correo electrónico */}
           <Link

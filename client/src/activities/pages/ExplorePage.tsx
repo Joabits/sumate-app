@@ -14,6 +14,7 @@ export default function ExplorePage() {
 
   return (
     <>
+      <h1 className="sr-only">Explorar actividades</h1>
       <ActivitiesFeed
         activities={activities}
         scope="others"

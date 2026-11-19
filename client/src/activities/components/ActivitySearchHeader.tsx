@@ -76,6 +76,7 @@ export function ActivitySearchHeader({
                 }
               }}
               placeholder="Buscar actividades por nombre, causa o lugar..."
+              aria-label="Buscar actividades por nombre, causa o lugar"
               autoFocus
               className="w-full pl-11 pr-10 py-2.5 lg:py-3 bg-superficie/80 border border-borde/80 rounded-2xl text-sm lg:text-[15px] text-texto placeholder:text-texto-tenue shadow-xs hover:border-borde-fuerte focus:outline-none focus:ring-2 focus:ring-accion/20 focus:border-accion transition-all"
             />
